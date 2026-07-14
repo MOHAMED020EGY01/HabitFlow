@@ -1,0 +1,464 @@
+<resources>
+    <string name="app_name">HabitFlow</string>
+    <string name="widget_description_habit_progress">تتبع تقدم عاداتك الأساسية</string>
+    
+    <!-- Settings & Permissions Section -->
+    <string name="settings">الإعدادات</string>
+    <string name="profile">الملف الشخصي</string>
+    <string name="username">اسم المستخدم</string>
+    <string name="theme">المظهر</string>
+    <string name="language">اللغة</string>
+    <string name="reset_data">إعادة ضبط البيانات</string>
+    <string name="confirm_reset">هل أنت متأكد من مسح جميع البيانات؟</string>
+    <string name="cancel">إلغاء</string>
+    <string name="reset">مسح</string>
+    <string name="reset_everything">مسح كل شيء</string>
+    <string name="reset_data_desc">سيؤدي هذا إلى حذف جميع عاداتك وتقدمك بشكل دائم. لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="save">حفظ</string>
+    <string name="permissions">الأذونات</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="exact_alarms">المنبهات الدقيقة</string>
+
+    <!-- Reliable Reminders -->
+    <string name="reliable_reminders_title">تذكيرات موثوقة</string>
+    <string name="reliable_reminders_protected">محمي بالكامل ✓</string>
+    <string name="reliable_reminders_setup_needed">مطلوب الإعداد (%1$d من %2$d خطوات)</string>
+    <string name="reliable_reminders_fix_now">إصلاح الآن</string>
+    <string name="display_over_apps">العرض فوق التطبيقات الأخرى</string>
+    <string name="run_in_background">التشغيل في الخلفية</string>
+    <string name="run_in_background_desc">يبقي التذكيرات والواجهة العائمة دقيقة حتى لو كان التطبيق مغلقًا</string>
+    <string name="battery_optimization">تحسين استهلاك البطارية</string>
+    <string name="battery_optimization_unrestricted">غير مقيد ✓</string>
+    <string name="battery_optimization_desc">مطلوب لمنع النظام من قتل التذكيرات</string>
+    <string name="enable_autostart">تمكين إذن التشغيل التلقائي (%1$s)</string>
+    <string name="glass_effect_auto">تلقائي</string>
+    <string name="glass_effect_on">تشغيل</string>
+    <string name="glass_effect_off">إيقاف</string>
+    <string name="allow">سماح</string>
+    <string name="grant">منح</string>
+    <string name="manage">إدارة</string>
+
+    <!-- Widgets -->
+    <string name="widget_no_active">لا توجد عادات نشطة</string>
+    <string name="widget_tap_add">انقر لإضافة عادة</string>
+    <string name="widget_done_today">✓ تم اليوم</string>
+    <string name="widget_mark_done">✓ تسجيل الإنجاز</string>
+    <string name="widget_mark_done_question">خلصت؟</string>
+    <string name="widget_wait_until">انتظر %1$s</string>
+    <string name="widget_days_left">%1$d/%2$d يوم · %3$d متبقي</string>
+    <string name="widget_failed_load">تعذر التحميل — انقر لإعادة المحاولة</string>
+    <string name="widget_inactive_for_days">متوقفة منذ %1$s يوم</string>
+    <string name="widget_inactive_for_1_day">متوقفة منذ يوم واحد</string>
+    <string name="widget_inactive_for_weeks">متوقفة منذ %1$s أسبوع</string>
+    <string name="widget_no_inactive_habits">مفيش عادات متوقفة</string>
+    <string name="widget_inactive_habits_title">العادات المتوقفة</string>
+    <string name="widget_active_habits_title">العادات النشطة</string>
+    <string name="widget_no_inactive_slot_title">لا توجد عادة غير نشطة</string>
+    <string name="widget_no_stop_date">لا يوجد تاريخ توقف</string>
+    <string name="widget_no_stop_duration">لا يوجد فترة توقف</string>
+    <string name="widget_stopped_on">توقفت يوم %1$s الساعة %2$s</string>
+    <string name="widget_stopped_date">توقف يوم %1$s</string>
+
+    <!-- Calendar -->
+    <string name="calendar_title">التقويم</string>
+    <string name="calendar_day">يوم</string>
+    <string name="calendar_week">أسبوع</string>
+    <string name="calendar_today">اليوم</string>
+    <string name="calendar_this_week">هذا الأسبوع</string>
+    <string name="calendar_no_habits_today">مفيش عادات مجدولة النهاردة</string>
+    <string name="calendar_no_habits">مفيش عادات مجدولة</string>
+
+    <!-- Overlay & Notification -->
+    <string name="overlay_later">لاحقًا</string>
+    <string name="overlay_done">✓ تم</string>
+    <string name="overlay_time_for_habit">حان وقت عادتك!</string>
+    <string name="overlay_title">تذكير العادة</string>
+    <string name="notification_body">حان الوقت لبناء عادتك! 💪</string>
+    <string name="notification_time_for_habit">حان وقت: %1$s</string>
+
+    <!-- Home screen banner -->
+    <string name="home_banner_title">تذكيرات موثوقة بنسبة ١٠٠٪</string>
+    <string name="home_banner_desc">انقر لتكوين أذونات الخلفية بسرعة لتجنب تفويت تذكيرات العادات.</string>
+
+    <!-- Greetings -->
+    <string name="home_good_morning">صباح الخير</string>
+    <string name="home_good_afternoon">مساء الخير</string>
+    <string name="home_good_evening">مساء الخير</string>
+    <string name="home_good_night">طاب مساؤك</string>
+
+    <!-- Habit Detail Screen Redesign Strings -->
+    <string name="habit_detail_done">تم</string>
+    <string name="habit_detail_days">%1$d يوم</string>
+    <string name="habit_detail_missed">فاتتني</string>
+    <string name="habit_detail_goal">الهدف</string>
+    <string name="habit_detail_total">%1$d إجمالي</string>
+    <string name="habit_detail_overall_progress">التقدم العام</string>
+    <string name="habit_detail_days_remaining">متبقي %1$d يوم للوصول إلى هدفك</string>
+    <string name="habit_detail_goal_reached">تم الوصول إلى الهدف! !</string>
+    <string name="habit_detail_reminders">التذكيرات</string>
+    <string name="habit_detail_no_reminders">لا توجد تذكيرات مجدولة</string>
+    <string name="habit_detail_already_done">تم إنجازها اليوم بالفعل ✓</string>
+    <string name="habit_detail_mark_done">تسجيل إنجاز اليوم</string>
+    <string name="next_reminder_in">التذكير القادم: %1$s • %2$s</string>
+    <string name="next_reminder_at">القادم: %1$s</string>
+    <string name="next_reminder_duration_hm">خلال %1$d س و %2$d د</string>
+    <string name="next_reminder_duration_m">خلال %1$d د</string>
+    <string name="habit_detail_consistency_heatmap">مخطط الاستمرارية</string>
+    <string name="habit_detail_legend_done">تم</string>
+    <string name="habit_detail_legend_empty">فارغ</string>
+    <string name="delete_habit_dialog_title">حذف العادة؟</string>
+    <string name="delete_habit_dialog_text">متأكد إنك عاوز تمسح العادة دي وكل السجل الخاص بيها؟ مش هينفع ترجع في الخطوة دي.</string>
+    <string name="delete">حذف</string>
+    <string name="habit_not_found">لم يتم العثور على العادة</string>
+    <string name="habit_not_scheduled_today">هذه العادة غير مجدولة لليوم</string>
+    <string name="today">اليوم</string>
+    <string name="yesterday">أمس</string>
+    
+    <!-- Heatmap Weekday Names -->
+    <string name="day_mon">إثن</string>
+    <string name="day_tue">ثلا</string>
+    <string name="day_wed">أرب</string>
+    <string name="day_thu">خمي</string>
+    <string name="day_fri">جمع</string>
+    <string name="day_sat">سبت</string>
+    <string name="day_sun">أحد</string>
+
+    <!-- Additional Hardcoded strings audited -->
+    <string name="home_lets_make_today_count">فلنجعل اليوم رائعًا! ✨</string>
+    <string name="home_active_habits">العادات النشطة</string>
+    <string name="home_see_all">عرض الكل</string>
+    <string name="home_no_active_habits">لا توجد عادات نشطة حاليًا.</string>
+    <string name="add_habit">إضافة عادة</string>
+    <string name="add_habit_name_label">اسم العادة</string>
+    <string name="add_habit_name_placeholder">مثال: تمرين صباحي</string>
+    <string name="add_habit_desc_label">الوصف (اختياري)</string>
+    <string name="add_habit_desc_placeholder">إيه اللي بيشجعك تعمل العادة دي؟</string>
+    <string name="add_habit_duration_label">المدة (أيام)</string>
+    <string name="add_habit_duration_preset">%1$d يوم</string>
+    <string name="add_habit_duration_custom">مخصص</string>
+    <string name="add_habit_duration_custom_placeholder">أدخل عدد الأيام</string>
+    <string name="add_habit_start_now">ابدأ العادة الآن</string>
+    <string name="add_habit_limit_warning">عندك بالفعل %1$d عادات نشطة (الحد الأقصى) — عطل واحدة الأول</string>
+    <string name="add_habit_activate_desc">فعلها دلوقتي عشان تبدأ تتبعها. العادات النشطة: %1$d / %2$d</string>
+    <string name="add_habit_add_reminder">إضافة تذكير</string>
+    <string name="add_habit_error_duration">المدة لازم تكون أكبر من 0</string>
+    <string name="add_habit_error_no_reminders">أضف وقت تذكير واحد على الأقل</string>
+    <string name="add_habit_error_time_exists">تم إضافة هذا الوقت بالفعل.</string>
+    <string name="this_habit">العادة دي</string>
+    <string name="add_habit_error_time_conflict">الوقت ده قريب جدًا من تذكير عادة \'%1$s\' الساعة %2$s — لازم يكون في فرق ١٠ دقايق على الأقل</string>
+    <string name="add_habit_error_time_conflict_multi">الوقت %1$s قريب جدًا من تذكير عادة \'%2$s\' الساعة %3$s — لازم يكون في فرق ١٠ دقايق على الأقل</string>
+    <string name="habit_not_active">العادة غير مفعلة</string>
+    <string name="habit_pause">إيقاف العادة مؤقتًا</string>
+    <string name="habit_resume">استئناف العادة</string>
+    <string name="habit_restart">إعادة بدء العادة (دورة جديدة)</string>
+    <string name="previous_cycles">الدورات السابقة</string>
+    <string name="cycle_result">النتيجة: %1$s</string>
+    <string name="no_habits_rank">لا توجد عادات للترتيب حاليًا.</string>
+    <string name="wipe_data_desc">مسح جميع بيانات الملف الشخصي والعادات</string>
+    <string name="hue">درجة اللون</string>
+    <string name="saturation">التشبع</string>
+    <string name="brightness">السطوع</string>
+    <string name="result_complete">مكتمل</string>
+    <string name="result_failure">فشل</string>
+    <string name="add_habit_limit_reached_title">تم الوصول للحد الأقصى</string>
+    <string name="add_habit_limit_reached_desc">لا يمكنك الحصول على أكثر من ٦ عادات نشطة في نفس الوقت. يرجى إكمال أو حذف إحدى عاداتك النشطة أولاً.</string>
+    <string name="ok">موافق</string>
+    <string name="search_habits_placeholder">البحث عن العادات...</string>
+    <string name="onboarding_whats_your_name">ما هو اسمك؟</string>
+    <string name="onboarding_name_placeholder">مثال: أحمد</string>
+
+    <!-- Bottom Navigation -->
+    <string name="menu_home">الرئيسية</string>
+    <string name="menu_all_habits">كل العادات</string>
+    <string name="menu_summary">التحليلات</string>
+    <string name="menu_settings">الإعدادات</string>
+    <string name="card_animations">تأثيرات وحركات البطاقات</string>
+    <string name="card_animations_desc">تفعيل تأثيرات الحدود والوهج واللمعان والإنعكاسات للبطاقات</string>
+    <string name="glass_effect">تأثير الزجاج</string>
+    <string name="glass_effect_desc">التحكم في تأثير خلفية الزجاج المشوش (تلقائي: موصى به)</string>
+
+    <!-- All Habits Screen -->
+    <string name="my_habits">عاداتي</string>
+    <string name="search">بحث</string>
+    <string name="clear_search">مسح البحث</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_active">النشطة</string>
+    <string name="filter_inactive">غير النشطة</string>
+    <string name="filter_complete">مكتمل</string>
+    <string name="filter_failure">فاشل</string>
+    <string name="sort_by">ترتيب حسب:</string>
+    <string name="sort_start_date">تاريخ البدء</string>
+    <string name="sort_progress">التقدم</string>
+    <string name="no_habits_match">لا توجد عادات تطابق خيارات التصفية.</string>
+
+    <!-- Summary Screen -->
+    <string name="summary_analytics">التحليلات</string>
+    <string name="summary_total_habits">إجمالي العادات</string>
+    <string name="summary_fully_completed">المكتملة تمامًا</string>
+    <string name="summary_best_streak">أفضل سلسلة 🔥</string>
+    <string name="habit_streak_days">🔥 سلسلة من %1$d أيام متتالية</string>
+    <string name="summary_leaderboard">لوحة متصدري العادات</string>
+    <string name="summary_completion_rates">نسب الإنجاز</string>
+    <string name="summary_completed">%1$d مكتمل</string>
+
+    <!-- Splash & Onboarding -->
+    <string name="splash_sub">ابنِ عادات أفضل يوميًا</string>
+    <string name="onboarding_welcome">مرحبًا بك في HabitFlow 👋</string>
+    <string name="onboarding_name_validation">يجب أن يكون الاسم حرفين على الأقل</string>
+    <string name="onboarding_lets_start">لنبدأ الآن</string>
+
+    <!-- Color Picker -->
+    <string name="choose_color">اختر لونًا</string>
+    <string name="color_custom">مخصص</string>
+    <string name="color_custom_picker_title">اختر لونًا مخصصًا</string>
+    <string name="color_custom_select">اختيار</string>
+
+    <!-- Habit Card -->
+    <string name="habit_card_days_progress">%1$d/%2$d يوم</string>
+
+    <!-- Add/Edit Habit Screen -->
+    <string name="add_habit_title_edit">تعديل العادة</string>
+    <string name="add_habit_title_create">إنشاء عادة</string>
+    <string name="add_habit_save_changes">حفظ التغييرات</string>
+    <string name="add_habit_create_habit">إنشاء العادة</string>
+
+    <!-- Days of Week Selector -->
+    <string name="daily">كل يوم</string>
+    <string name="days_of_week">أيام الأسبوع</string>
+    <string name="days_selector_at_least_one">اختر يومًا واحدًا على الأقل</string>
+    <string name="hide_nav_bar">إخفاء شريط التنقل السفلي</string>
+    <string name="hide_nav_bar_desc">إخفاء شريط التنقل السفلي في أندرويد (اسحب للإظهار)</string>
+    <string name="habit_details_title">تفاصيل العادة</string>
+    <string name="habit_created_activated">تم إنشاء العادة وتفعيلها بنجاح! !</string>
+    <string name="habit_updated_activated">تم تحديث العادة وتفعيلها بنجاح! !</string>
+        <string name="habit_created">تم إنشاء العادة بنجاح! [OK]</string>
+    <string name="habit_updated">تم تحديث العادة بنجاح! [OK]</string>
+    <string name="habit_name_empty_error">اسم العادة لا يمكن أن يكون فارغاً</string>
+    <string name="habit_activated_success">تم تفعيل العادة بنجاح [OK]</string>
+    <string name="reminder_times">أوقات التذكير</string>
+    <string name="channel_habit_reminders">تذكيرات العادات</string>
+    <string name="channel_inactivity_alerts">تنبيهات عدم النشاط</string>
+    <string name="channel_overlay">تراكب العادة</string>
+    <string name="splash_loading">جارٍ التحميل…</string>
+    <string name="habit_limit_reached">تم حفظ العادة، ولكن تم الوصول إلى الحد الأقصى (٦ عادات). أكمل أو احذف واحدة أولاً.</string>
+
+    <string name="hour">الساعة</string>
+    <string name="minute">الدقيقة</string>
+    <string name="period">الفترة</string>
+    <string name="am">صباحًا</string>
+    <string name="pm">مساءً</string>
+
+    <string name="no_notifications">مفيش إشعارات لسه</string>
+    <string name="clear_all">مسح الكل</string>
+    <string name="clear_all_notifications_title">مسح كل الإشعارات؟</string>
+    <string name="clear_all_notifications_confirm">متأكد إنك عاوز تمسح كل سجل الإشعارات؟ مش هينفع ترجع في الخطوة دي.</string>
+
+    <string-array name="motivational_quotes">
+        <item>التحسينات اليومية الصغيرة بمرور الوقت تؤدي إلى نتائج مذهلة.</item>
+        <item>عاداتك هي التي ستحدد مستقبلك.</item>
+        <item>نحن ما نفعله باستمرار. التميز إذًا ليس فعلًا، بل عادة.</item>
+        <item>الدافع هو ما يجعلك تبدأ. العادة هي ما تجعلك تستمر.</item>
+        <item>من الأسهل منع العادات السيئة بدلاً من كسرها.</item>
+        <item>الاستمرارية هي مفتاح كل نجاح.</item>
+        <item>الخطوات الصغيرة في الاتجاه الصحيح يمكن أن تكون أكبر خطوات حياتك.</item>
+        <item>الانضباط هو فعل ما يجب فعله، حتى لو كنت لا ترغب في ذلك.</item>
+        <item>لا تتوقف حتى تصبح فخوراً بنفسك.</item>
+        <item>ركز على أن تكون منتجًا بدلاً من أن تكون مشغولًا.</item>
+        <item>سر مستقبلك مخفي في روتينك اليومي.</item>
+        <item>النجاح هو مجموع الجهود الصغيرة التي تتكرر يومًا بعد يوم.</item>
+        <item>ليس عليك أن تكون رائعًا لتبدأ، ولكن عليك أن تبدأ لتكون رائعًا.</item>
+        <item>الطريقة الوحيدة للقيام بعمل رائع هي أن تحب ما تفعله.</item>
+        <item>العمل هو المفتاح الأساسي لكل نجاح.</item>
+        <item>حياتك لا تتحسن بالصدفة، بل تتحسن بالتغيير.</item>
+        <item>كل ما أردته دائمًا موجود على الجانب الآخر من الخوف.</item>
+        <item>ابدأ من حيث أنت. استخدم ما لديك. افعل ما تستطيع.</item>
+        <item>يبدو الأمر دائمًا مستحيلاً حتى يتم إنجازه.</item>
+        <item>لا تراقب الساعة؛ افعل ما تفعله. استمر في التحرك.</item>
+        <item>المستقبل يعتمد على ما تفعله اليوم.</item>
+        <item>آمن بأنك تستطيع وسوف تقطع نصف الطريق.</item>
+        <item>الجودة ليست فعلًا، بل عادة.</item>
+        <item>الخطوة الأولى هي الأصعب دائمًا. استمر في التحرك.</item>
+        <item>بعد عام من الآن قد تتمنى لو أنك بدأت اليوم.</item>
+        <item>اجعل كل يوم تحفة فنية.</item>
+        <item>الإصرار يضمن أن النتائج حتمية.</item>
+        <item>احلم أحلامًا كبيرة. ابدأ بداية صغيرة. ولكن الأهم من ذلك، ابدأ.</item>
+        <item>شيئًا فشيئًا، القليل يصبح كثيرًا.</item>
+        <item>رحلة الألف ميل تبدأ بخطوة واحدة.</item>
+        <item>الإنتاجية ليست حادثًا أبدًا.</item>
+        <item>الانضباط هو الجسر بين الأهداف والإنجاز.</item>
+        <item>حدودك الوحيدة هي أنت.</item>
+        <item>الأشياء العظيمة لا تأتي أبدًا من مناطق الراحة.</item>
+        <item>النجاح ليس نهائيًا، والفشل ليس قاتلاً: الشجاعة للاستمرار هي ما يهم.</item>
+        <item>اعمل بجد في صمت، ودع نجاحك يكون هو الضجيج.</item>
+        <item>الطريقة للبدء هي التوقف عن الكلام والبدء في الفعل.</item>
+        <item>افعل شيئًا اليوم تشكرك عليه نفسك في المستقبل.</item>
+        <item>إذا كنت تريد أن تعيش حياة سعيدة، فاربطها بهدف.</item>
+        <item>الطاقة والمثابرة تغلب كل شيء.</item>
+        <item>العمل الجاد يتفوق على الموهبة عندما لا تعمل الموهبة بجد.</item>
+        <item>الفوز عادة. لسوء الحظ، الفشل أيضًا عادة.</item>
+        <item>أعزو نجاحي إلى هذا: لم أقدم أو أقبل أي عذر أبدًا.</item>
+        <item>المحارب الناجح هو الرجل العادي، بتركيز يشبه الليزر.</item>
+        <item>الدافع هو نار من الداخل.</item>
+        <item>المماطلة هي سارقة الوقت.</item>
+        <item>لست أبدًا أكبر من أن تضع هدفًا آخر أو تحلم بحلم جديد.</item>
+        <item>غير عاداتك، تغير حياتك.</item>
+        <item>إذا كنت تمر بالجحيم، فاستمر في السير.</item>
+        <item>لا يهم إذا سقطت، المهم هو أن تنهض.</item>
+        <item>الفشل لن يغلبني أبدًا إذا كان تصميمي على النجاح قويًا بما يكفي.</item>
+        <item>المكان الوحيد الذي يأتي فيه النجاح قبل العمل هو في القاموس.</item>
+        <item>كل شيء يأتي لمن يسعى أثناء انتظاره.</item>
+        <item>استثمر في عاداتك، فهي تدفع أفضل الفوائد.</item>
+        <item>تحديد الأهداف هو الخطوة الأولى في تحويل غير المرئي إلى مرئي.</item>
+        <item>لا تدع الأمس يأخذ الكثير من اليوم.</item>
+        <item>تضيع 100% من الفرص التي لا تستغلها.</item>
+        <item>لقد فشلت مرارًا وتكرارًا في حياتي ولهذا السبب نجحت.</item>
+        <item>أصعب شيء هو قرار الفعل، والباقي هو مجرد إصرار.</item>
+        <item>وضوح الهدف هو نقطة البداية لكل إنجاز.</item>
+        <item>ابنِ أحلامك الخاصة، وإلا سيستأجرك شخص آخر لبناء أحلامه.</item>
+        <item>إما أن تقود اليوم، أو يقودك اليوم.</item>
+        <item>أنا لست نتاج ظروفي. أنا نتاج قراراتي.</item>
+        <item>كل محاولة تقربني أكثر من النجاح التالي.</item>
+        <item>الحياة هي ما يحدث لك بينما أنت مشغول في وضع خطط أخرى.</item>
+        <item>نحن نصبح ما نفكر فيه.</item>
+        <item>العقل هو كل شيء. ما تفكر فيه تصبح عليه.</item>
+        <item>الحياة غير المفحوصة لا تستحق العيش.</item>
+        <item>أفضل وقت لزراعة شجرة كان قبل 20 عامًا. الوقت الثاني الأفضل هو الآن.</item>
+        <item>وقتك محدود، فلا تضيعه في عيش حياة شخص آخر.</item>
+        <item>الفوز ليس كل شيء، لكن الرغبة في الفوز هي كل شيء.</item>
+        <item>أنا ممتن لكل من قال لي لا. فبسببهم قمت بذلك بنفسي.</item>
+        <item>إذا كنت تستطيع أن تحلم به، يمكنك القيام به.</item>
+        <item>أفضل انتقام هو النجاح الهائل.</item>
+        <item>الحياة قصيرة، والأمر متروك لك لجعلها حلوة.</item>
+        <item>السعادة ليست شيئًا جاهزًا. إنها تأتي من أفعالك الخاصة.</item>
+        <item>ركز على الرحلة، وليس الوجهة.</item>
+        <item>الطريقة الوحيدة للوصول إلى المستحيل هي الإيمان بأنه ممكن.</item>
+        <item>النجاح عادة ما يأتي لأولئك الذين هم مشغولون جدًا بالبحث عنه.</item>
+        <item>لا تخف من التخلي عن الجيد من أجل العظيم.</item>
+        <item>أجد أنه كلما عملت بجد، زاد حظي.</item>
+        <item>النجاح هو الانتقال من فشل إلى فشل دون فقدان الحماس.</item>
+        <item>كل أحلامنا يمكن أن تتحقق إذا كانت لدينا الشجاعة لمتابعتها.</item>
+        <item>الفرص لا تحدث بالصدفة. أنت من تصنعها.</item>
+        <item>لا تحاول أن تصبح رجلاً ناجحاً، بل حاول أن تصبح رجلاً ذا قيمة.</item>
+        <item>العقول العظيمة تناقش الأفكار؛ العقول المتوسطة تناقش الأحداث؛ العقول الصغيرة تناقش الناس.</item>
+        <item>إذا كنت تحب الحياة، فلا تضيع الوقت، لأن الوقت هو ما صُنعت منه الحياة.</item>
+        <item>الرجل الناجح هو الذي يمكنه وضع أساس متين بالطوب الذي ألقاه الآخرون عليه.</item>
+        <item>لا أحد يستطيع أن يجعلك تشعر بالدونية دون موافقتك.</item>
+        <item>المسافة بين الجنون والعبقرية تقاس فقط بالنجاح.</item>
+        <item>المعرفة قوة. المعلومات محررِة.</item>
+        <item>القاعدة الذهبية لكل عمل هي: ضع نفسك مكان عميلك.</item>
+        <item>في وسط كل صعوبة تكمن الفرصة.</item>
+        <item>الهدف ليس أن تكون أفضل من الآخرين، بل أفضل من نفسك السابقة.</item>
+        <item>كل شيء صعب قبل أن يصبح سهلاً.</item>
+        <item>لا تتوقف عندما تتعب. توقف عندما تنتهي.</item>
+        <item>أفضل طريقة للتنبؤ بالمستقبل هي ابتكاره.</item>
+        <item>كن التغيير الذي ترغب في رؤيته في العالم.</item>
+        <item>ابقَ جائعًا، ابقَ أحمق.</item>
+        <item>الغرض من حياتنا هو أن نكون سعداء.</item>
+        <item>الحياة هي ما يحدث عندما تكون مشغولاً في وضع خطط أخرى.</item>
+        <item>انشغل بالحياة أو انشغل بالموت.</item>
+        <item>أنت تعيش مرة واحدة فقط، ولكن إذا فعلت ذلك بشكل صحيح، فمرة واحدة تكفي.</item>
+        <item>كثير من حالات الفشل في الحياة هم أناس لم يدركوا مدى قربهم من النجاح عندما استسلموا.</item>
+        <item>إذا كنت تريد أن تعيش حياة سعيدة، فاربطها بهدف، وليس بأشخاص أو أشياء.</item>
+        <item>لا تدع الخوف من الخسارة يمنعك من اللعب.</item>
+        <item>المال والنجاح لا يغيران الناس؛ بل يضخمان ما هو موجود بالفعل.</item>
+        <item>ليس طول الحياة، بل جودة عيشها هو الشيء الرئيسي.</item>
+        <item>لكي تكتب عن الحياة، يجب أن تعيشها أولاً.</item>
+        <item>الدرس الكبير في الحياة، يا صغيري، هو ألا تخاف أبدًا من أي شخص أو أي شيء.</item>
+        <item>الحياة ليست مشكلة يجب حلها، بل حقيقة يجب تجربتها.</item>
+        <item>حول جراحك إلى حكمة.</item>
+        <item>الطريقة التي أرى بها الأمر، إذا كنت تريد قوس قزح، فعليك أن تتحمل المطر.</item>
+        <item>افعل كل الخير الذي تستطيعه، لكل الناس الذين تستطيعهم، بكل الطرق التي تستطيعها، طالما تستطيع.</item>
+        <item>لا ترضَ بما تعطيك الحياة إياه؛ اجعل الحياة أفضل وابنِ شيئًا.</item>
+        <item>كل ما هو سلبي - الضغوط، التحديات - هو فرصة لي للنهوض.</item>
+        <item>أنا أحب النقد. إنه يجعلك قويًا.</item>
+        <item>أنت لا تتعلم الكثير أبدًا من سماع نفسك تتحدث.</item>
+        <item>الحياة تفرض عليك أشياء لا يمكنك التحكم فيها، ولكن لا يزال لديك خيار كيفية العيش من خلال ذلك.</item>
+        <item>الحياة ليست سهلة أبدًا. هناك عمل يجب القيام به والتزامات يجب الوفاء بها.</item>
+        <item>عش لكل ثانية دون تردد.</item>
+        <item>الحياة مثل ركوب الدراجة. لكي تحافظ على توازنك، يجب أن تستمر في التحرك.</item>
+        <item>الحياة بسيطة حقًا، لكننا نصر على جعلها معقدة.</item>
+        <item>الحياة هي سلسلة من الدروس التي يجب أن تعاش لفهمها.</item>
+        <item>مهمتي في الحياة ليست مجرد البقاء، بل الازدهار.</item>
+        <item>تحصل في الحياة على ما لديك الشجاعة لطلبه.</item>
+        <item>الحياة تقدم، وليست محطة.</item>
+        <item>التغيير هو قانون الحياة.</item>
+        <item>إذا غيرت الطريقة التي تنظر بها إلى الأشياء، فإن الأشياء التي تنظر إليها تتغير.</item>
+        <item>ابق عينيك على النجوم، وقدميك على الأرض.</item>
+        <item>كن نفسك؛ فالجميع مأخوذون بالفعل.</item>
+        <item>شيئان لا حدود لهما: الكون وغباء الإنسان؛ وأنا لست متأكدًا من الكون.</item>
+        <item>كتب كثيرة جدًا، وقت قليل جدًا.</item>
+        <item>غرفة بدون كتب مثل جسد بدون روح.</item>
+        <item>كن من أنت وقل ما تشعر به، لأن أولئك الذين يهتمون لا يهمون، وأولئك الذين يهمون لا يهتمون.</item>
+        <item>تعلم أنك في حالة حب عندما لا تستطيع النوم لأن الواقع أصبح أخيرًا أفضل من أحلامك.</item>
+        <item>أنت تعيش مرة واحدة فقط، ولكن إذا فعلت ذلك بشكل صحيح، فمرة واحدة تكفي.</item>
+        <item>كن التغيير الذي ترغب في رؤيته في العالم.</item>
+        <item>في ثلاث كلمات يمكنني تلخيص كل ما تعلمته عن الحياة: إنها تستمر.</item>
+        <item>إذا قلت الحقيقة، فليس عليك أن تتذكر أي شيء.</item>
+        <item>الصديق هو شخص يعرف كل شيء عنك ولا يزال يحبك.</item>
+        <item>أن تعيش هو أندر شيء في العالم. معظم الناس موجودون، وهذا كل شيء.</item>
+        <item>سامح أعداءك دائمًا؛ فلا شيء يزعجهم أكثر من ذلك.</item>
+        <item>عش كأنك ستموت غدًا. تعلم كأنك ستعيش للأبد.</item>
+        <item>نحن نقبل الحب الذي نعتقد أننا نستحقه.</item>
+        <item>بدون الموسيقى، ستكون الحياة خطأً.</item>
+        <item>أنا ذكي جدًا لدرجة أنني في بعض الأحيان لا أفهم كلمة واحدة مما أقول.</item>
+        <item>أن تكون نفسك في عالم يحاول باستمرار أن يجعلك شيئًا آخر هو أعظم إنجاز.</item>
+        <item>الجنون هو فعل الشيء نفسه، مرارًا وتكرارًا، وتوقع نتائج مختلفة.</item>
+        <item>من الأفضل أن تُكره على ما أنت عليه بدلاً من أن تُحب على ما لست عليه.</item>
+        <item>العادات الصغيرة تؤدي إلى تغييرات كبيرة.</item>
+        <item>يوم واحد في كل مرة، عادة واحدة في كل مرة.</item>
+        <item>اليوم هو أفضل يوم للبدء.</item>
+        <item>مستقبلك يصنعه ما تفعله اليوم، وليس غدًا.</item>
+        <item>الانضباط هو الاختيار بين ما تريده الآن وما تريده أكثر.</item>
+        <item>ركز على التقدم، وليس الكمال.</item>
+        <item>الفوز الصغير لا يزال فوزًا.</item>
+        <item>الاستمرارية تتفوق على الكثافة.</item>
+        <item>اجعل الأمر سهلاً، اجعل الأمر واضحًا.</item>
+        <item>التكرار هو أم كل المهارات.</item>
+        <item>النجاح هو بضعة تخصصات بسيطة تمارس كل يوم.</item>
+        <item>الفشل هو الفرصة للبدء من جديد بذكاء أكبر.</item>
+        <item>سر المضي قدمًا هو البدء.</item>
+        <item>ليس ما نفعله من حين لآخر هو ما يشكل حياتنا. بل ما نفعله باستمرار.</item>
+        <item>العادات هي الفائدة المركبة لتحسين الذات.</item>
+        <item>الدافع يجعلك تبدأ، لكن الانضباط يجعلك تنمو.</item>
+        <item>لن تغير حياتك أبدًا حتى تغير شيئًا تفعله يوميًا.</item>
+        <item>انسَ الإلهام. العادة أكثر موثوقية.</item>
+        <item>النجاح ليس وجهة، بل هو طريقة حياة.</item>
+        <item>الشخصية هي ببساطة عادة استمرت طويلاً.</item>
+        <item>طقوسك اليومية تحدد من أنت.</item>
+        <item>أتقن صباحك، تتقن يومك.</item>
+        <item>سلاسل العادة أخف من أن تشعر بها حتى تصبح أثقل من أن تكسر.</item>
+        <item>العادات الجيدة تسبب الإدمان مثل العادات السيئة، وهي أكثر مكافأة بكثير.</item>
+        <item>النجاح هو نتيجة الإعداد والعمل الجاد والتعلم من الفشل.</item>
+        <item>لا تتمنى لو كان الأمر أسهل، تمنَّ لو كنت أفضل.</item>
+        <item>الانضباط هو روح الجيش. إنه يجعل الأعداد الصغيرة هائلة.</item>
+        <item>كل نجاح يبدأ بالانضباط الذاتي.</item>
+        <item>بدون الانضباط الذاتي، النجاح مستحيل، نقطة انتهى.</item>
+        <item>العقل المنضبط يؤدي إلى السعادة، والعقل غير المنضبط يؤدي إلى المعاناة.</item>
+        <item>تكلفة الانضباط دائمًا أقل من ثمن الندم.</item>
+        <item>الانضباط الذاتي هو عندما يخبرك ضميرك أن تفعل شيئًا ولا تجادل.</item>
+        <item>يجب علينا جميعًا أن نعاني من أحد شيئين: ألم الانضباط أو ألم الندم.</item>
+        <item>الانضباط هو القدرة على فعل ما تعرف أنه يجب عليك فعله.</item>
+        <item>النصر الأول والأفضل هو قهر الذات.</item>
+        <item>من لا يستطيع أن يطيع نفسه سيُؤمر.</item>
+        <item>الأعمال العظيمة تتكون من أفعال صغيرة.</item>
+        <item>خطوة بخطوة ويتم الأمر.</item>
+        <item>الأفعال الصغيرة التي يتم القيام بها أفضل من الأفعال العظيمة المخطط لها.</item>
+        <item>النجاح هو تقدم مستمر نحو أهداف المرء الشخصية.</item>
+        <item>سر النجاح هو الثبات على الهدف.</item>
+        <item>أنا أمشي ببطء، لكني لا أمشي للخلف أبدًا.</item>
+        <item>لا يهم مدى بطئك طالما أنك لا تتوقف.</item>
+        <item>الرجل الذي يحرك جبلاً يبدأ بحمل الأحجار الصغيرة.</item>
+        <item>النصر لمن يصمد أكثر.</item>
+        <item>الشجاعة ليست في امتلاك القوة للاستمرار؛ بل في الاستمرار عندما لا تملك القوة.</item>
+        <item>من خلال المثابرة، يحقق الكثير من الناس النجاح مما كان يبدو محكوماً عليه بالفشل المؤكد.</item>
+        <item>الفرق بين الشخص الناجح والآخرين ليس نقص القوة، بل نقص الإرادة.</item>
+        <item>اسقط سبع مرات، وقف ثماني مرات.</item>
+        <item>المثابرة هي الفشل 19 مرة والنجاح في المرة العشرين.</item>
+        <item>الحد الوحيد لإدراكنا للغد سيكون شكوكنا اليوم.</item>
+        <item>استمر في التقدم للأمام.</item>
+        <item>ابقَ مركزًا، ابقَ مصممًا.</item>
+        <item>أنهِ ما بدأته.</item>
+        <item>لا تتخلى عن أحلامك.</item>
+    </string-array>
+</resources>
+

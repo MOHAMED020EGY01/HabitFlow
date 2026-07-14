@@ -1,0 +1,30 @@
+# Baseline Profile for HabitFlow
+# Core classes pre-compiled to prevent initial startup/navigation warm-up jank
+
+Lcom/example/HabitApplication;
+Lcom/example/MainActivity;
+Lcom/example/MainActivity$AppNavigation$1;
+Lcom/example/MainActivity$onCreate$1;
+
+# Navigation and Animations
+Lcom/example/presentation/navigation/Routes;
+Lcom/example/presentation/navigation/NavAnimations;
+Lcom/example/presentation/navigation/NavAnimations$enterTransition$1;
+Lcom/example/presentation/navigation/NavAnimations$exitTransition$1;
+Lcom/example/presentation/navigation/NavAnimations$popEnterTransition$1;
+Lcom/example/presentation/navigation/NavAnimations$popExitTransition$1;
+
+# Shared UI Components
+Lcom/example/presentation/components/BottomNavBarKt;
+Lcom/example/presentation/components/GlassCardKt;
+Lcom/example/presentation/components/GlassCardKt$GlassCard$1;
+
+# Screens
+Lcom/example/presentation/screens/home/HomeScreenKt;
+Lcom/example/presentation/screens/home/HabitCardKt;
+Lcom/example/presentation/screens/all/AllHabitsScreenKt;
+Lcom/example/presentation/screens/detail/HabitDetailScreenKt;
+Lcom/example/presentation/screens/summary/SummaryScreenKt;
+Lcom/example/presentation/screens/settings/SettingsScreenKt;
+Lcom/example/presentation/screens/splash/SplashScreenKt;
+Lcom/example/presentation/screens/onboarding/OnboardingScreenKt;

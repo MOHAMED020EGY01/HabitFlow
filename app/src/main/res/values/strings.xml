@@ -1,0 +1,464 @@
+<resources>
+    <string name="app_name">HabitFlow</string>
+    <string name="widget_description_habit_progress">Tracks the progress of your top habits</string>
+    
+    <!-- Settings & Permissions Section -->
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="username">Username</string>
+    <string name="theme">Theme</string>
+    <string name="language">Language</string>
+    <string name="reset_data">Reset Data</string>
+    <string name="confirm_reset">Are you sure you want to reset all data?</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">Reset</string>
+    <string name="reset_everything">Reset Everything</string>
+    <string name="reset_data_desc">This will permanently delete all your habits and progress. This action cannot be undone.</string>
+    <string name="save">Save</string>
+    <string name="permissions">Permissions</string>
+    <string name="notifications">Notifications</string>
+    <string name="exact_alarms">Exact Alarms</string>
+
+    <!-- Reliable Reminders -->
+    <string name="reliable_reminders_title">Reliable Reminders</string>
+    <string name="reliable_reminders_protected">Fully protected ✓</string>
+    <string name="reliable_reminders_setup_needed">Setup needed (%1$d of %2$d steps)</string>
+    <string name="reliable_reminders_fix_now">Fix Now</string>
+    <string name="display_over_apps">Display Over Other Apps</string>
+    <string name="run_in_background">Run in Background</string>
+    <string name="run_in_background_desc">Keeps reminders &amp; overlay reliable even when the app is closed</string>
+    <string name="battery_optimization">Battery Optimization</string>
+    <string name="battery_optimization_unrestricted">Unrestricted ✓</string>
+    <string name="battery_optimization_desc">Required so the system doesn\&apos;t kill reminders</string>
+    <string name="enable_autostart">Enable Autostart Permission (%1$s)</string>
+    <string name="glass_effect_auto">Auto</string>
+    <string name="glass_effect_on">On</string>
+    <string name="glass_effect_off">Off</string>
+    <string name="allow">Allow</string>
+    <string name="grant">Grant</string>
+    <string name="manage">Manage</string>
+
+    <!-- Widgets -->
+    <string name="widget_no_active">No active habit</string>
+    <string name="widget_tap_add">Tap to add one</string>
+    <string name="widget_done_today">✓ Done today</string>
+    <string name="widget_mark_done">✓ Mark Done</string>
+    <string name="widget_mark_done_question">Done?</string>
+    <string name="widget_wait_until">Wait until %1$s</string>
+    <string name="widget_days_left">%1$d/%2$d days · %3$d left</string>
+    <string name="widget_failed_load">Couldn\&apos;t load — tap to retry</string>
+    <string name="widget_inactive_for_days">Inactive for %1$s days</string>
+    <string name="widget_inactive_for_1_day">Inactive for 1 day</string>
+    <string name="widget_inactive_for_weeks">Inactive for %1$s weeks</string>
+    <string name="widget_no_inactive_habits">No inactive habits</string>
+    <string name="widget_inactive_habits_title">Inactive Habits</string>
+    <string name="widget_active_habits_title">Active Habits</string>
+    <string name="widget_no_inactive_slot_title">No inactive habit</string>
+    <string name="widget_no_stop_date">No stop date</string>
+    <string name="widget_no_stop_duration">No stop duration</string>
+    <string name="widget_stopped_on">Stopped on %1$s at %2$s</string>
+    <string name="widget_stopped_date">Stopped: %1$s</string>
+
+    <!-- Calendar -->
+    <string name="calendar_title">Calendar</string>
+    <string name="calendar_day">Day</string>
+    <string name="calendar_week">Week</string>
+    <string name="calendar_today">Today</string>
+    <string name="calendar_this_week">This Week</string>
+    <string name="calendar_no_habits_today">No habits scheduled for today</string>
+    <string name="calendar_no_habits">No habits scheduled</string>
+
+    <!-- Overlay & Notification -->
+    <string name="overlay_later">Later</string>
+    <string name="overlay_done">✓ Done</string>
+    <string name="overlay_time_for_habit">Time for your habit!</string>
+    <string name="overlay_title">Habit Reminder</string>
+    <string name="notification_body">Time to build your habit! 💪</string>
+    <string name="notification_time_for_habit">Time for: %1$s</string>
+
+    <!-- Home screen banner -->
+    <string name="home_banner_title">Make Reminders 100% Reliable</string>
+    <string name="home_banner_desc">Tap to quickly configure background permissions and prevent missing habit alerts.</string>
+
+    <!-- Greetings -->
+    <string name="home_good_morning">Good morning</string>
+    <string name="home_good_afternoon">Good afternoon</string>
+    <string name="home_good_evening">Good evening</string>
+    <string name="home_good_night">Good night</string>
+
+    <!-- Habit Detail Screen Redesign Strings -->
+    <string name="habit_detail_done">Done</string>
+    <string name="habit_detail_days">%1$d Days</string>
+    <string name="habit_detail_missed">Missed</string>
+    <string name="habit_detail_goal">Goal</string>
+    <string name="habit_detail_total">%1$d Total</string>
+    <string name="habit_detail_overall_progress">Overall Progress</string>
+    <string name="habit_details_title">Habit Details</string>
+    <string name="habit_detail_days_remaining">%1$d days left to reach your goal</string>
+    <string name="habit_detail_goal_reached">Goal reached! !</string>
+    <string name="habit_detail_reminders">Reminders</string>
+    <string name="habit_detail_no_reminders">No reminders scheduled</string>
+    <string name="habit_detail_already_done">Already Done Today ✓</string>
+    <string name="habit_detail_mark_done">Mark Today as Done</string>
+    <string name="next_reminder_in">Next reminder: %1$s • %2$s</string>
+    <string name="next_reminder_at">Next: %1$s</string>
+    <string name="next_reminder_duration_hm">in %1$dh %2$dm</string>
+    <string name="next_reminder_duration_m">in %1$dm</string>
+    <string name="habit_detail_consistency_heatmap">Consistency Heatmap</string>
+    <string name="habit_detail_legend_done">Done</string>
+    <string name="habit_detail_legend_empty">Empty</string>
+    <string name="delete_habit_dialog_title">Delete Habit?</string>
+    <string name="delete_habit_dialog_text">Are you sure you want to permanently delete this habit and all its logged history? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="habit_not_found">Habit not found</string>
+    <string name="habit_not_scheduled_today">This habit isn\'t scheduled for today</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    
+    <!-- Heatmap Weekday Names -->
+    <string name="day_mon">MON</string>
+    <string name="day_tue">TUE</string>
+    <string name="day_wed">WED</string>
+    <string name="day_thu">THU</string>
+    <string name="day_fri">FRI</string>
+    <string name="day_sat">SAT</string>
+    <string name="day_sun">SUN</string>
+
+    <!-- Additional Hardcoded strings audited -->
+    <string name="home_lets_make_today_count">Let\&apos;s make today count! ✨</string>
+    <string name="home_active_habits">Active Habits</string>
+    <string name="home_see_all">See All</string>
+    <string name="home_no_active_habits">No active habits for now.</string>
+    <string name="add_habit">Add Habit</string>
+    <string name="add_habit_name_label">Habit Name</string>
+    <string name="add_habit_name_placeholder">e.g. Morning Workout</string>
+    <string name="add_habit_desc_label">Description (Optional)</string>
+    <string name="add_habit_desc_placeholder">What\'s your motivation for this habit?</string>
+    <string name="add_habit_duration_label">Duration (Days)</string>
+    <string name="add_habit_duration_preset">%1$d days</string>
+    <string name="add_habit_duration_custom">Custom</string>
+    <string name="add_habit_duration_custom_placeholder">Enter number of days</string>
+    <string name="add_habit_start_now">Start Habit Now</string>
+    <string name="add_habit_limit_warning">You already have %1$d active habits (the maximum) — deactivate one first</string>
+    <string name="add_habit_activate_desc">Activate immediately to begin tracking. Active habits: %1$d / %2$d</string>
+    <string name="add_habit_add_reminder">Add Reminder</string>
+    <string name="add_habit_error_duration">Duration must be greater than 0</string>
+    <string name="add_habit_error_no_reminders">Add at least one reminder time</string>
+    <string name="add_habit_error_time_exists">This time has already been added.</string>
+    <string name="this_habit">this habit</string>
+    <string name="add_habit_error_time_conflict">This time is too close to habit \'%1$s\' at %2$s. Needs at least 10 minutes gap.</string>
+    <string name="add_habit_error_time_conflict_multi">Time %1$s is too close to habit \'%2$s\' at %3$s. Needs at least 10 minutes gap.</string>
+    <string name="habit_not_active">Habit is not Active</string>
+    <string name="habit_pause">Pause Habit</string>
+    <string name="habit_resume">Resume Habit</string>
+    <string name="habit_restart">Restart Habit (New Cycle)</string>
+    <string name="previous_cycles">Previous Cycles</string>
+    <string name="cycle_result">Result: %1$s</string>
+    <string name="no_habits_rank">No habits to rank yet.</string>
+    <string name="wipe_data_desc">Wipe all profile and habit details</string>
+    <string name="hue">Hue</string>
+    <string name="saturation">Saturation</string>
+    <string name="brightness">Brightness</string>
+    <string name="result_complete">COMPLETE</string>
+    <string name="result_failure">FAILURE</string>
+    <string name="add_habit_limit_reached_title">Limit Reached</string>
+    <string name="add_habit_limit_reached_desc">You can\&apos;t have more than 6 active habits at the same time. Please complete or delete one of your active habits first.</string>
+    <string name="ok">OK</string>
+    <string name="search_habits_placeholder">Search habits...</string>
+    <string name="onboarding_whats_your_name">What\&apos;s your name?</string>
+    <string name="onboarding_name_placeholder">e.g. Ahmed</string>
+
+    <!-- Bottom Navigation -->
+    <string name="menu_home">Home</string>
+    <string name="menu_all_habits">All Habits</string>
+    <string name="menu_summary">Summary</string>
+    <string name="menu_settings">Settings</string>
+    <string name="card_animations">Card Animations</string>
+    <string name="card_animations_desc">Enable border glow, animations, and reflections on cards</string>
+    <string name="glass_effect">Glass Effect</string>
+    <string name="glass_effect_desc">Control the frosted glass background blur (Auto: recommended)</string>
+
+    <!-- All Habits Screen -->
+    <string name="my_habits">My Habits</string>
+    <string name="search">Search</string>
+    <string name="clear_search">Clear Search</string>
+    <string name="filter_all">All</string>
+    <string name="filter_active">Active</string>
+    <string name="filter_inactive">Inactive</string>
+    <string name="filter_complete">Complete</string>
+    <string name="filter_failure">Failure</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="sort_start_date">Start Date</string>
+    <string name="sort_progress">Progress</string>
+    <string name="no_habits_match">No habits match your filters.</string>
+
+    <!-- Summary Screen -->
+    <string name="summary_analytics">Analytics</string>
+    <string name="summary_total_habits">Total Habits</string>
+    <string name="summary_fully_completed">Fully Completed</string>
+    <string name="summary_best_streak">Best Streak 🔥</string>
+    <string name="habit_streak_days">🔥 %1$d day streak</string>
+    <string name="summary_leaderboard">Habit Leaderboard</string>
+    <string name="summary_completion_rates">Completion Rates</string>
+    <string name="summary_completed">%1$d Completed</string>
+
+    <!-- Splash & Onboarding -->
+    <string name="splash_sub">Build Better Habits Daily</string>
+    <string name="onboarding_welcome">Welcome to HabitFlow 👋</string>
+    <string name="onboarding_name_validation">Name must be at least 2 characters</string>
+    <string name="onboarding_lets_start">Let\&apos;s Start</string>
+
+    <!-- Color Picker -->
+    <string name="choose_color">Choose a Color</string>
+    <string name="color_custom">Custom</string>
+    <string name="color_custom_picker_title">Pick a Custom Color</string>
+    <string name="color_custom_select">Select</string>
+
+    <!-- Habit Card -->
+    <string name="habit_card_days_progress">%1$d/%2$d days</string>
+
+    <!-- Add/Edit Habit Screen -->
+    <string name="add_habit_title_edit">Edit Habit</string>
+    <string name="add_habit_title_create">Create Habit</string>
+    <string name="add_habit_save_changes">Save Changes</string>
+    <string name="add_habit_create_habit">Create Habit</string>
+
+    <!-- Days of Week Selector -->
+    <string name="daily">Daily</string>
+    <string name="days_of_week">Days of Week</string>
+    <string name="days_selector_at_least_one">Select at least one day</string>
+    <string name="hide_nav_bar">Hide system navigation bar</string>
+    <string name="hide_nav_bar_desc">Hide the Android bottom navigation bar (swipe to reveal)</string>
+    <string name="habit_created_activated">Habit created and activated successfully! !</string>
+    <string name="habit_updated_activated">Habit updated and activated successfully! !</string>
+        <string name="habit_created">Habit created successfully! [OK]</string>
+    <string name="habit_updated">Habit updated successfully! [OK]</string>
+    <string name="habit_name_empty_error">Habit name cannot be empty</string>
+    <string name="habit_activated_success">Habit activated successfully [OK]</string>
+    <string name="reminder_times">Reminder Times</string>
+    <string name="channel_habit_reminders">Habit Reminders</string>
+    <string name="channel_inactivity_alerts">Habit Inactivity Alerts</string>
+    <string name="channel_overlay">Habit Overlay</string>
+    <string name="splash_loading">Loading…</string>
+    <string name="habit_limit_reached">Habit saved, but limit of 6 active habits reached. Complete or delete one first.</string>
+
+    <string name="hour">Hour</string>
+    <string name="minute">Minute</string>
+    <string name="period">Period</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+
+    <string name="no_notifications">No notifications yet</string>
+    <string name="clear_all">Clear all</string>
+    <string name="clear_all_notifications_title">Clear all notifications?</string>
+    <string name="clear_all_notifications_confirm">Are you sure you want to delete all notification history? This cannot be undone.</string>
+
+    <string-array name="motivational_quotes">
+        <item>Small daily improvements over time lead to stunning results.</item>
+        <item>Your habits will determine your future.</item>
+        <item>We are what we repeatedly do. Excellence, then, is not an act, but a habit.</item>
+        <item>Motivation is what gets you started. Habit is what keeps you going.</item>
+        <item>It is easier to prevent bad habits than to break them.</item>
+        <item>Consistency is the key to all success.</item>
+        <item>Small steps in the right direction can turn out to be the biggest steps of your life.</item>
+        <item>Discipline is doing what needs to be done, even if you don\'t want to do it.</item>
+        <item>Don\'t stop until you\'re proud.</item>
+        <item>Focus on being productive instead of busy.</item>
+        <item>The secret of your future is hidden in your daily routine.</item>
+        <item>Success is the sum of small efforts, repeated day in and day out.</item>
+        <item>You don\'t have to be great to start, but you have to start to be great.</item>
+        <item>The only way to do great work is to love what you do.</item>
+        <item>Action is the foundational key to all success.</item>
+        <item>Your life does not get better by chance, it gets better by change.</item>
+        <item>Everything you’ve ever wanted is on the other side of fear.</item>
+        <item>Start where you are. Use what you have. Do what you can.</item>
+        <item>It always seems impossible until it’s done.</item>
+        <item>Don’t watch the clock; do what it does. Keep going.</item>
+        <item>The future depends on what you do today.</item>
+        <item>Believe you can and you\'re halfway there.</item>
+        <item>Quality is not an act, it is a habit.</item>
+        <item>The first step is always the hardest. Keep moving.</item>
+        <item>A year from now you may wish you had started today.</item>
+        <item>Make each day your masterpiece.</item>
+        <item>Persistence guarantees that results are inevitable.</item>
+        <item>Dream big. Start small. But most of all, start.</item>
+        <item>Little by little, a little becomes a lot.</item>
+        <item>The journey of a thousand miles begins with one step.</item>
+        <item>Productivity is never an accident.</item>
+        <item>Discipline is the bridge between goals and accomplishment.</item>
+        <item>Your only limit is you.</item>
+        <item>Great things never come from comfort zones.</item>
+        <item>Success is not final, failure is not fatal: it is the courage to continue that counts.</item>
+        <item>Work hard in silence, let your success be your noise.</item>
+        <item>The way to get started is to quit talking and begin doing.</item>
+        <item>Do something today that your future self will thank you for.</item>
+        <item>If you want to live a happy life, tie it to a goal.</item>
+        <item>Energy and persistence conquer all things.</item>
+        <item>Hard work beats talent when talent doesn’t work hard.</item>
+        <item>Winning is a habit. Unfortunately, so is losing.</item>
+        <item>I attribute my success to this: I never gave or took any excuse.</item>
+        <item>The successful warrior is the average man, with laser-like focus.</item>
+        <item>Motivation is a fire from within.</item>
+        <item>Procrastination is the thief of time.</item>
+        <item>You are never too old to set another goal or to dream a new dream.</item>
+        <item>Change your habits, change your life.</item>
+        <item>If you are going through hell, keep going.</item>
+        <item>It’s not whether you get knocked down, it’s whether you get up.</item>
+        <item>Failure will never overtake me if my determination to succeed is strong enough.</item>
+        <item>The only place where success comes before work is in the dictionary.</item>
+        <item>Everything comes to him who hustles while he waits.</item>
+        <item>Invest in your habits, they pay the best interest.</item>
+        <item>Setting goals is the first step in turning the invisible into the visible.</item>
+        <item>Don’t let yesterday take up too much of today.</item>
+        <item>You miss 100% of the shots you don’t take.</item>
+        <item>I’ve failed over and over and over again in my life and that is why I succeed.</item>
+        <item>The most difficult thing is the decision to act, the rest is merely tenacity.</item>
+        <item>Definiteness of purpose is the starting point of all achievement.</item>
+        <item>Build your own dreams, or someone else will hire you to build theirs.</item>
+        <item>Either you run the day, or the day runs you.</item>
+        <item>I am not a product of my circumstances. I am a product of my decisions.</item>
+        <item>Every strike brings me closer to the next home run.</item>
+        <item>Life is what happens to you while you\'re busy making other plans.</item>
+        <item>We become what we think about.</item>
+        <item>The mind is everything. What you think you become.</item>
+        <item>An unexamined life is not worth living.</item>
+        <item>The best time to plant a tree was 20 years ago. The second best time is now.</item>
+        <item>Your time is limited, so don\'t waste it living someone else\'s life.</item>
+        <item>Winning isn\'t everything, but wanting to win is.</item>
+        <item>I am grateful for all of those who said NO to me. It’s because of them I’m doing it myself.</item>
+        <item>If you can dream it, you can do it.</item>
+        <item>The best revenge is massive success.</item>
+        <item>Life is short, and it is up to you to make it sweet.</item>
+        <item>Happiness is not something readymade. It comes from your own actions.</item>
+        <item>Focus on the journey, not the destination.</item>
+        <item>The only way to reach the impossible is to believe it is possible.</item>
+        <item>Success usually comes to those who are too busy to be looking for it.</item>
+        <item>Don’t be afraid to give up the good to go for the great.</item>
+        <item>I find that the harder I work, the more luck I seem to have.</item>
+        <item>Success is walking from failure to failure with no loss of enthusiasm.</item>
+        <item>All our dreams can come true if we have the courage to pursue them.</item>
+        <item>Opportunities don\'t happen. You create them.</item>
+        <item>Try not to become a man of success, but rather try to become a man of value.</item>
+        <item>Great minds discuss ideas; average minds discuss events; small minds discuss people.</item>
+        <item>If you love life, don\'t waste time, for time is what life is made up of.</item>
+        <item>A successful man is one who can lay a firm foundation with the bricks others have thrown at him.</item>
+        <item>No one can make you feel inferior without your consent.</item>
+        <item>The distance between insanity and genius is measured only by success.</item>
+        <item>Knowledge is power. Information is liberating.</item>
+        <item>The golden rule for every business is this: Put yourself in your customer\'s place.</item>
+        <item>In the middle of every difficulty lies opportunity.</item>
+        <item>The goal is not to be better than the other man, but your previous self.</item>
+        <item>Everything is hard before it is easy.</item>
+        <item>Don\'t stop when you\'re tired. Stop when you\'re done.</item>
+        <item>The best way to predict the future is to create it.</item>
+        <item>Be the change that you wish to see in the world.</item>
+        <item>Stay hungry, stay foolish.</item>
+        <item>The purpose of our lives is to be happy.</item>
+        <item>Life is what happens when you\'re busy making other plans.</item>
+        <item>Get busy living or get busy dying.</item>
+        <item>You only live once, but if you do it right, once is enough.</item>
+        <item>Many of life\'s failures are people who did not realize how close they were to success when they gave up.</item>
+        <item>If you want to live a happy life, tie it to a goal, not to people or things.</item>
+        <item>Never let the fear of striking out keep you from playing the game.</item>
+        <item>Money and success don’t change people; they merely amplify what is already there.</item>
+        <item>Not how long, but how well you have lived is the main thing.</item>
+        <item>In order to write about life first you must live it.</item>
+        <item>The big lesson in life, baby, is never be scared of anyone or anything.</item>
+        <item>Life is not a problem to be solved, but a reality to be experienced.</item>
+        <item>Turn your wounds into wisdom.</item>
+        <item>The way I see it, if you want the rainbow, you gotta put up with the rain.</item>
+        <item>Do all the good you can, for all the people you can, in all the ways you can, as long as you can.</item>
+        <item>Don’t settle for what life gives you; make life better and build something.</item>
+        <item>Everything negative - pressure, challenges - is all an opportunity for me to rise.</item>
+        <item>I like criticism. It makes you strong.</item>
+        <item>You never really learn much from hearing yourself speak.</item>
+        <item>Life imposes things on you that you can’t control, but you still have the choice of how you’re going to live through this.</item>
+        <item>Life is never easy. There is work to be done and obligations to be met.</item>
+        <item>Live for each second without hesitation.</item>
+        <item>Life is like riding a bicycle. To keep your balance, you must keep moving.</item>
+        <item>Life is really simple, but we insist on making it complicated.</item>
+        <item>Life is a succession of lessons which must be lived to be understood.</item>
+        <item>My mission in life is not merely to survive, but to thrive.</item>
+        <item>You get in life what you have the courage to ask for.</item>
+        <item>Life is a progress, and not a station.</item>
+        <item>Change is the law of life.</item>
+        <item>If you change the way you look at things, the things you look at change.</item>
+        <item>Keep your eyes on the stars, and your feet on the ground.</item>
+        <item>Be yourself; everyone else is already taken.</item>
+        <item>Two things are infinite: the universe and human stupidity; and I\'m not sure about the universe.</item>
+        <item>So many books, so little time.</item>
+        <item>A room without books is like a body without a soul.</item>
+        <item>Be who you are and say what you feel, because those who mind don\'t matter, and those who matter don\'t mind.</item>
+        <item>You know you\'re in love when you can\'t fall asleep because reality is finally better than your dreams.</item>
+        <item>You only live once, but if you do it right, once is enough.</item>
+        <item>Be the change that you wish to see in the world.</item>
+        <item>In three words I can sum up everything I\'ve learned about life: it goes on.</item>
+        <item>If you tell the truth, you don\'t have to remember anything.</item>
+        <item>A friend is someone who knows all about you and still loves you.</item>
+        <item>To live is the rarest thing in the world. Most people exist, that is all.</item>
+        <item>Always forgive your enemies; nothing annoys them so much.</item>
+        <item>Live as if you were to die tomorrow. Learn as if you were to live forever.</item>
+        <item>We accept the love we think we deserve.</item>
+        <item>Without music, life would be a mistake.</item>
+        <item>I am so clever that sometimes I don\'t understand a single word of what I am saying.</item>
+        <item>To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.</item>
+        <item>Insanity is doing the same thing, over and over again, but expecting different results.</item>
+        <item>It is better to be hated for what you are than to be loved for what you are not.</item>
+        <item>Small habits lead to big changes.</item>
+        <item>One day at a time, one habit at a time.</item>
+        <item>Today is the best day to start.</item>
+        <item>Your future is created by what you do today, not tomorrow.</item>
+        <item>Discipline is choosing between what you want now and what you want most.</item>
+        <item>Focus on progress, not perfection.</item>
+        <item>A small win is still a win.</item>
+        <item>Consistency beats intensity.</item>
+        <item>Make it easy, make it obvious.</item>
+        <item>Repetition is the mother of all skills.</item>
+        <item>Success is a few simple disciplines practiced every day.</item>
+        <item>Failure is the opportunity to begin again more intelligently.</item>
+        <item>The secret to getting ahead is getting started.</item>
+        <item>It’s not what we do once in a while that shapes our lives. It’s what we do consistently.</item>
+        <item>Habits are the compound interest of self-improvement.</item>
+        <item>Motivation gets you going, but discipline keeps you growing.</item>
+        <item>You will never change your life until you change something you do daily.</item>
+        <item>Forget inspiration. Habit is more dependable.</item>
+        <item>Success is not a destination, it\'s a way of life.</item>
+        <item>Character is simply habit long continued.</item>
+        <item>Your daily rituals define you.</item>
+        <item>Master your morning, master your day.</item>
+        <item>The chains of habit are too light to be felt until they are too heavy to be broken.</item>
+        <item>Good habits are as addictive as bad habits, and a lot more rewarding.</item>
+        <item>Success is the result of preparation, hard work, and learning from failure.</item>
+        <item>Don\'t wish it were easier, wish you were better.</item>
+        <item>Discipline is the soul of an army. It makes small numbers formidable.</item>
+        <item>All success begins with self-discipline.</item>
+        <item>Without self-discipline, success is impossible, period.</item>
+        <item>A disciplined mind leads to happiness, and an undisciplined mind leads to suffering.</item>
+        <item>The cost of discipline is always less than the price of regret.</item>
+        <item>Self-discipline is when your conscience tells you to do something and you don\'t talk back.</item>
+        <item>We must all suffer one of two things: the pain of discipline or the pain of regret.</item>
+        <item>Discipline is the power of being able to do what you know you should do.</item>
+        <item>The first and best victory is to conquer self.</item>
+        <item>He who cannot obey himself will be commanded.</item>
+        <item>Great acts are made up of small deeds.</item>
+        <item>Step by step and the thing is done.</item>
+        <item>Small deeds done are better than great deeds planned.</item>
+        <item>Success is steady progress toward one\'s personal goals.</item>
+        <item>The secret of success is constancy to purpose.</item>
+        <item>I am a slow walker, but I never walk back.</item>
+        <item>It does not matter how slowly you go as long as you do not stop.</item>
+        <item>The man who moves a mountain begins by carrying away small stones.</item>
+        <item>Victory belongs to the most persevering.</item>
+        <item>Courage is not having the strength to go on; it is going on when you don\'t have the strength.</item>
+        <item>Through perseverance, many people win success out of what seemed destined to be certain failure.</item>
+        <item>The difference between a successful person and others is not a lack of strength, but a lack of will.</item>
+        <item>Fall seven times, stand up eight.</item>
+        <item>Perseverance is failing 19 times and succeeding the 20th.</item>
+        <item>The only limit to our realization of tomorrow will be our doubts of today.</item>
+        <item>Keep moving forward.</item>
+        <item>Stay focused, stay determined.</item>
+        <item>Finish what you started.</item>
+        <item>Don\'t give up on your dreams.</item>
+    </string-array>
+</resources>
+

@@ -1,0 +1,6 @@
+{
+  "name": "HabitFlow",
+  "description": "A premium modern Habit Tracker application built with Jetpack Compose.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

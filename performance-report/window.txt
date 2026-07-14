@@ -1,0 +1,20 @@
+WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)
+  Display: mDisplayId=0 (organized)
+    init=720x1600 320dpi mMinSizeOfResizeableTaskDp=220 base=720x1600 272dpi cur=720x1600 app=720x1600 rng=720x720-1600x1600
+    deferred=false mLayoutNeeded=false
+  mLastOrientationSource=WindowedMagnification:0:31@203195988
+  deepestLastOrientationSource=ActivityRecord{dbb8c1a u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t1331 d0}
+  overrideConfig={1.0 602mcc4mnc [ar_EG,en_EG] ldrtl sw424dp w424dp h941dp 272dpi nrml long port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1600) mAppBounds=Rect(0, 0 - 720, 1600) mMaxBounds=Rect(0, 0 - 720, 1600) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.14954 fontWeightAdjustment=300}
+  mLayoutSeq=87756
+  mCurrentFocus=Window{4cdee4b u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}, [type=1, isChildWindow=false]-[Surface(name=*Title#61502)/@0x24116ee, shown=false, windowType=1]
+  mFocusedApp=ActivityRecord{dbb8c1a u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t1331 d0}
+
+  mHoldScreenWindow=null
+  mObscuringWindow=Window{14ffbb u0 com.android.systemui.wallpapers.ImageWallpaper}, [type=2013, isChildWindow=false]-[Surface(name=*Title#67)/@0xa6a6ee, shown=false, windowType=2013]
+  mLastWakeLockHoldingWindow=null
+  mLastWakeLockObscuringWindow=Window{14ffbb u0 com.android.systemui.wallpapers.ImageWallpaper}, [type=2013, isChildWindow=false]-[Surface(name=*Title#67)/@0xa6a6ee, shown=false, windowType=2013]
+
+  displayId=0
+  mWallpaperTarget=Window{4cdee4b u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}, [type=1, isChildWindow=false]-[Surface(name=*Title#61502)/@0x24116ee, shown=false, windowType=1]
+  mLastWallpaperZoomOut=0.0
+  token WallpaperWindowToken{f93498e token=android.os.Binder@1b70589}:

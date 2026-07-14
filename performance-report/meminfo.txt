@@ -1,0 +1,65 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 215305468 Realtime: 669025398
+
+** MEMINFO in pid 12743 [com.aistudio.habittracker.yfnwdp] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap    33481    33432       28       61    34636    46000    39566     1559
+  Dalvik Heap    20510    20448       12      145    21528    31956     7380    24576
+ Dalvik Other    15784     6752        0        3    25072                           
+        Stack     2056     2056        0        0     2064                           
+       Ashmem       13        0        0        0      472                           
+    Other dev       79        0       76        0      480                           
+     .so mmap     5372      196      416       23    48744                           
+    .jar mmap     2372        0      604        0    44604                           
+    .apk mmap      294        0       16        0     2876                           
+    .ttf mmap      425        0      100        0     1204                           
+    .dex mmap    75461    75448        0        0    76152                           
+    .oat mmap       37        0        0        0     1900                           
+    .art mmap     8880     7456      848       92    18560                           
+   Other mmap      229        4       96        0     1544                           
+    GL mtrack    20044    20044        0        0    20044                           
+      Unknown      859      564      240        4     1392                           
+        TOTAL   186224   166400     2436      328   301272    77956    46946    26135
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    28752                          40088
+         Native Heap:    33432                          34636
+                Code:    76924                         193688
+               Stack:     2056                           2064
+            Graphics:    20044                          20044
+       Private Other:     7628
+              System:    17388
+             Unknown:                                   10752
+ 
+           TOTAL PSS:   186224            TOTAL RSS:   301272       TOTAL SWAP PSS:      328
+ 
+ Objects
+               Views:       12         ViewRootImpl:        2
+         AppContexts:        7           Activities:        1
+              Assets:       68        AssetManagers:        0
+       Local Binders:       23        Proxy Binders:       65
+       Parcel memory:        9         Parcel count:       39
+    Death Recipients:        0             WebViews:        0
+ 
+ SQL
+         MEMORY_USED:      738
+  PAGECACHE_OVERFLOW:      244          MALLOC_SIZE:       46
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4      116            123   294   153    25  /data/user/0/com.aistudio.habittracker.yfnwdp/no_backup/androidx.work.workdb
+         4        8                    0     0     0    (attached) temp
+         4      116             92    16    25     7  /data/user/0/com.aistudio.habittracker.yfnwdp/no_backup/androidx.work.workdb (1)
+         4       52             25     2    43     3  /data/user/0/com.aistudio.habittracker.yfnwdp/databases/habit_database
+         4        8                    0     0     0    (attached) temp
+         4       52             25     2    14     2  /data/user/0/com.aistudio.habittracker.yfnwdp/databases/habit_database (2)
+         4       52             99    10    25     6  /data/user/0/com.aistudio.habittracker.yfnwdp/databases/habit_database (1)
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+            310           182           492  /data/user/0/com.aistudio.habittracker.yfnwdp/no_backup/androidx.work.workdb
+             12            86            98  /data/user/0/com.aistudio.habittracker.yfnwdp/databases/habit_database

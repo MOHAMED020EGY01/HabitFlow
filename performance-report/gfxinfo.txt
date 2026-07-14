@@ -1,0 +1,102 @@
+Applications Graphics Acceleration Info:
+Uptime: 215305199 Realtime: 669025129
+
+** Graphics info for pid 12743 [com.aistudio.habittracker.yfnwdp] **
+
+Stats since: 215272141444446ns
+Total frames rendered: 1832
+Janky frames: 27 (1.47%)
+Janky frames (legacy): 1591 (86.84%)
+50th percentile: 18ms
+90th percentile: 21ms
+95th percentile: 24ms
+99th percentile: 73ms
+Number Missed Vsync: 16
+Number High input latency: 2081
+Number Slow UI thread: 25
+Number Slow bitmap uploads: 0
+Number Slow issue draw commands: 14
+Number Frame deadline missed: 27
+Number Frame deadline missed (legacy): 1387
+HISTOGRAM: 5ms=0 6ms=0 7ms=0 8ms=0 9ms=4 10ms=33 11ms=42 12ms=16 13ms=16 14ms=25 15ms=78 16ms=220 17ms=468 18ms=325 19ms=206 20ms=172 21ms=87 22ms=33 23ms=9 24ms=19 25ms=16 26ms=8 27ms=6 28ms=4 29ms=3 30ms=0 31ms=1 32ms=2 34ms=2 36ms=2 38ms=2 40ms=1 42ms=0 44ms=4 46ms=1 48ms=2 53ms=4 57ms=1 61ms=0 65ms=1 69ms=0 73ms=1 77ms=1 81ms=0 85ms=0 89ms=0 93ms=0 97ms=0 101ms=0 105ms=0 109ms=0 113ms=1 117ms=0 121ms=0 125ms=0 129ms=1 133ms=1 150ms=3 200ms=3 250ms=1 300ms=3 350ms=2 400ms=1 450ms=0 500ms=0 550ms=0 600ms=0 650ms=0 700ms=0 750ms=0 800ms=0 850ms=0 900ms=0 950ms=0 1000ms=0 1050ms=0 1100ms=0 1150ms=0 1200ms=0 1250ms=0 1300ms=0 1350ms=0 1400ms=0 1450ms=1 1500ms=0 1550ms=0 1600ms=0 1650ms=0 1700ms=0 1750ms=0 1800ms=0 1850ms=0 1900ms=0 1950ms=0 2000ms=0 2050ms=0 2100ms=0 2150ms=0 2200ms=0 2250ms=0 2300ms=0 2350ms=0 2400ms=0 2450ms=0 2500ms=0 2550ms=0 2600ms=0 2650ms=0 2700ms=0 2750ms=0 2800ms=0 2850ms=0 2900ms=0 2950ms=0 3000ms=0 3050ms=0 3100ms=0 3150ms=0 3200ms=0 3250ms=0 3300ms=0 3350ms=0 3400ms=0 3450ms=0 3500ms=0 3550ms=0 3600ms=0 3650ms=0 3700ms=0 3750ms=0 3800ms=0 3850ms=0 3900ms=0 3950ms=0 4000ms=0 4050ms=0 4100ms=0 4150ms=0 4200ms=0 4250ms=0 4300ms=0 4350ms=0 4400ms=0 4450ms=0 4500ms=0 4550ms=0 4600ms=0 4650ms=0 4700ms=0 4750ms=0 4800ms=0 4850ms=0 4900ms=0 4950ms=0
+50th gpu percentile: 7ms
+90th gpu percentile: 8ms
+95th gpu percentile: 9ms
+99th gpu percentile: 10ms
+GPU HISTOGRAM: 1ms=26 2ms=86 3ms=7 4ms=11 5ms=24 6ms=37 7ms=813 8ms=686 9ms=108 10ms=16 11ms=9 12ms=6 13ms=0 14ms=1 15ms=1 16ms=1 17ms=0 18ms=0 19ms=0 20ms=0 21ms=0 22ms=0 23ms=0 24ms=0 25ms=0 4950ms=0
+
+Pipeline=Skia (OpenGL)
+Memory policy:
+  Max surface area: 2073600
+  Max resource usage: 99.53MB (x48)
+  Background retention: 50% (altUiHidden = true)
+  GPU Context timeout: 10
+Contexts: 2 (stopped = 0)
+CPU Caches:
+  Glyph Cache: 223.25 KB (1 entry)
+  Shadows: 2.86 KB (1 entry)
+  Glyph Count: 110 
+Total CPU memory usage:
+  231532 bytes, 226.11 KB (0.00 bytes is purgeable)
+GPU Caches:
+  SW Path Mask:
+    Texture: 95.62 KB (1 entry)
+  Other:
+    Other: 22.11 KB (1 entry)
+    Buffer Object: 2.05 KB (2 entries)
+  Image:
+    Texture: 561.25 KB (35 entries)
+  Scratch:
+    RenderTarget: 8.62 MB (2 entries)
+    Texture: 4.00 MB (3 entries)
+    Buffer Object: 78.00 KB (2 entries)
+Total GPU memory usage:
+  14015648 bytes, 13.37 MB (9.25 MB is purgeable)
+
+GraphicBufferAllocator buffers:
+        Handle |        Size |     W (Stride) x H | Layers |   Format |      Usage | Requestor
+0xb4000079bcaf9a70 | 4500.00 KiB |  720 ( 720) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity]#0(BLAST Consumer)0
+0xb4000079bcaffc50 | 4500.00 KiB |  720 ( 720) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity]#0(BLAST Consumer)0
+0xb4000079bcb0b4d0 | 4500.00 KiB |  720 ( 720) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity]#0(BLAST Consumer)0
+0xb4000079bcb0d8d0 | 4500.00 KiB |  720 ( 720) x 1600 |      1 |        1 | 0x40000000000b00 | VRI[MainActivity]#0(BLAST Consumer)0
+0xb4000079bcce7cf0 |  845.62 KiB |  654 ( 656) x  330 |      1 |        1 | 0x40000000000b00 | VRI[نافذة منبثقة]#1(BLAST Consumer)1
+0xb4000079bcceb9b0 |  845.62 KiB |  654 ( 656) x  330 |      1 |        1 | 0x40000000000b00 | VRI[نافذة منبثقة]#1(BLAST Consumer)1
+0xb4000079bccebe30 |  845.62 KiB |  654 ( 656) x  330 |      1 |        1 | 0x40000000000b00 | VRI[نافذة منبثقة]#1(BLAST Consumer)1
+0xb4000079bcced270 |  845.62 KiB |  654 ( 656) x  330 |      1 |        1 | 0x40000000000b00 | VRI[نافذة منبثقة]#1(BLAST Consumer)1
+Total allocated by GraphicBufferAllocator (estimate): 21382.50 KB
+Imported gralloc buffers:
++ name:VRI[نافذة منبثقة]#1(BLAST Consumer)1, id:2607045236697, size:875.00KiB, w/h:654x330, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x8810000, compressed: true
+	planes: R/G/B/A:	 w/h:656x336, stride:2624 bytes, size:896000
++ name:VRI[نافذة منبثقة]#1(BLAST Consumer)1, id:2607045236696, size:875.00KiB, w/h:654x330, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x8810000, compressed: true
+	planes: R/G/B/A:	 w/h:656x336, stride:2624 bytes, size:896000
++ name:VRI[نافذة منبثقة]#1(BLAST Consumer)1, id:2607045236695, size:875.00KiB, w/h:654x330, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:656x336, stride:2624 bytes, size:896000
++ name:VRI[MainActivity]#0(BLAST Consumer)0, id:2607045236693, size:4571.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x8810000, compressed: true
+	planes: R/G/B/A:	 w/h:720x1600, stride:2880 bytes, size:4680704
++ name:VRI[MainActivity]#0(BLAST Consumer)0, id:2607045236694, size:4571.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x8810000, compressed: true
+	planes: R/G/B/A:	 w/h:720x1600, stride:2880 bytes, size:4680704
++ name:VRI[نافذة منبثقة]#1(BLAST Consumer)1, id:2607045236698, size:875.00KiB, w/h:654x330, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x8810000, compressed: true
+	planes: R/G/B/A:	 w/h:656x336, stride:2624 bytes, size:896000
++ name:VRI[MainActivity]#0(BLAST Consumer)0, id:2607045236692, size:4571.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x0, compressed: true
+	planes: R/G/B/A:	 w/h:720x1600, stride:2880 bytes, size:4680704
++ name:VRI[MainActivity]#0(BLAST Consumer)0, id:2607045236691, size:4571.00KiB, w/h:720x1600, usage: 0x40000000000b00, req fmt:1, fourcc/mod:875708993/576460752303423521, dataspace: 0x8810000, compressed: true
+	planes: R/G/B/A:	 w/h:720x1600, stride:2880 bytes, size:4680704
+Total imported by gralloc: 21784.00KiB
+
+Profile data in ms:
+
+	com.aistudio.habittracker.yfnwdp/com.example.MainActivity/android.view.UnisocViewRootImpl@a33f170 (visibility=٠)
+	نافذة منبثقة/android.view.UnisocViewRootImpl@84e1ce9 (visibility=٠)
+View hierarchy:
+
+  com.aistudio.habittracker.yfnwdp/com.example.MainActivity/android.view.UnisocViewRootImpl@a33f170
+  ١٠ views, ١٩٫٩٢ kB of render nodes
+
+  نافذة منبثقة/android.view.UnisocViewRootImpl@84e1ce9
+  ٢ views, ٣٫٠١ kB of render nodes
+
+
+Total ViewRootImpl   : ٢
+Total attached Views : ١٢
+Total RenderNode     : ٢٢٫٩٣ kB (used) / ٦٦٫٦٦ kB (capacity)
+

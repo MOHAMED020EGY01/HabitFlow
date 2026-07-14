@@ -1,0 +1,20 @@
+Load: 16.07 / 14.95 / 14.7
+CPU usage from 213854ms to 139394ms ago (٢٠٢٦-٠٧-٠٦ ٠٩:٥٤:٠٨.٣٧٦ to ٢٠٢٦-٠٧-٠٦ ٠٩:٥٥:٢٢.٨٣٥):
+  68% 1073/system_server: 21% user + 47% kernel / faults: 26626 minor 18492 major
+  6.8% 334/usc_sugov:0: 0% user + 6.8% kernel
+  6.3% 601/android.hardware.audio.service: 4.5% user + 1.7% kernel / faults: 176 minor
+  5.9% 10982/com.google.android.googlequicksearchbox:trusted_disable_art_image_:com.google.android.apps.gsa.hot: 4.3% user + 1.5% kernel / faults: 797 minor
+  5.7% 24479/adbd: 2.4% user + 3.3% kernel / faults: 9871 minor
+  4.8% 11174/com.coloros.phonemanager: 2.8% user + 2% kernel / faults: 15100 minor 6228 major
+  2.6% 21948/com.google.android.gms.persistent: 1.7% user + 0.9% kernel / faults: 771 minor 5 major
+  2.4% 611/android.hardware.sensors-service.multihal: 1.4% user + 1% kernel
+  0% 339/shrink_anon: 0% user + 0% kernel
+  2% 1353/com.android.systemui: 1.2% user + 0.7% kernel / faults: 947 minor 1 major
+  1.9% 11035/kworker/u17:1-SPRD_RX_QUEUE: 0% user + 1.9% kernel
+  1.8% 634/surfaceflinger: 1% user + 0.8% kernel / faults: 125 minor 3 major
+  1.8% 630/audioserver: 1% user + 0.7% kernel
+  1.8% 12185/kworker/u17:0-blk_crypto_wq: 0% user + 1.8% kernel
+  1.7% 10301/kworker/u17:3-kbase_pm_poweroff_wait: 0% user + 1.7% kernel
+  1.7% 6664/kworker/0:5H-kblockd: 0% user + 1.7% kernel
+  1.6% 20612/com.android.launcher3: 0.9% user + 0.6% kernel / faults: 711 minor 5 major
+  1.5% 10958/kworker/1:2H: 0% user + 1.5% kernel
