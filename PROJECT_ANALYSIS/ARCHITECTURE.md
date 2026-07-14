@@ -1,66 +1,165 @@
-# Architecture Overview
+# ARCHITECTURE
 
-## High-Level Structure
+## النمط المعماري الكامل / Full Architecture Overview
 
-HabitFlow follows a layered architecture that keeps UI concerns separate from persistence and domain rules.
+### الفلسفة التصميمية المتبعة
+يتبع المشروع مزيجاً من **Clean Architecture** و **MVVM**، مع حقن اعتماديات يدوي بدلاً من Hilt. المبدأ الجوهري هو عزل المنطق التجاري (Domain) عن تفاصيل التخزين (Data) وعن واجهة المستخدم (Presentation) لتمكين الاختبار وسهولة الصيانة.
 
-- Presentation layer: Compose screens, view models, navigation, and reusable UI components.
-- Domain layer: use cases and domain models for habit lifecycle rules.
-- Data layer: repositories, Room DAO/entity implementations, DataStore preferences, and background workers.
-- Platform layer: Android services, broadcast receivers, widgets, and notification handling.
+### Design Philosophy
+HabitFlow employs a hybrid of **Clean Architecture** and **MVVM**, with manual dependency injection replacing Hilt. The core principle is to isolate business logic (Domain) from storage details (Data) and from the UI (Presentation) to enable robust testing and maintainability.
 
-## Main Runtime Flow
+---
 
-1. The application starts through the custom Application class.
-2. The app initializes preferences, the Room database, repositories, and use cases.
-3. MainActivity hosts the navigation graph and theme/language context.
-4. Screens interact with ViewModels, which delegate to use cases and repository methods.
-5. Background workers and services handle rollover, reminders, and widget refreshes.
+## الطبقات المعمارية / Architectural Layers
 
-## Core Components
+### 1. طبقة العرض (Presentation Layer)
+**المسؤولية**: عرض الحالة للمستخدم واستقبال تفاعلاته وتمريرها للطبقات الداخلية.
 
-### Application Bootstrap
+المكونات الرئيسية:
+- **Screens** (`presentation/screens/`): شاشات Jetpack Compose.
+- **ViewModels**: تحتفظ بالحالة، تستدعي UseCases والمستودعات، وتبث الحالة عبر `StateFlow`.
+- **Components** (`presentation/components/`): عناصر مشتركة قابلة لإعادة الاستخدام (بطاقات زجاجية، حلقات تقدم، منتقيات الوقت).
+- **Navigation** (`presentation/navigation/`): مسار التنقل `AppNavigation` يربط جميع الشاشات عبر Compose Navigation.
 
-The custom application class wires the app together and schedules background work after startup.
+**Presentation Layer Responsibilities**: Renders UI state and forwards interactions to inner layers.
+- **Screens**: Feature-specific Compose screens.
+- **ViewModels**: Retain state, bridge use cases/repositories, and emit state via `StateFlow`.
+- **Components**: Reusable premium composables (glass cards, progress rings, time pickers).
+- **Navigation**: `AppNavigation` connects all screens in a single Compose NavHost graph.
 
-### Navigation
+---
 
-MainActivity contains the root navigation graph and deep-link handling for screens such as add habit and habit detail.
+### 2. طبقة النطاق (Domain Layer)
+**المسؤولية**: الكود التجاري النقي المستقل عن تفاصيل أندرويد أو قاعدة البيانات.
 
-### Screens
+المكونات الرئيسية:
+- **Models** (`domain/model/`): نماذج بيانات نظيفة (مثل `Habit`, `HabitLog`, `HabitCycleHistory`).
+- **Repository Interfaces** (`domain/repository/`): عقد برمجي تُحددها هذه الطبقة وتُنفذها طبقة البيانات.
+- **Use Cases** (`domain/usecase/`): منطق العمل المعزول والقابل للاختبار مستقلاً.
+- **Utilities** (`domain/util/`): أدوات حسابية مستقلة مثل `StreakCalculator` و`NextReminderCalculator`.
 
-The main screens include:
+**Domain Layer Responsibilities**: Pure Kotlin business rules with zero framework dependencies.
+- **Models**: Clean domain objects (`Habit`, `HabitLog`, `HabitCycleHistory`).
+- **Repository Interfaces**: Abstract contracts fulfilled by the Data layer.
+- **Use Cases**: Isolated, independently testable business logic units.
+- **Utilities**: Framework-free calculation utilities (`StreakCalculator`, `NextReminderCalculator`).
 
-- Home
-- Add/Edit Habit
-- Habit Detail
-- All Habits
-- Summary
-- Settings
-- Onboarding and Splash
+---
 
-### Data Management
+### 3. طبقة البيانات (Data Layer)
+**المسؤولية**: تنفيذ عقود طبقة النطاق عبر قاعدة البيانات والتفضيلات ونظام أندرويد.
 
-- Room is the primary persistence engine for habits, logs, cycle history, and notifications.
-- DataStore stores user preferences such as language, onboarding state, and display settings.
+المكونات الرئيسية:
+- **Repository Implementations** (`data/repository/`): يُنفذ `HabitRepositoryImpl` واجهة `HabitRepository` ويتولى التحويل بين كيانات Room ونماذج النطاق.
+- **Room** (`data/local/`): يحتوي على تعريف القاعدة `HabitDatabase`، وواجهات الاستعلام `HabitDao` و`NotificationDao`، وكيانات الجداول.
+- **DataStore** (`data/preferences/`): `UserPreferencesManager` و`PendingOverlayStore`.
+- **Workers** (`data/worker/`): عمال WorkManager للمهام الخلفية الدورية.
 
-### Background Processing
+**Data Layer Responsibilities**: Fulfills Domain contracts with concrete Android implementations.
+- **Repository Implementations**: `HabitRepositoryImpl` maps Room entities to domain models and vice versa.
+- **Room Database**: Schema declaration, DAOs, and entity definitions.
+- **DataStore**: Preference management and pending overlay queuing.
+- **Workers**: Scheduled periodic tasks via WorkManager.
 
-- WorkManager handles scheduled periodic tasks.
-- Foreground services support overlay reminders and keep-alive behavior.
-- Broadcast receivers respond to boot events and overlay actions.
+---
 
-## Notable Design Choices
+### 4. طبقة المنصة (Platform Layer)
+**المسؤولية**: التكامل مع نظام التشغيل أندرويد مباشرة.
 
-- The app is intentionally local-first and does not rely on a remote API in the current implementation.
-- Habit lifecycle rules are concentrated in domain use cases to keep the UI simple.
-- Widgets are updated both by worker scheduling and by direct refresh logic to keep data in sync quickly.
+المكونات الرئيسية:
+- **Services**: `HabitBackgroundService` (keepalive) و`HabitOverlayService` (عرض النافذة العائمة).
+- **Broadcast Receivers**: `BootReceiver` و`PendingOverlayReceiver` و`HabitOverlayReceiver`.
+- **Widgets** (`widget/`): `AllHabitsWidget` و`InactiveHabitsWidget` بتقنية Glance.
+- **Notifications**: تكوين قنوات الإشعارات وبثها عبر `HabitNotificationManager`.
 
-## Suggested Mental Model
+**Platform Layer Responsibilities**: Direct integration with Android OS features.
+- **Services**: Background keepalive and overlay window management.
+- **Broadcast Receivers**: Boot, unlock, and overlay cycle management.
+- **Widgets**: Glance AppWidgets with direct update bypass for responsiveness.
+- **Notifications**: Channel setup and reminder broadcasting.
 
-If you are working on a feature, follow this pattern:
+---
 
-1. Update the UI state in the screen/ViewModel.
-2. Invoke the relevant domain use case.
-3. Let the repository write to Room or DataStore.
-4. Trigger any needed reminder/widget sync through the background layer.
+## مخطط تدفق البيانات الكامل / Complete Data Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────┐
+│               PRESENTATION LAYER                    │
+│  ┌───────────┐  StateFlow  ┌─────────────────────┐  │
+│  │  Screens  │◄────────────│    ViewModels        │  │
+│  │ (Compose) │             │  (HomeViewModel,     │  │
+│  └───────────┘             │   SettingsViewModel) │  │
+└─────────────────────────────────────────────────────┘
+           │ calls UseCases & Repository directly
+           ▼
+┌─────────────────────────────────────────────────────┐
+│                 DOMAIN LAYER                        │
+│  ┌───────────────┐    ┌──────────────────────────┐  │
+│  │   Use Cases   │    │   Repository Interface   │  │
+│  │ (AddHabit,    │    │   (HabitRepository)      │  │
+│  │  DeleteHabit) │    └──────────────────────────┘  │
+└─────────────────────────────────────────────────────┘
+                              │ implemented by
+                              ▼
+┌─────────────────────────────────────────────────────┐
+│                  DATA LAYER                         │
+│  ┌──────────────────┐   ┌──────────────────────┐    │
+│  │ HabitRepositoryImpl│  │ HabitDatabase (Room) │    │
+│  │  (mapping layer) │◄──│  HabitDao            │    │
+│  └──────────────────┘   └──────────────────────┘    │
+│  ┌──────────────────┐   ┌──────────────────────┐    │
+│  │  UserPreferences │   │    Workers (WM)       │    │
+│  │    Manager       │   │  DailyRolloverWorker  │    │
+│  └──────────────────┘   └──────────────────────┘    │
+└─────────────────────────────────────────────────────┘
+                              │ triggers
+                              ▼
+┌─────────────────────────────────────────────────────┐
+│                PLATFORM LAYER                       │
+│  ┌──────────────────┐   ┌──────────────────────┐    │
+│  │  HabitOverlay    │   │  Glance Widgets       │    │
+│  │  Service         │   │  AllHabitsWidget      │    │
+│  └──────────────────┘   └──────────────────────┘    │
+│  ┌──────────────────┐   ┌──────────────────────┐    │
+│  │  BootReceiver    │   │  NotificationManager  │    │
+│  └──────────────────┘   └──────────────────────┘    │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## الانحراف المعماري الموثق / Documented Architecture Drift
+
+### الانحراف المُلاحظ: الوصول المباشر للمستودع من نماذج العرض
+بعض نماذج العرض تتجاوز طبقة حالات الاستخدام وتستدعي المستودع مباشرة:
+```kotlin
+// HomeViewModel.kt — تجاوز UseCase للعمليات البسيطة
+val repository = (application as HabitApplication).repository
+repository.getActiveHabitsForDate(today) // مباشرة بدون UseCase
+```
+
+هذا الانحراف مقبول للعمليات البسيطة (قراءة، تبديل الحالة) لكن يُوصى بتوحيد القناة عبر UseCases للتحسينات المستقبلية.
+
+### Observed Drift: Direct Repository Access in ViewModels
+Several ViewModels (`HomeViewModel`, `AllHabitsViewModel`, `HabitDetailViewModel`) bypass the UseCase layer for simple read/toggle operations:
+```kotlin
+// Pattern observed in HomeViewModel.kt
+val app = application as HabitApplication
+val repository = app.repository
+// Called directly without an intermediate UseCase
+repository.toggleHabitCompletion(habitId, date)
+```
+This is an acceptable simplification for CRUD operations but inconsistent with strict Clean Architecture. Recommended: gradually route all VM-to-data calls through dedicated UseCases.
+
+---
+
+## دورة حياة نموذج العرض / ViewModel Lifecycle
+
+تستخدم جميع نماذج العرض `AndroidViewModel` لأنها تحتاج إلى `Application` للوصول لكائنات الاعتماديات:
+```kotlin
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
+    private val app = application as HabitApplication
+    private val repository = app.repository
+}
+```
+All ViewModels extend `AndroidViewModel` to gain access to the manually injected dependencies held in the global Application instance.
