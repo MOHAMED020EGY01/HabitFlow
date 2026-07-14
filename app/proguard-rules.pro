@@ -40,17 +40,6 @@
 -dontwarn androidx.room.**
 
 ########################################
-# Moshi
-########################################
-
--keep @com.squareup.moshi.JsonClass class * { *; }
-
--keepclassmembers class * {
-    @com.squareup.moshi.* <methods>;
-    @com.squareup.moshi.* <fields>;
-}
-
-########################################
 # Gson
 ########################################
 
@@ -58,25 +47,10 @@
 -keepattributes *Annotation*
 
 ########################################
-# Retrofit / OkHttp
-########################################
-
--dontwarn okhttp3.**
--dontwarn okio.**
--dontwarn retrofit2.**
-
-########################################
 # Coroutines
 ########################################
 
 -dontwarn kotlinx.coroutines.**
-
-########################################
-# Firebase
-########################################
-
--dontwarn com.google.firebase.**
--keep class com.google.firebase.** { *; }
 
 ########################################
 # Compose
