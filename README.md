@@ -1,21 +1,70 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# HabitFlow
 
-# Run and deploy your AI Studio app
+HabitFlow is a feature-rich Android habit-tracking app built with Kotlin and Jetpack Compose. The current implementation is local-first and focuses on daily habit completion, reminders, progress tracking, cycle management, widgets, and personalized settings.
 
-This contains everything you need to run your app locally.
+## What the App Includes
 
-View your app in AI Studio: https://ai.studio/apps/426525a4-a03b-40cb-b655-318aa9057987
+- Habit creation and editing with reminders, duration, colors, and weekly scheduling
+- Daily log tracking with completion, miss, and cycle-state handling
+- Auto-pause and cycle-completion logic for long-running habits
+- Reminder overlays, notification channels, and background scheduling
+- Home-screen widgets for active and inactive habits
+- Localization, onboarding, settings, and reset flows
 
-## Run Locally
+## Architecture Snapshot
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+The project uses a layered architecture:
 
+- Presentation: Compose screens and ViewModels
+- Domain: use cases and habit lifecycle rules
+- Data: Room persistence, repository implementations, and DataStore preferences
+- Platform: WorkManager, foreground services, widgets, and broadcast receivers
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+## Tech Stack
+
+- Kotlin
+- Jetpack Compose + Material 3
+- Room
+- DataStore
+- WorkManager
+- Glance
+- Gradle with Kotlin DSL
+
+## Project Structure
+
+- app/src/main/java/com/example: application entry points, screens, viewmodels, and platform integrations
+- app/src/main/java/com/example/data: repositories, database, workers, and preferences
+- app/src/main/java/com/example/domain: models and use cases
+- app/src/test: unit tests
+- app/src/androidTest: instrumentation tests and benchmark coverage
+
+## Getting Started
+
+Prerequisites:
+
+- Android Studio
+- JDK 11+
+- A connected emulator or physical device
+
+Steps:
+
+1. Open the project in Android Studio.
+2. Sync Gradle and let Android Studio resolve dependencies.
+3. Create a local .env file if you need environment-based secrets for local builds.
+4. Run the app from the project root or the app module.
+
+## Documentation
+
+Additional project documentation is available in:
+
+- PROJECT_ANALYSIS.md
+- ARCHITECTURE.md
+- DATABASE.md
+- SECURITY_AUDIT.md
+- PERFORMANCE_AUDIT.md
+- TECH_STACK.md
+- ROADMAP.md
+
+## Notes
+
+The app currently uses local persistence and device features rather than a remote backend. Some Android permissions and reminders are intentionally feature-rich and should be reviewed carefully in release builds.
