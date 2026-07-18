@@ -58,6 +58,11 @@
     <string name="widget_no_stop_duration">لا يوجد فترة توقف</string>
     <string name="widget_stopped_on">توقفت يوم %1$s الساعة %2$s</string>
     <string name="widget_stopped_date">توقف يوم %1$s</string>
+    <string name="widget_stats_summary_title">ملخص العادات</string>
+    <string name="widget_stat_total">إجمالي العادات</string>
+    <string name="widget_stat_active">العادات النشطة</string>
+    <string name="widget_stat_inactive">العادات المتوقفة</string>
+    <string name="widget_stat_completed">مكتملة بالكامل</string>
 
     <!-- Calendar -->
     <string name="calendar_title">التقويم</string>

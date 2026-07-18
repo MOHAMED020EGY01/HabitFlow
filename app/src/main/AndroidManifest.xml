@@ -108,6 +108,19 @@
                 android:resource="@xml/inactive_habits_widget_info" />
         </receiver>
 
+        <!-- Habit Summary Widget Receiver -->
+        <receiver
+            android:name="com.example.widget.HabitStatsSummaryWidgetReceiver"
+            android:exported="true"
+            android:label="HabitFlow — Habit Summary">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/habit_stats_summary_widget_info" />
+        </receiver>
+
     </application>
 
 </manifest>

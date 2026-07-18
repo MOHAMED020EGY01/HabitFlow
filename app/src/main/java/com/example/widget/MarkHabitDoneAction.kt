@@ -39,6 +39,13 @@ class MarkHabitDoneAction : ActionCallback {
         val repository = HabitWidgetRepository(app.repository)
         withContext(Dispatchers.IO) {
             repository.markHabitDoneToday(habitId)
+            
+            // Check for instant cycle completion if this was the last day
+            com.example.domain.usecase.HabitStatusManager.checkHabitCompletion(
+                app.applicationContext,
+                app.repository,
+                habitId
+            )
         }
         android.util.Log.d("HabitWidgetPerf", "[LOG] MarkHabitDoneAction DB write completed. Timestamp: ${System.currentTimeMillis()}")
 

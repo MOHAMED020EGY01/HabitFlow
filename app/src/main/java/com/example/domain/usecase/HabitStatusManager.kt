@@ -51,7 +51,7 @@ object HabitStatusManager {
             var currentHabit = habit
             var tempDate = effectiveStart
 
-            while (!tempDate.isAfter(yesterday)) {
+            while (!tempDate.isAfter(yesterday) && tempDate.isBefore(cycleEnd)) {
                 val dateStr = tempDate.toString()
 
                 // ── activeDays check for ACTIVE habits ────────────────────
@@ -134,15 +134,34 @@ object HabitStatusManager {
         cycleStart: LocalDate,
         cycleEnd: LocalDate
     ) {
-        if (!today.isAfter(cycleEnd) || habit.status != HabitStatus.ACTIVE) return
+        if (habit.status != HabitStatus.ACTIVE) return
+
+        // ── Completion Condition ──────────────────────────────────────────
+        // A cycle is eligible for completion if:
+        // 1. Today is strictly AFTER the cycle end (traditional rollover logic).
+        // 2. Today IS the cycle end day AND the user has marked it done.
+        // ──────────────────────────────────────────────────────────────────
+        val lastScheduledDay = cycleEnd.minusDays(1)
+        val isLastDayOrLater = !today.isBefore(lastScheduledDay)
+        
+        if (!isLastDayOrLater) return
 
         val updatedLogs = repository.getLogsForHabitSync(habit.id)
             .filter { log ->
                 val d = LocalDate.parse(log.logDate)
-                !d.isBefore(cycleStart) && !d.isAfter(cycleEnd)
+                !d.isBefore(cycleStart) && d.isBefore(cycleEnd)
             }
 
-        val doneCount = updatedLogs.count { it.state == "DONE" }
+        // Check if today's log is done if today is the last day
+        val todayStr = today.toString()
+        val isDoneOnLastDay = updatedLogs.any { it.logDate == todayStr && (it.completed || it.state == "DONE") }
+        
+        // If it's exactly the last day, only complete if it's actually marked DONE.
+        // This prevents premature FAILURE status on the last day if the user hasn't
+        // finished their day yet.
+        if (today == lastScheduledDay && !isDoneOnLastDay) return
+
+        val doneCount = updatedLogs.count { it.state == "DONE" || it.completed }
         val missCount = updatedLogs.count { it.state == "MISS" }
         val totalCount = doneCount + missCount
 
@@ -169,6 +188,21 @@ object HabitStatusManager {
             logsSnapshot = logsSnapshot
         )
         repository.insertCycleHistory(history)
+    }
+
+    /**
+     * Public entry point to check completion for a single habit.
+     * Useful for real-time status updates after user actions.
+     */
+    suspend fun checkHabitCompletion(context: Context, repository: HabitRepository, habitId: Int) {
+        val habit = repository.getHabitById(habitId) ?: return
+        val today = LocalDate.now()
+        val cycleStart = Instant.ofEpochMilli(habit.cycleStartDate)
+            .atZone(ZoneId.systemDefault()).toLocalDate()
+        val cycleEnd = Instant.ofEpochMilli(habit.cycleEndDate)
+            .atZone(ZoneId.systemDefault()).toLocalDate()
+
+        checkAndCompleteCycle(context, repository, habit, today, cycleStart, cycleEnd)
     }
 
     private suspend fun sendInactivityNotification(

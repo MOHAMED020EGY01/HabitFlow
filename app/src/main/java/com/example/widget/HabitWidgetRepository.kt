@@ -69,4 +69,57 @@ class HabitWidgetRepository(
             )
         }
     }
+
+    data class HabitStatsSummary(
+        val totalCount: Int,
+        val activeCount: Int,
+        val inactiveCount: Int,
+        val completedCount: Int,
+        val failedCount: Int,
+        val bestStreakName: String,
+        val bestStreakCount: Int,
+        val bestStreakColor: String
+    )
+
+    suspend fun getHabitStatsSummary(): HabitStatsSummary {
+        val habits = habitRepository.getAllHabitsSync()
+        val allLogs = habitRepository.getAllLogsSync().groupBy { it.habitId }
+
+        var bestStreakName = "None"
+        var bestStreakCount = 0
+        var bestStreakColor = "#7C4DFF"
+
+        habits.forEach { habit ->
+            val logs = allLogs[habit.id] ?: emptyList()
+            val completedDates = logs.filter { it.completed }.map { it.logDate }.toSet()
+            val streak = com.example.domain.util.StreakCalculator.calculateStreakFromDates(
+                completedDates = completedDates,
+                activeDays = habit.activeDays,
+                habitId = habit.id
+            )
+            if (streak > bestStreakCount) {
+                bestStreakCount = streak
+                bestStreakName = habit.name
+                bestStreakColor = habit.colorHex
+            }
+        }
+
+        // Fallback for best streak
+        if (bestStreakCount == 0 && habits.isNotEmpty()) {
+            val first = habits.first()
+            bestStreakName = first.name
+            bestStreakColor = first.colorHex
+        }
+
+        return HabitStatsSummary(
+            totalCount = habits.size,
+            activeCount = habits.count { it.status == com.example.domain.model.HabitStatus.ACTIVE },
+            inactiveCount = habits.count { it.status == com.example.domain.model.HabitStatus.INACTIVE },
+            completedCount = habits.count { it.status == com.example.domain.model.HabitStatus.COMPLETE },
+            failedCount = habits.count { it.status == com.example.domain.model.HabitStatus.FAILURE },
+            bestStreakName = bestStreakName,
+            bestStreakCount = bestStreakCount,
+            bestStreakColor = bestStreakColor
+        )
+    }
 }

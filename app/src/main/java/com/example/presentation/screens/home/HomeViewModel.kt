@@ -167,6 +167,16 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val todayStr = LocalDate.now().toString()
             app.repository.toggleLogForDate(habitId, todayStr, completed)
             StreakCalculator.invalidateCache(habitId)
+            
+            // Check for instant cycle completion if this was the last day
+            if (completed) {
+                com.example.domain.usecase.HabitStatusManager.checkHabitCompletion(
+                    app.applicationContext, 
+                    app.repository, 
+                    habitId
+                )
+            }
+
             com.example.widget.HabitWidgetSyncUpdater.updateNowForced(app.applicationContext)
         }
     }

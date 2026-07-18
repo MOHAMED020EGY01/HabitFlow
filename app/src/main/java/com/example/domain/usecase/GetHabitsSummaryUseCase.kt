@@ -52,9 +52,9 @@ class GetHabitsSummaryUseCase(private val repository: HabitRepository) {
                 item.copy(rank = index + 1)
             }
 
-            // completedHabits (finished all days, meaning completedDays >= scheduledDaysCount)
+            // completedHabits: habits that have officially transitioned to COMPLETE status.
             val completedHabits = habitsWithCompletion.count { item ->
-                item.completedCount >= item.habit.getScheduledDaysCount()
+                item.habit.status == com.example.domain.model.HabitStatus.COMPLETE
             }
 
             // Best streak calculation

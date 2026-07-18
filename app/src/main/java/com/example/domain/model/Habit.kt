@@ -46,7 +46,7 @@ data class Habit(
         val end = java.time.Instant.ofEpochMilli(cycleEndDate)
             .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
 
-        return !date.isBefore(start) && !date.isAfter(end)
+        return !date.isBefore(start) && date.isBefore(end)
     }
 
     /**
@@ -61,7 +61,7 @@ data class Habit(
 
         var scheduledCount = 0
         var curr = start
-        while (!curr.isAfter(end)) {
+        while (curr.isBefore(end)) {
             if (isActiveOnDate(curr)) {
                 scheduledCount++
             }

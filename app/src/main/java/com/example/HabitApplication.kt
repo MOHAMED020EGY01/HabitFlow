@@ -128,6 +128,9 @@ class HabitApplication : Application() {
                 com.example.widget.HabitWidgetUpdateWorker.scheduleDaily(this@HabitApplication)
                 com.example.data.worker.DbVacuumWorker.schedule(this@HabitApplication)
                 com.example.data.worker.DailyRolloverWorker.schedule(this@HabitApplication)
+                
+                // Run an immediate rollover check on cold start to handle missed night passes
+                HabitStatusManager.performDailyRollover(this@HabitApplication, repository)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

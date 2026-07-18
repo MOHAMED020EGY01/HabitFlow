@@ -58,6 +58,11 @@
     <string name="widget_no_stop_duration">No stop duration</string>
     <string name="widget_stopped_on">Stopped on %1$s at %2$s</string>
     <string name="widget_stopped_date">Stopped: %1$s</string>
+    <string name="widget_stats_summary_title">Habit Summary</string>
+    <string name="widget_stat_total">Total Habits</string>
+    <string name="widget_stat_active">Active Habits</string>
+    <string name="widget_stat_inactive">Inactive Habits</string>
+    <string name="widget_stat_completed">Fully Completed</string>
 
     <!-- Calendar -->
     <string name="calendar_title">Calendar</string>

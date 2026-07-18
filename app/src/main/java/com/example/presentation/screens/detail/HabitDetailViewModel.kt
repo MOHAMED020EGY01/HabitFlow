@@ -99,6 +99,16 @@ class HabitDetailViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch {
             android.util.Log.d("HabitWidgetSync", "[LOG] HabitDetailViewModel: Toggling log for date $dateStr. Timestamp: ${System.currentTimeMillis()}")
             app.repository.toggleLogForDate(currentHabitId, dateStr, completed)
+            
+            // Check for instant cycle completion if this was the last day
+            if (completed && dateStr == LocalDate.now().toString()) {
+                com.example.domain.usecase.HabitStatusManager.checkHabitCompletion(
+                    app.applicationContext, 
+                    app.repository, 
+                    currentHabitId
+                )
+            }
+
             android.util.Log.d("HabitWidgetSync", "[LOG] HabitDetailViewModel: DB write completed (toggleLog). Timestamp: ${System.currentTimeMillis()}")
             com.example.widget.HabitWidgetSyncUpdater.updateNowForced(app.applicationContext)
         }

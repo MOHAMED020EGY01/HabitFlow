@@ -102,6 +102,17 @@ object HabitWidgetSyncUpdater {
                 } catch (e: Exception) {
                     Log.e("HabitWidgetSync", "Failed to get IDs for InactiveHabitsWidget", e)
                 }
+
+                // HabitStatsSummaryWidget
+                try {
+                    val summaryIds = manager.getGlanceIds(HabitStatsSummaryWidget::class.java)
+                    android.util.Log.d("HabitWidgetSync", "[LOG] Found ${summaryIds.size} instances of HabitStatsSummaryWidget.")
+                    summaryIds.forEach { glanceId ->
+                        jobs.add(launch { WidgetDirectUpdater.pushDirectUpdate(context, HabitStatsSummaryWidget(), glanceId) })
+                    }
+                } catch (e: Exception) {
+                    Log.e("HabitWidgetSync", "Failed to get IDs for HabitStatsSummaryWidget", e)
+                }
                 
                 jobs.joinAll()
                 android.util.Log.d("HabitWidgetSync", "[LOG] refreshAllPlacedWidgets finished joining all jobs. Timestamp: ${System.currentTimeMillis()}")
