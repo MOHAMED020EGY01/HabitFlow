@@ -23,7 +23,8 @@ class UserPreferencesManager(private val context: Context) {
         val GLASS_EFFECT_MODE = intPreferencesKey("glass_effect_mode")
         val LAST_ROLLOVER_DATE = stringPreferencesKey("last_rollover_date")
         val IS_SPEECH_ENABLED = booleanPreferencesKey("is_speech_enabled")
-        val REMINDER_VOLUME = floatPreferencesKey("reminder_volume")
+        val VOICE_VOLUME = floatPreferencesKey("voice_volume")
+        val RINGTONE_VOLUME = floatPreferencesKey("ringtone_volume")
         val SPEECH_PITCH = floatPreferencesKey("speech_pitch")
         val SPEECH_RATE = floatPreferencesKey("speech_rate")
         val SELECTED_AUDIO_ENGINE = stringPreferencesKey("selected_audio_engine")
@@ -80,8 +81,12 @@ class UserPreferencesManager(private val context: Context) {
         preferences[IS_SPEECH_ENABLED] ?: true
     }
 
-    val reminderVolumeFlow: Flow<Float> = context.dataStore.data.map { preferences ->
-        preferences[REMINDER_VOLUME] ?: 1.0f
+    val voiceVolumeFlow: Flow<Float> = context.dataStore.data.map { preferences ->
+        preferences[VOICE_VOLUME] ?: 1.0f
+    }
+
+    val ringtoneVolumeFlow: Flow<Float> = context.dataStore.data.map { preferences ->
+        preferences[RINGTONE_VOLUME] ?: 1.0f
     }
 
     val speechPitchFlow: Flow<Float> = context.dataStore.data.map { preferences ->
@@ -181,9 +186,15 @@ class UserPreferencesManager(private val context: Context) {
         }
     }
 
-    suspend fun saveReminderVolume(volume: Float) {
+    suspend fun saveVoiceVolume(volume: Float) {
         context.dataStore.edit { preferences ->
-            preferences[REMINDER_VOLUME] = volume
+            preferences[VOICE_VOLUME] = volume
+        }
+    }
+
+    suspend fun saveRingtoneVolume(volume: Float) {
+        context.dataStore.edit { preferences ->
+            preferences[RINGTONE_VOLUME] = volume
         }
     }
 

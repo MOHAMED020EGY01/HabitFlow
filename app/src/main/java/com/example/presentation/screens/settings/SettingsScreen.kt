@@ -26,7 +26,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -450,65 +453,82 @@ fun SettingsScreen(
 
                     // Contextual Settings
                     if (uiState.audioSettings.selectedEngine == AudioEngineType.ALARM) {
-                        // Alarm Settings
-                        Button(
-                            onClick = {
-                                val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(com.example.R.string.reminder_audio_alarm_select))
-                                    val alarmUri = if (uiState.audioSettings.alarmUri.isNotEmpty()) Uri.parse(uiState.audioSettings.alarmUri) else null
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmUri)
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
-                                }
-                                alarmPickerLauncher.launch(intent)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(text = stringResource(com.example.R.string.reminder_audio_alarm_select))
-                        }
-
-                        // Duration Selection
-                        Column {
-                            Text(
-                                text = stringResource(com.example.R.string.reminder_audio_duration),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            // Alarm Settings
+                            Button(
+                                onClick = {
+                                    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                                        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(com.example.R.string.reminder_audio_alarm_select))
+                                        val alarmUri = if (uiState.audioSettings.alarmUri.isNotEmpty()) Uri.parse(uiState.audioSettings.alarmUri) else null
+                                        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmUri)
+                                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                                    }
+                                    alarmPickerLauncher.launch(intent)
+                                },
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                shape = RoundedCornerShape(8.dp)
                             ) {
-                                listOf(
-                                    15 to stringResource(com.example.R.string.reminder_audio_duration_15s),
-                                    30 to stringResource(com.example.R.string.reminder_audio_duration_30s),
-                                    60 to stringResource(com.example.R.string.reminder_audio_duration_60s),
-                                    -1 to stringResource(com.example.R.string.reminder_audio_duration_infinite)
-                                ).forEach { (dur, label) ->
-                                    val isSel = uiState.audioSettings.alarmDurationSeconds == dur
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(if (isSel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
-                                            .clickable { viewModel.setAlarmDuration(dur) }
-                                            .padding(vertical = 8.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = label.split(" ")[0],
-                                            fontSize = 10.sp,
-                                            color = if (isSel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
+                                Text(text = stringResource(com.example.R.string.reminder_audio_alarm_select))
+                            }
+
+                            // Duration Selection
+                            Column {
+                                Text(
+                                    text = stringResource(com.example.R.string.reminder_audio_duration),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    listOf(
+                                        15 to stringResource(com.example.R.string.reminder_audio_duration_15s),
+                                        30 to stringResource(com.example.R.string.reminder_audio_duration_30s),
+                                        60 to stringResource(com.example.R.string.reminder_audio_duration_60s),
+                                        -1 to stringResource(com.example.R.string.reminder_audio_duration_infinite)
+                                    ).forEach { (dur, label) ->
+                                        val isSel = uiState.audioSettings.alarmDurationSeconds == dur
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (isSel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
+                                                .clickable { viewModel.setAlarmDuration(dur) }
+                                                .padding(vertical = 8.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = label.split(" ")[0],
+                                                fontSize = 10.sp,
+                                                color = if (isSel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
                                     }
                                 }
                             }
+
+                            // Ringtone Volume Slider
+                            AudioSettingSlider(
+                                label = stringResource(com.example.R.string.ringtone_volume),
+                                currentValue = uiState.audioSettings.ringtoneVolume,
+                                onValueChange = { viewModel.setRingtoneVolume(it) },
+                                valueRange = 0.0f..1.0f,
+                                steps = 99,
+                                valueDisplayFormatter = { "${(it * 100).toInt()}%" },
+                                presets = listOf(
+                                    "Low" to 0.25f,
+                                    "Default" to 0.75f,
+                                    "High" to 1.0f
+                                )
+                            )
                         }
                     } else {
                         // TTS Settings
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                             // Repeats
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -528,22 +548,55 @@ fun SettingsScreen(
                                 }
                             }
 
-                            // Pitch/Rate Sliders
+                            // Pitch/Rate Sliders (Restore)
                             AudioSettingSlider(
                                 label = stringResource(com.example.R.string.speech_pitch),
                                 currentValue = uiState.audioSettings.pitch,
-                                onValueChange = { viewModel.setSpeechPitch(it) }
+                                onValueChange = { viewModel.setSpeechPitch(it) },
+                                valueRange = 0.5f..2.0f,
+                                steps = 29,
+                                valueDisplayFormatter = { String.format(Locale.US, "%.2fx", it) },
+                                presets = listOf(
+                                    "Low" to 0.5f,
+                                    "Default" to 1.0f,
+                                    "High" to 1.5f
+                                )
                             )
 
                             AudioSettingSlider(
                                 label = stringResource(com.example.R.string.speech_rate),
                                 currentValue = uiState.audioSettings.rate,
-                                onValueChange = { viewModel.setSpeechRate(it) }
+                                onValueChange = { viewModel.setSpeechRate(it) },
+                                valueRange = 0.5f..2.0f,
+                                steps = 29,
+                                valueDisplayFormatter = { String.format(Locale.US, "%.2fx", it) },
+                                presets = listOf(
+                                    "Low" to 0.5f,
+                                    "Default" to 1.0f,
+                                    "High" to 1.5f
+                                )
+                            )
+
+                            // Voice Volume Slider
+                            AudioSettingSlider(
+                                label = stringResource(com.example.R.string.voice_volume),
+                                currentValue = uiState.audioSettings.voiceVolume,
+                                onValueChange = { viewModel.setVoiceVolume(it) },
+                                valueRange = 0.0f..1.0f,
+                                steps = 99,
+                                valueDisplayFormatter = { "${(it * 100).toInt()}%" },
+                                presets = listOf(
+                                    "Low" to 0.25f,
+                                    "Default" to 0.75f,
+                                    "High" to 1.0f
+                                )
                             )
                         }
                     }
 
-                    // Dynamic Test Button
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Dynamic Test/Stop Button
                     Button(
                         onClick = { viewModel.testReminder() },
                         modifier = Modifier
@@ -555,8 +608,17 @@ fun SettingsScreen(
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
+                        Icon(
+                            imageVector = if (uiState.isAudioPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = stringResource(com.example.R.string.reminder_audio_test_button),
+                            text = stringResource(
+                                if (uiState.isAudioPlaying) com.example.R.string.reminder_audio_test_stop
+                                else com.example.R.string.reminder_audio_test_button
+                            ),
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -668,7 +730,11 @@ fun SettingsScreen(
 private fun AudioSettingSlider(
     label: String,
     currentValue: Float,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int,
+    valueDisplayFormatter: (Float) -> String,
+    presets: List<Pair<String, Float>>
 ) {
     val scope = rememberCoroutineScope()
     
@@ -705,7 +771,7 @@ private fun AudioSettingSlider(
             )
             // Numeric Display updates immediately from Layer 1
             Text(
-                text = String.format(Locale.US, "%.2fx", localValue),
+                text = valueDisplayFormatter(localValue),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -717,11 +783,7 @@ private fun AudioSettingSlider(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            listOf(
-                "Low" to 0.5f,
-                "Default" to 1.0f,
-                "High" to 1.5f
-            ).forEach { (name, presetValue) ->
+            presets.forEach { (name, presetValue) ->
                 val isSelected = abs(localValue - presetValue) < 0.02f
                 val backgroundColor by animateColorAsState(
                     if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
@@ -777,8 +839,8 @@ private fun AudioSettingSlider(
                 // Commit to LAYER 3 exactly once after dragging ends
                 currentOnValueChange(localValue)
             },
-            valueRange = 0.5f..2.0f,
-            steps = 29,
+            valueRange = valueRange,
+            steps = steps,
             interactionSource = interactionSource,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.primary,

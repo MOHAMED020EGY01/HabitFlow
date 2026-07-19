@@ -193,17 +193,17 @@ class ReminderSpeechEngine(private val context: Context) {
                 setPitch(pitch)
                 setSpeechRate(rate)
                 
-                // Set audio attributes explicitly for Media Stream
+                // Set audio attributes explicitly for Alarm Stream to match AlarmSoundEngine
                 val attr = AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build()
                 setAudioAttributes(attr)
             }
 
             val params = Bundle().apply {
-                // Key stream for legacy support if setAudioAttributes is not enough on some versions
-                putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_MUSIC)
+                // Use STREAM_ALARM for legacy support
+                putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_ALARM)
                 putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, appVolume)
             }
 
@@ -260,7 +260,7 @@ class ReminderSpeechEngine(private val context: Context) {
     private fun requestFocus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val attr = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setUsage(AudioAttributes.USAGE_ALARM)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                 .build()
             audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
@@ -270,7 +270,7 @@ class ReminderSpeechEngine(private val context: Context) {
             android.util.Log.d("TTS", "[TTS] Audio Focus ${if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) "GRANTED" else "DENIED ($res)"}")
         } else {
             @Suppress("DEPRECATION")
-            val res = audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+            val res = audioManager.requestAudioFocus(null, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
             android.util.Log.d("TTS", "[TTS] Audio Focus (Legacy) ${if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) "GRANTED" else "DENIED ($res)"}")
         }
     }

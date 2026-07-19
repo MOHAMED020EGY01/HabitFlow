@@ -8,6 +8,9 @@ import com.example.domain.audio.ReminderAudioEngine
 import com.example.domain.audio.ReminderAudioSettings
 import com.example.speech.ReminderSpeechManager
 import com.example.util.LocaleDirectionHelper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 
 /**
@@ -16,6 +19,9 @@ import java.util.Locale
  */
 class TextToSpeechEngine(private val speechManager: ReminderSpeechManager) : ReminderAudioEngine {
     override val type: AudioEngineType = AudioEngineType.TTS
+
+    private val _isPlaying = MutableStateFlow(false)
+    override val isPlaying: Flow<Boolean> = _isPlaying.asStateFlow()
 
     override fun play(context: Context, habitName: String, langCode: String, settings: ReminderAudioSettings) {
         Log.d("TTS", "[TTS] Speaking habit reminder: $habitName")
@@ -32,14 +38,24 @@ class TextToSpeechEngine(private val speechManager: ReminderSpeechManager) : Rem
             habitName
         }
 
-        repeat(settings.ttsRepeats.coerceAtLeast(1)) {
+        var requestsPending = settings.ttsRepeats.coerceAtLeast(1)
+        _isPlaying.value = true
+
+        repeat(requestsPending) {
             speechManager.speak(
                 ReminderSpeechManager.SpeechRequest(
                     text = textToSpeak,
                     locale = locale,
-                    volume = settings.volume,
+                    voiceVolume = settings.voiceVolume,
                     pitch = settings.pitch,
-                    rate = settings.rate
+                    rate = settings.rate,
+                    onDone = {
+                        requestsPending--
+                        if (requestsPending <= 0) {
+                            Log.d("TTS", "[TTS] All speech requests finished")
+                            _isPlaying.value = false
+                        }
+                    }
                 )
             )
         }
@@ -51,19 +67,30 @@ class TextToSpeechEngine(private val speechManager: ReminderSpeechManager) : Rem
         val localizedContext = LocaleDirectionHelper.getLocalizedContext(context, langCode)
         val textToSpeak = localizedContext.getString(R.string.reminder_voice_preview)
 
+        _isPlaying.value = true
         speechManager.speak(
             ReminderSpeechManager.SpeechRequest(
                 text = textToSpeak,
                 locale = locale,
-                volume = settings.volume,
+                voiceVolume = settings.voiceVolume,
                 pitch = settings.pitch,
-                rate = settings.rate
+                rate = settings.rate,
+                onDone = {
+                    Log.d("TTS", "[TTS] Preview finished")
+                    _isPlaying.value = false
+                }
             )
         )
     }
 
+    override fun updateVolume(volume: Float) {
+        // TTS volume is set per-request in speak(), live updates are not supported by Android TTS API
+        // without restarting the speech. We log this as a limitation or ignore.
+    }
+
     override fun stop() {
         Log.d("TTS", "[TTS] Stopping playback")
+        _isPlaying.value = false
         speechManager.stopAll()
     }
 

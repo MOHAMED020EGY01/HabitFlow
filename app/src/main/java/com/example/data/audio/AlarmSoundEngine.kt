@@ -10,6 +10,9 @@ import android.util.Log
 import com.example.domain.audio.AudioEngineType
 import com.example.domain.audio.ReminderAudioEngine
 import com.example.domain.audio.ReminderAudioSettings
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * Production-ready implementation of Alarm Sound Engine.
@@ -17,6 +20,9 @@ import com.example.domain.audio.ReminderAudioSettings
  */
 class AlarmSoundEngine : ReminderAudioEngine {
     override val type: AudioEngineType = AudioEngineType.ALARM
+
+    private val _isPlaying = MutableStateFlow(false)
+    override val isPlaying: Flow<Boolean> = _isPlaying.asStateFlow()
 
     private var mediaPlayer: MediaPlayer? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -33,6 +39,7 @@ class AlarmSoundEngine : ReminderAudioEngine {
     }
 
     private fun playInternal(context: Context, settings: ReminderAudioSettings) {
+        Log.d("AUDIO", "[AUDIO] playInternal with Volume: ${settings.ringtoneVolume}")
         stop()
 
         try {
@@ -47,13 +54,25 @@ class AlarmSoundEngine : ReminderAudioEngine {
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build()
                 )
-                // Note: Volume is controlled by the system Alarm stream because of USAGE_ALARM
+                
+                // Apply configured reminder volume
                 isLooping = settings.alarmDurationSeconds == -1
                 prepare()
+                
+                // Explicitly set volume twice to override some aggressive system drivers
+                setVolume(settings.ringtoneVolume, settings.ringtoneVolume)
+                
+                setOnCompletionListener {
+                    Log.d("AUDIO", "[AUDIO] Alarm Completion Listener triggered")
+                    _isPlaying.value = false
+                }
+
                 start()
+                _isPlaying.value = true
+                setVolume(settings.ringtoneVolume, settings.ringtoneVolume)
             }
 
             if (settings.alarmDurationSeconds > 0) {
@@ -68,7 +87,21 @@ class AlarmSoundEngine : ReminderAudioEngine {
         }
     }
 
+    override fun updateVolume(volume: Float) {
+        mediaPlayer?.let {
+            try {
+                if (it.isPlaying) {
+                    it.setVolume(volume, volume)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     override fun stop() {
+        Log.d("AUDIO", "[AUDIO] AlarmSoundEngine.stop() called")
+        _isPlaying.value = false
         stopRunnable?.let { handler.removeCallbacks(it) }
         stopRunnable = null
         

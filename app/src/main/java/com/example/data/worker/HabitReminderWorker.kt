@@ -91,7 +91,7 @@ class HabitReminderWorker(
         val areNotificationsEnabled = androidx.core.app.NotificationManagerCompat.from(context).areNotificationsEnabled()
         android.util.Log.e("ReminderChain", "[HabitReminderWorker] showNotification for '$habitName'. areNotificationsEnabled: $areNotificationsEnabled")
         
-        val channelId = "habit_reminder_channel"
+        val channelId = "habit_reminder_silent_channel"
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -102,6 +102,9 @@ class HabitReminderWorker(
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = context.getString(com.example.R.string.channel_habit_reminders)
+                // Set channel sound to null to ensure ONLY our audio engine plays the reminder
+                setSound(null, null)
+                enableVibration(true)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -124,6 +127,7 @@ class HabitReminderWorker(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+            .setSilent(true) // Ensure audio is handled exclusively by ReminderAudioEngine
             .build()
 
         notificationManager.notify(habitId, notification)

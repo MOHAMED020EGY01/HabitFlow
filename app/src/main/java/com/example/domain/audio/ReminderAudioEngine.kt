@@ -1,9 +1,11 @@
 package com.example.domain.audio
 
 import android.content.Context
+import kotlinx.coroutines.flow.Flow
 
 interface ReminderAudioEngine {
     val type: AudioEngineType
+    val isPlaying: Flow<Boolean>
     
     /**
      * Plays a reminder sound/speech.
@@ -14,6 +16,11 @@ interface ReminderAudioEngine {
      * Plays a preview sound/speech.
      */
     fun playPreview(context: Context, langCode: String, settings: ReminderAudioSettings)
+    
+    /**
+     * Updates the volume of any currently playing audio.
+     */
+    fun updateVolume(volume: Float)
     
     /**
      * Stops any ongoing audio.

@@ -21,7 +21,7 @@ class ReminderSpeechManager(private val context: Context) {
     data class SpeechRequest(
         val text: String,
         val locale: Locale,
-        val volume: Float,
+        val voiceVolume: Float,
         val pitch: Float = 1.0f,
         val rate: Float = 1.0f,
         val onDone: (() -> Unit)? = null
@@ -77,7 +77,7 @@ class ReminderSpeechManager(private val context: Context) {
                 engine?.speak(
                     request.text,
                     request.locale,
-                    request.volume,
+                    request.voiceVolume,
                     request.pitch,
                     request.rate
                 ) {

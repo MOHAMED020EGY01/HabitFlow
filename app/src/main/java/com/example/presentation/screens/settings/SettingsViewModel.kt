@@ -27,7 +27,8 @@ data class SettingsUiState(
     val glassEffectMode: Int = 0,
     val isNavBarHidden: Boolean = true,
     val audioSettings: ReminderAudioSettings = ReminderAudioSettings(),
-    val ttsStatus: TTSStatus = TTSStatus.INITIALIZING
+    val ttsStatus: TTSStatus = TTSStatus.INITIALIZING,
+    val isAudioPlaying: Boolean = false
 )
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -52,7 +53,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             app.preferencesManager.glassEffectModeFlow,
             app.preferencesManager.isNavBarHiddenFlow,
             audioRepository.settings,
-            audioRepository.ttsStatus
+            audioRepository.ttsStatus,
+            audioRepository.isPlaying
         ) { array ->
             SettingsUiState(
                 userName = array[0] as String,
@@ -64,7 +66,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 glassEffectMode = array[6] as Int,
                 isNavBarHidden = array[7] as Boolean,
                 audioSettings = array[8] as ReminderAudioSettings,
-                ttsStatus = array[9] as TTSStatus
+                ttsStatus = array[9] as TTSStatus,
+                isAudioPlaying = array[10] as Boolean
             )
         }.onEach { state ->
             _uiState.value = state
@@ -182,9 +185,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun setReminderVolume(volume: Float) {
+    fun setVoiceVolume(volume: Float) {
         viewModelScope.launch {
-            audioRepository.updateSettings(uiState.value.audioSettings.copy(volume = volume))
+            audioRepository.updateSettings(uiState.value.audioSettings.copy(voiceVolume = volume))
+        }
+    }
+
+    fun setRingtoneVolume(volume: Float) {
+        viewModelScope.launch {
+            audioRepository.updateSettings(uiState.value.audioSettings.copy(ringtoneVolume = volume))
         }
     }
 
@@ -201,9 +210,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun testReminder() {
-        Log.d("AUDIO", "[AUDIO] Dynamic Preview Button Clicked")
-        audioRepository.stop()
-        audioRepository.playPreview()
+        if (uiState.value.isAudioPlaying) {
+            Log.d("AUDIO", "[AUDIO] Stopping Preview")
+            audioRepository.stop()
+        } else {
+            Log.d("AUDIO", "[AUDIO] Starting Preview")
+            audioRepository.playPreview()
+        }
     }
 
     fun verifyTtsStatus() {

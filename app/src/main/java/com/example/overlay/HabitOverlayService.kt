@@ -69,13 +69,16 @@ class HabitOverlayService : Service() {
         val langCode = app.currentLanguageCode
         val localizedContext = com.example.util.LocaleDirectionHelper.getLocalizedContext(applicationContext, langCode)
 
-        val channelId = "habit_overlay_channel"
+        val channelId = "habit_overlay_silent_channel"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
                 applicationContext.getString(com.example.R.string.channel_overlay),
                 NotificationManager.IMPORTANCE_LOW
-            ).apply { description = applicationContext.getString(com.example.R.string.channel_overlay) }
+            ).apply { 
+                description = applicationContext.getString(com.example.R.string.channel_overlay)
+                setSound(null, null) // Silent channel
+            }
 
             getSystemService(NotificationManager::class.java)
                 .createNotificationChannel(channel)
@@ -87,6 +90,7 @@ class HabitOverlayService : Service() {
             .setContentText(localizedContext.getString(com.example.R.string.notification_time_for_habit, habitName))
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
+            .setSilent(true)
             .build()
 
         try {

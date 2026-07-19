@@ -83,7 +83,8 @@
 
     <!-- Speech/Reminder Voice Section -->
     <string name="reminder_voice">صوت التذكير</string>
-    <string name="reminder_volume">مستوى صوت التذكير</string>
+    <string name="voice_volume">حجم صوت الكلام</string>
+    <string name="ringtone_volume">حجم صوت الرنة</string>
     <string name="speech_enabled">تفعيل التحدث</string>
     <string name="speech_pitch">طبقة الصوت</string>
     <string name="speech_rate">سرعة التحدث</string>
@@ -98,7 +99,7 @@
     <string name="reminder_audio_duration_15s">15 ثانية</string>
     <string name="reminder_audio_duration_30s">30 ثانية (افتراضي)</string>
     <string name="reminder_audio_duration_60s">60 ثانية</string>
-    <string name="reminder_audio_duration_infinite">حتى الإغلاق</string>
+    <string name="reminder_audio_duration_infinite">لانهائي</string>
     <string name="reminder_audio_tts_repeats">تكرار الصوت</string>
     <string name="reminder_audio_tts_once">تحدث مرة واحدة</string>
     <string name="reminder_audio_tts_twice">تكرار مرتين</string>
@@ -108,6 +109,7 @@
     <string name="reminder_audio_google_play_unavailable_title">متجر Google Play غير متوفر</string>
     <string name="reminder_audio_google_play_unavailable_msg">خدمات Google Play غير متوفرة على هذا الجهاز. لا يمكن تثبيت تحويل النص إلى كلام تلقائيًا.</string>
     <string name="reminder_audio_install">تثبيت</string>
+    <string name="reminder_audio_test_stop">إيقاف الاختبار</string>
     <string name="reminder_audio_tts_preview">اختبار الصوت يعمل.</string>
     <string name="reminder_voice_template">حان وقت عادة %1$s</string>
     <string name="reminder_voice_preview">اختبار الصوت يعمل.</string>

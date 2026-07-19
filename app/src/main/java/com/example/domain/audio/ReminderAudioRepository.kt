@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 interface ReminderAudioRepository {
     val settings: Flow<ReminderAudioSettings>
     val ttsStatus: Flow<TTSStatus>
+    val isPlaying: Flow<Boolean>
     
     suspend fun updateSettings(settings: ReminderAudioSettings)
     

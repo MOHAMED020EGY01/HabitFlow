@@ -31,7 +31,7 @@ class ReminderSpeechController(private val context: Context) {
                 return@runBlocking
             }
 
-            val volume = preferencesManager.reminderVolumeFlow.first()
+            val volume = preferencesManager.voiceVolumeFlow.first()
             val pitch = preferencesManager.speechPitchFlow.first()
             val rate = preferencesManager.speechRateFlow.first()
 
@@ -44,7 +44,7 @@ class ReminderSpeechController(private val context: Context) {
                 ReminderSpeechManager.SpeechRequest(
                     text = textToSpeak,
                     locale = locale,
-                    volume = volume,
+                    voiceVolume = volume,
                     pitch = pitch,
                     rate = rate
                 )
@@ -68,7 +68,7 @@ class ReminderSpeechController(private val context: Context) {
             ReminderSpeechManager.SpeechRequest(
                 text = textToSpeak,
                 locale = locale,
-                volume = volume,
+                voiceVolume = volume,
                 pitch = pitch,
                 rate = rate
             )

@@ -26,7 +26,8 @@ class ReminderAudioRepositoryImpl(
         preferencesManager.alarmUriFlow,
         preferencesManager.alarmDurationFlow,
         preferencesManager.ttsRepeatsFlow,
-        preferencesManager.reminderVolumeFlow,
+        preferencesManager.voiceVolumeFlow,
+        preferencesManager.ringtoneVolumeFlow,
         preferencesManager.speechPitchFlow,
         preferencesManager.speechRateFlow
     ) { args: Array<Any> ->
@@ -40,19 +41,44 @@ class ReminderAudioRepositoryImpl(
             alarmUri = args[1] as String,
             alarmDurationSeconds = args[2] as Int,
             ttsRepeats = args[3] as Int,
-            volume = args[4] as Float,
-            pitch = args[5] as Float,
-            rate = args[6] as Float
+            voiceVolume = args[4] as Float,
+            ringtoneVolume = args[5] as Float,
+            pitch = args[6] as Float,
+            rate = args[7] as Float
         )
     }
 
     private val _ttsStatus = MutableStateFlow(TTSStatus.INITIALIZING)
     override val ttsStatus: Flow<TTSStatus> = _ttsStatus.asStateFlow()
 
+    override val isPlaying: Flow<Boolean> = combine(
+        ttsEngine.isPlaying,
+        alarmEngine.isPlaying
+    ) { ttsPlaying, alarmPlaying ->
+        ttsPlaying || alarmPlaying
+    }
+
     init {
         repositoryScope.launch {
             verifyTTS()
         }
+        
+        // Live Volume Updates - route to correct engines
+        settings.map { it.voiceVolume }
+            .distinctUntilChanged()
+            .onEach { volume ->
+                Log.d("AUDIO", "[AUDIO] Live Voice Volume Update: $volume")
+                ttsEngine.updateVolume(volume)
+            }
+            .launchIn(repositoryScope)
+
+        settings.map { it.ringtoneVolume }
+            .distinctUntilChanged()
+            .onEach { volume ->
+                Log.d("AUDIO", "[AUDIO] Live Ringtone Volume Update: $volume")
+                alarmEngine.updateVolume(volume)
+            }
+            .launchIn(repositoryScope)
     }
 
     override suspend fun updateSettings(settings: ReminderAudioSettings) {
@@ -60,7 +86,8 @@ class ReminderAudioRepositoryImpl(
         preferencesManager.saveAlarmUri(settings.alarmUri)
         preferencesManager.saveAlarmDuration(settings.alarmDurationSeconds)
         preferencesManager.saveTtsRepeats(settings.ttsRepeats)
-        preferencesManager.saveReminderVolume(settings.volume)
+        preferencesManager.saveVoiceVolume(settings.voiceVolume)
+        preferencesManager.saveRingtoneVolume(settings.ringtoneVolume)
         preferencesManager.saveSpeechPitch(settings.pitch)
         preferencesManager.saveSpeechRate(settings.rate)
     }
