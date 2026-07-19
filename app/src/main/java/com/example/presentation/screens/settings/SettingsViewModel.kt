@@ -21,7 +21,11 @@ data class SettingsUiState(
     val isBackgroundServiceEnabled: Boolean = false,
     val isCardAnimationsEnabled: Boolean = true,
     val glassEffectMode: Int = 0,  // 0=Auto, 1=On, 2=Off
-    val isNavBarHidden: Boolean = true
+    val isNavBarHidden: Boolean = true,
+    val isSpeechEnabled: Boolean = true,
+    val reminderVolume: Float = 1.0f,
+    val speechPitch: Float = 1.0f,
+    val speechRate: Float = 1.0f
 )
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -43,7 +47,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             app.preferencesManager.isBackgroundServiceEnabledFlow,
             app.preferencesManager.isCardAnimationsEnabledFlow,
             app.preferencesManager.glassEffectModeFlow,
-            app.preferencesManager.isNavBarHiddenFlow
+            app.preferencesManager.isNavBarHiddenFlow,
+            app.preferencesManager.isSpeechEnabledFlow,
+            app.preferencesManager.reminderVolumeFlow,
+            app.preferencesManager.speechPitchFlow,
+            app.preferencesManager.speechRateFlow
         ) { array ->
             val name = array[0] as String
             val photo = array[1] as String
@@ -53,7 +61,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val cardAnimsEnabled = array[5] as Boolean
             val glassMode = array[6] as Int
             val navBarHidden = array[7] as Boolean
-            SettingsUiState(name, photo, theme, lang, serviceEnabled, cardAnimsEnabled, glassMode, navBarHidden)
+            val speechEnabled = array[8] as Boolean
+            val volume = array[9] as Float
+            val pitch = array[10] as Float
+            val rate = array[11] as Float
+            SettingsUiState(
+                name, photo, theme, lang, serviceEnabled, cardAnimsEnabled, glassMode, navBarHidden,
+                speechEnabled, volume, pitch, rate
+            )
         }.onEach { state ->
             _uiState.value = state
         }.launchIn(viewModelScope)
@@ -176,6 +191,34 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             app.preferencesManager.saveNavBarHidden(hidden)
         }
+    }
+
+    fun setSpeechEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            app.preferencesManager.saveSpeechEnabled(enabled)
+        }
+    }
+
+    fun setReminderVolume(volume: Float) {
+        viewModelScope.launch {
+            app.preferencesManager.saveReminderVolume(volume)
+        }
+    }
+
+    fun setSpeechPitch(pitch: Float) {
+        viewModelScope.launch {
+            app.preferencesManager.saveSpeechPitch(pitch)
+        }
+    }
+
+    fun setSpeechRate(rate: Float) {
+        viewModelScope.launch {
+            app.preferencesManager.saveSpeechRate(rate)
+        }
+    }
+
+    fun previewVoice(volume: Float, pitch: Float, rate: Float) {
+        app.reminderSpeechController.previewVoice(volume, pitch, rate, app.currentLanguageCode)
     }
 
     fun resetAllData(onComplete: () -> Unit) {

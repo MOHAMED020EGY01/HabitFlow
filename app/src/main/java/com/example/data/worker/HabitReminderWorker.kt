@@ -57,7 +57,32 @@ class HabitReminderWorker(
             }
         }
 
-        showNotification(habitId, habitName)
+        // ── Trigger Speech Reminder ───────────────────────────────────
+        val app = context.applicationContext as HabitApplication
+        try {
+            val db = com.example.data.local.database.HabitDatabase.getDatabase(context)
+            val habit = db.habitDao().getHabitById(habitId)
+            if (habit != null) {
+                app.reminderSpeechController.speakHabitReminder(habit.toDomain())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        // ─────────────────────────────────────────────────────────────
+
+        // ── Follow Reminder Flow: Try Overlay Else Notification ───────
+        val canDrawOverlays = android.provider.Settings.canDrawOverlays(context)
+        val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
+        val isLocked = keyguardManager.isKeyguardLocked
+
+        // If overlay is available and phone not locked, let HabitOverlayWorker handle it.
+        // Otherwise, show notification.
+        if (canDrawOverlays && !isLocked) {
+            android.util.Log.d("ReminderChain", "[HabitReminderWorker] Overlay is available, skipping notification as per flow.")
+        } else {
+            showNotification(habitId, habitName)
+        }
+
         com.example.widget.HabitWidgetSyncUpdater.updateNowForced(context)
         return Result.success()
     }

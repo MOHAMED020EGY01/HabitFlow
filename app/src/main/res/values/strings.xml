@@ -81,6 +81,16 @@
     <string name="notification_body">Time to build your habit! 💪</string>
     <string name="notification_time_for_habit">Time for: %1$s</string>
 
+    <!-- Speech/Reminder Voice Section -->
+    <string name="reminder_voice">Reminder Voice</string>
+    <string name="reminder_volume">Reminder Volume</string>
+    <string name="speech_enabled">Speech Enabled</string>
+    <string name="speech_pitch">Speech Pitch</string>
+    <string name="speech_rate">Speech Rate</string>
+    <string name="preview_voice">Preview Voice</string>
+    <string name="reminder_voice_template">It\'s time for your %1$s habit.</string>
+    <string name="reminder_voice_preview">Voice test is working.</string>
+
     <!-- Home screen banner -->
     <string name="home_banner_title">Make Reminders 100% Reliable</string>
     <string name="home_banner_desc">Tap to quickly configure background permissions and prevent missing habit alerts.</string>

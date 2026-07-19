@@ -431,6 +431,126 @@ fun SettingsScreen(
                 }
             }
 
+            // Speech Reminder Settings Card
+            com.example.presentation.components.GlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(com.example.R.string.reminder_voice),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(com.example.R.string.speech_enabled),
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
+                            )
+                        }
+                        Switch(
+                            checked = uiState.isSpeechEnabled,
+                            onCheckedChange = { viewModel.setSpeechEnabled(it) }
+                        )
+                    }
+
+                    if (uiState.isSpeechEnabled) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(com.example.R.string.speech_pitch),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = String.format("%.1f", uiState.speechPitch),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Slider(
+                                value = uiState.speechPitch,
+                                onValueChange = { viewModel.setSpeechPitch(it) },
+                                valueRange = 0.5f..2.0f,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(com.example.R.string.speech_rate),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = String.format("%.1f", uiState.speechRate),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Slider(
+                                value = uiState.speechRate,
+                                onValueChange = { viewModel.setSpeechRate(it) },
+                                valueRange = 0.5f..2.0f,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(com.example.R.string.reminder_volume),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = "${(uiState.reminderVolume * 100).toInt()}%",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Slider(
+                                value = uiState.reminderVolume,
+                                onValueChange = { viewModel.setReminderVolume(it) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Button(
+                            onClick = { viewModel.previewVoice(uiState.reminderVolume, uiState.speechPitch, uiState.speechRate) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(text = stringResource(com.example.R.string.preview_voice))
+                        }
+                    }
+                }
+            }
+
             // Permissions Section
             com.example.presentation.components.GlassCard(
                 modifier = Modifier.fillMaxWidth(),

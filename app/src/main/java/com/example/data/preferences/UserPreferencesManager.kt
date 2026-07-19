@@ -22,6 +22,10 @@ class UserPreferencesManager(private val context: Context) {
         val IS_NAV_BAR_HIDDEN = booleanPreferencesKey("is_nav_bar_hidden")
         val GLASS_EFFECT_MODE = intPreferencesKey("glass_effect_mode")
         val LAST_ROLLOVER_DATE = stringPreferencesKey("last_rollover_date")
+        val IS_SPEECH_ENABLED = booleanPreferencesKey("is_speech_enabled")
+        val REMINDER_VOLUME = floatPreferencesKey("reminder_volume")
+        val SPEECH_PITCH = floatPreferencesKey("speech_pitch")
+        val SPEECH_RATE = floatPreferencesKey("speech_rate")
     }
 
     val userNameFlow: Flow<String> = context.dataStore.data.map { preferences ->
@@ -66,6 +70,22 @@ class UserPreferencesManager(private val context: Context) {
 
     val lastRolloverDateFlow: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[LAST_ROLLOVER_DATE] ?: ""
+    }
+
+    val isSpeechEnabledFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[IS_SPEECH_ENABLED] ?: true
+    }
+
+    val reminderVolumeFlow: Flow<Float> = context.dataStore.data.map { preferences ->
+        preferences[REMINDER_VOLUME] ?: 1.0f
+    }
+
+    val speechPitchFlow: Flow<Float> = context.dataStore.data.map { preferences ->
+        preferences[SPEECH_PITCH] ?: 1.0f
+    }
+
+    val speechRateFlow: Flow<Float> = context.dataStore.data.map { preferences ->
+        preferences[SPEECH_RATE] ?: 1.0f
     }
 
     suspend fun saveUserName(name: String) {
@@ -132,6 +152,30 @@ class UserPreferencesManager(private val context: Context) {
     suspend fun saveLastRolloverDate(date: String) {
         context.dataStore.edit { preferences ->
             preferences[LAST_ROLLOVER_DATE] = date
+        }
+    }
+
+    suspend fun saveSpeechEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[IS_SPEECH_ENABLED] = enabled
+        }
+    }
+
+    suspend fun saveReminderVolume(volume: Float) {
+        context.dataStore.edit { preferences ->
+            preferences[REMINDER_VOLUME] = volume
+        }
+    }
+
+    suspend fun saveSpeechPitch(pitch: Float) {
+        context.dataStore.edit { preferences ->
+            preferences[SPEECH_PITCH] = pitch
+        }
+    }
+
+    suspend fun saveSpeechRate(rate: Float) {
+        context.dataStore.edit { preferences ->
+            preferences[SPEECH_RATE] = rate
         }
     }
 

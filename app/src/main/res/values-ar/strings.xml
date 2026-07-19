@@ -81,6 +81,16 @@
     <string name="notification_body">حان الوقت لبناء عادتك! 💪</string>
     <string name="notification_time_for_habit">حان وقت: %1$s</string>
 
+    <!-- Speech/Reminder Voice Section -->
+    <string name="reminder_voice">صوت التذكير</string>
+    <string name="reminder_volume">مستوى صوت التذكير</string>
+    <string name="speech_enabled">تفعيل التحدث</string>
+    <string name="speech_pitch">طبقة الصوت</string>
+    <string name="speech_rate">سرعة التحدث</string>
+    <string name="preview_voice">تجربة الصوت</string>
+    <string name="reminder_voice_template">حان وقت عادة %1$s</string>
+    <string name="reminder_voice_preview">اختبار الصوت يعمل.</string>
+
     <!-- Home screen banner -->
     <string name="home_banner_title">تذكيرات موثوقة بنسبة ١٠٠٪</string>
     <string name="home_banner_desc">انقر لتكوين أذونات الخلفية بسرعة لتجنب تفويت تذكيرات العادات.</string>

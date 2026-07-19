@@ -21,7 +21,7 @@ import com.example.data.local.entity.NotificationEntity
         HabitCycleHistoryEntity::class,
         NotificationEntity::class
     ],
-    version = 10,
+    version = 12,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -32,6 +32,18 @@ abstract class HabitDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: HabitDatabase? = null
+
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Refresh identity hash
+            }
+        }
+
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE habits ADD COLUMN reminderVoice TEXT NOT NULL DEFAULT 'DEFAULT'")
+            }
+        }
 
         val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -183,7 +195,7 @@ abstract class HabitDatabase : RoomDatabase() {
                     HabitDatabase::class.java,
                     "habit_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_8_9, MIGRATION_9_10)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
@@ -191,11 +203,7 @@ abstract class HabitDatabase : RoomDatabase() {
                     }
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
-                        try {
-                            db.execSQL("PRAGMA journal_mode = WAL")
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                        // WAL is typically handled by Room, explicit PRAGMA can cause issues if it returns results
                     }
                 })
                 .fallbackToDestructiveMigration()

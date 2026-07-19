@@ -29,7 +29,8 @@ data class HabitEntity(
     val cycleEndDate: Long = 0,
     val inactiveDaysCount: Int = 0,
     val activeDays: List<String> = listOf("MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"),
-    val inactiveSinceTimestamp: Long? = null
+    val inactiveSinceTimestamp: Long? = null,
+    val reminderVoice: String = "DEFAULT"
 ) {
     fun toDomain(): Habit = Habit(
         id = id,
@@ -48,7 +49,8 @@ data class HabitEntity(
         activeDays = activeDays.mapNotNull { name ->
             try { java.time.DayOfWeek.valueOf(name) } catch (_: Exception) { null }
         }.toSet(),
-        inactiveSinceTimestamp = inactiveSinceTimestamp
+        inactiveSinceTimestamp = inactiveSinceTimestamp,
+        reminderVoice = reminderVoice
     )
 
     companion object {
@@ -67,7 +69,8 @@ data class HabitEntity(
             cycleEndDate = habit.cycleEndDate,
             inactiveDaysCount = habit.inactiveDaysCount,
             activeDays = habit.activeDays.map { it.name },
-            inactiveSinceTimestamp = habit.inactiveSinceTimestamp
+            inactiveSinceTimestamp = habit.inactiveSinceTimestamp,
+            reminderVoice = habit.reminderVoice
         )
     }
 }

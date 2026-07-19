@@ -6,6 +6,7 @@ import com.example.data.preferences.UserPreferencesManager
 import com.example.data.repository.HabitRepositoryImpl
 import com.example.domain.repository.HabitRepository
 import com.example.domain.usecase.*
+import com.example.speech.ReminderSpeechController
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
@@ -25,6 +26,7 @@ class HabitApplication : Application() {
 
     lateinit var preferencesManager: UserPreferencesManager
     lateinit var repository: HabitRepository
+    lateinit var reminderSpeechController: ReminderSpeechController
 
     // Use cases
     lateinit var getAllHabitsUseCase: GetAllHabitsUseCase
@@ -74,6 +76,7 @@ class HabitApplication : Application() {
         }
 
         preferencesManager = UserPreferencesManager(this)
+        reminderSpeechController = ReminderSpeechController(this)
 
         // Setup LeakCanary config if in debug mode to avoid MediaProvider errors
         setupLeakCanaryConfig()

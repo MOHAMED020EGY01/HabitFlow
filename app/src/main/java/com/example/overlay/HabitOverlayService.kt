@@ -11,9 +11,6 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.RingtoneManager
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -48,9 +45,6 @@ class HabitOverlayService : Service() {
     private var lifecycleOwner: ServiceLifecycleOwner? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    private var mediaPlayer: MediaPlayer? = null
-    private var soundStopJob: Job? = null
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val habitId    = intent?.getIntExtra("HABIT_ID", -1) ?: -1
         val habitName  = intent?.getStringExtra("HABIT_NAME")  ?: applicationContext.getString(com.example.R.string.channel_habit_reminders)
@@ -65,54 +59,9 @@ class HabitOverlayService : Service() {
             android.util.Log.e("ReminderChain", "[HabitOverlayService] CRITICAL: startForegroundWithNotification failed", e)
         }
         
-        playOverlaySound()
         showOverlay(habitId, habitName, habitColor, habitDesc)
 
         return START_NOT_STICKY
-    }
-
-    private fun playOverlaySound() {
-        try {
-            val notificationUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) ?: return
-            mediaPlayer = MediaPlayer().apply {
-                setDataSource(applicationContext, notificationUri)
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
-                )
-                isLooping = true
-                prepare()
-                start()
-            }
-
-            // Stop sound after 20 seconds
-            soundStopJob?.cancel()
-            soundStopJob = serviceScope.launch {
-                delay(20_000L)
-                stopAndReleaseMediaPlayer()
-            }
-        } catch (e: Exception) {
-            Log.e("HabitOverlay", "Failed to play overlay sound", e)
-        }
-    }
-
-    private fun stopAndReleaseMediaPlayer() {
-        try {
-            mediaPlayer?.let {
-                if (it.isPlaying) {
-                    it.stop()
-                }
-                it.release()
-            }
-        } catch (e: Exception) {
-            Log.e("HabitOverlay", "Error releasing MediaPlayer", e)
-        } finally {
-            mediaPlayer = null
-            soundStopJob?.cancel()
-            soundStopJob = null
-        }
     }
 
     private fun startForegroundWithNotification(habitName: String) {
@@ -217,7 +166,7 @@ class HabitOverlayService : Service() {
                             habitDesc  = habitDesc,
                             quote      = randomQuote,
                             onDone = {
-                                stopAndReleaseMediaPlayer()
+                                app.reminderSpeechController.stop()
                                 dismissOverlayViewOnly()
                                 serviceScope.launch {
                                     val today = LocalDate.now().toString() // "yyyy-MM-dd"
@@ -235,7 +184,7 @@ class HabitOverlayService : Service() {
                                 }
                             },
                             onDismiss = {
-                                stopAndReleaseMediaPlayer()
+                                app.reminderSpeechController.stop()
                                 dismissOverlay()
                             }
                         )
@@ -320,7 +269,7 @@ class HabitOverlayService : Service() {
     }
 
     override fun onDestroy() {
-        stopAndReleaseMediaPlayer()
+        (applicationContext as? HabitApplication)?.reminderSpeechController?.stop()
         dismissOverlay()
         serviceScope.cancel()
         super.onDestroy()

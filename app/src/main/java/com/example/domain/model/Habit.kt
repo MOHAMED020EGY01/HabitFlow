@@ -19,7 +19,8 @@ data class Habit(
     val cycleEndDate: Long = cycleStartDate + durationDays * 24L * 60L * 60L * 1000L,
     val inactiveDaysCount: Int = 0,
     val activeDays: Set<DayOfWeek> = DayOfWeek.values().toSet(),
-    val inactiveSinceTimestamp: Long? = null
+    val inactiveSinceTimestamp: Long? = null,
+    val reminderVoice: String = "DEFAULT"
 ) {
     /** Convenience: returns true if the habit runs on [day]. */
     fun isActiveOn(day: DayOfWeek): Boolean = day in activeDays
