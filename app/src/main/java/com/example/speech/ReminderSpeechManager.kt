@@ -91,16 +91,20 @@ class ReminderSpeechManager(private val context: Context) {
 
     private fun onTaskDone(request: SpeechRequest, taskToken: Long) {
         synchronized(this) {
+            // Always set isProcessing to false if this was the task we were waiting for,
+            // even if the token changed, so we don't block the queue forever.
+            isProcessing = false
+            
             if (taskToken == currentTaskToken) {
                 try {
                     request.onDone?.invoke()
                 } catch (e: Exception) {
                     android.util.Log.e("TTS", "[TTS] Error in onDone callback", e)
-                } finally {
-                    isProcessing = false
-                    processQueue()
                 }
+            } else {
+                android.util.Log.d("TTS", "[TTS] Task discarded (token mismatch)")
             }
+            processQueue()
         }
     }
 

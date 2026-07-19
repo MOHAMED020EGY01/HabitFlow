@@ -166,7 +166,7 @@ class HabitOverlayService : Service() {
                             habitDesc  = habitDesc,
                             quote      = randomQuote,
                             onDone = {
-                                app.reminderSpeechController.stop()
+                                app.reminderAudioRepository.stop()
                                 dismissOverlayViewOnly()
                                 serviceScope.launch {
                                     val today = LocalDate.now().toString() // "yyyy-MM-dd"
@@ -184,7 +184,7 @@ class HabitOverlayService : Service() {
                                 }
                             },
                             onDismiss = {
-                                app.reminderSpeechController.stop()
+                                app.reminderAudioRepository.stop()
                                 dismissOverlay()
                             }
                         )
@@ -269,7 +269,7 @@ class HabitOverlayService : Service() {
     }
 
     override fun onDestroy() {
-        (applicationContext as? HabitApplication)?.reminderSpeechController?.stop()
+        (applicationContext as? HabitApplication)?.reminderAudioRepository?.stop()
         dismissOverlay()
         serviceScope.cancel()
         super.onDestroy()

@@ -26,6 +26,10 @@ class UserPreferencesManager(private val context: Context) {
         val REMINDER_VOLUME = floatPreferencesKey("reminder_volume")
         val SPEECH_PITCH = floatPreferencesKey("speech_pitch")
         val SPEECH_RATE = floatPreferencesKey("speech_rate")
+        val SELECTED_AUDIO_ENGINE = stringPreferencesKey("selected_audio_engine")
+        val ALARM_URI = stringPreferencesKey("alarm_uri")
+        val ALARM_DURATION = intPreferencesKey("alarm_duration")
+        val TTS_REPEATS = intPreferencesKey("tts_repeats")
     }
 
     val userNameFlow: Flow<String> = context.dataStore.data.map { preferences ->
@@ -86,6 +90,22 @@ class UserPreferencesManager(private val context: Context) {
 
     val speechRateFlow: Flow<Float> = context.dataStore.data.map { preferences ->
         preferences[SPEECH_RATE] ?: 1.0f
+    }
+
+    val selectedAudioEngineFlow: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[SELECTED_AUDIO_ENGINE] ?: "ALARM"
+    }
+
+    val alarmUriFlow: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[ALARM_URI] ?: ""
+    }
+
+    val alarmDurationFlow: Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[ALARM_DURATION] ?: 30
+    }
+
+    val ttsRepeatsFlow: Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[TTS_REPEATS] ?: 1
     }
 
     suspend fun saveUserName(name: String) {
@@ -176,6 +196,30 @@ class UserPreferencesManager(private val context: Context) {
     suspend fun saveSpeechRate(rate: Float) {
         context.dataStore.edit { preferences ->
             preferences[SPEECH_RATE] = rate
+        }
+    }
+
+    suspend fun saveSelectedAudioEngine(engine: String) {
+        context.dataStore.edit { preferences ->
+            preferences[SELECTED_AUDIO_ENGINE] = engine
+        }
+    }
+
+    suspend fun saveAlarmUri(uri: String) {
+        context.dataStore.edit { preferences ->
+            preferences[ALARM_URI] = uri
+        }
+    }
+
+    suspend fun saveAlarmDuration(duration: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[ALARM_DURATION] = duration
+        }
+    }
+
+    suspend fun saveTtsRepeats(repeats: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[TTS_REPEATS] = repeats
         }
     }
 

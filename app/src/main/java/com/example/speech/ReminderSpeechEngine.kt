@@ -105,6 +105,16 @@ class ReminderSpeechEngine(private val context: Context) {
             android.util.Log.d("TTS", "[TTS] Using system default engine")
             TextToSpeech(appContext) { status -> handleInit(status) }
         }
+
+        // Safety net: If TTS constructor fails to trigger onInit (rare but possible on some OS versions)
+        handler.postDelayed({
+            synchronized(this) {
+                if (state == EngineState.INITIALIZING) {
+                    android.util.Log.e("TTS", "[TTS] Init timeout reached. Forcing failure state.")
+                    handleInit(TextToSpeech.ERROR)
+                }
+            }
+        }, 5000)
     }
 
     private fun isPackageEnabled(packageName: String): Boolean {

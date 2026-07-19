@@ -2,8 +2,12 @@ package com.example
 
 import android.app.Application
 import com.example.data.local.database.HabitDatabase
+import com.example.data.audio.AlarmSoundEngine
+import com.example.data.audio.TextToSpeechEngine
 import com.example.data.preferences.UserPreferencesManager
 import com.example.data.repository.HabitRepositoryImpl
+import com.example.data.repository.ReminderAudioRepositoryImpl
+import com.example.domain.audio.ReminderAudioRepository
 import com.example.domain.repository.HabitRepository
 import com.example.domain.usecase.*
 import com.example.speech.ReminderSpeechController
@@ -26,6 +30,7 @@ class HabitApplication : Application() {
 
     lateinit var preferencesManager: UserPreferencesManager
     lateinit var repository: HabitRepository
+    lateinit var reminderAudioRepository: ReminderAudioRepository
     lateinit var reminderSpeechController: ReminderSpeechController
 
     // Use cases
@@ -98,6 +103,16 @@ class HabitApplication : Application() {
             val database = HabitDatabase.getDatabase(this@HabitApplication)
             val repo = HabitRepositoryImpl(database.habitDao(), database.notificationDao())
             repository = repo
+
+            val ttsEngine = TextToSpeechEngine(com.example.speech.ReminderSpeechManager(this@HabitApplication))
+            val alarmEngine = AlarmSoundEngine()
+            reminderAudioRepository = ReminderAudioRepositoryImpl(
+                context = this@HabitApplication,
+                preferencesManager = preferencesManager,
+                ttsEngine = ttsEngine,
+                alarmEngine = alarmEngine
+            )
+
             getAllHabitsUseCase = GetAllHabitsUseCase(repo)
             addHabitUseCase = AddHabitUseCase(repo, this@HabitApplication)
             updateHabitUseCase = UpdateHabitUseCase(repo, this@HabitApplication)

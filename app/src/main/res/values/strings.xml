@@ -87,7 +87,28 @@
     <string name="speech_enabled">Speech Enabled</string>
     <string name="speech_pitch">Speech Pitch</string>
     <string name="speech_rate">Speech Rate</string>
-    <string name="preview_voice">Preview Voice</string>
+    <!-- Reminder Audio System -->
+    <string name="reminder_audio_title">Reminder Audio</string>
+    <string name="reminder_audio_engine_alarm">Alarm Sound (Recommended)</string>
+    <string name="reminder_audio_engine_tts">Text To Speech</string>
+    <string name="reminder_audio_test_button">Test Reminder</string>
+    <string name="reminder_audio_alarm_select">Choose Alarm Sound</string>
+    <string name="reminder_audio_current_alarm">Current Alarm: %1$s</string>
+    <string name="reminder_audio_duration">Alarm Duration</string>
+    <string name="reminder_audio_duration_15s">15 seconds</string>
+    <string name="reminder_audio_duration_30s">30 seconds (Default)</string>
+    <string name="reminder_audio_duration_60s">60 seconds</string>
+    <string name="reminder_audio_duration_infinite">Until Dismissed</string>
+    <string name="reminder_audio_tts_repeats">Repeat Voice</string>
+    <string name="reminder_audio_tts_once">Speak once</string>
+    <string name="reminder_audio_tts_twice">Repeat twice</string>
+    <string name="reminder_audio_tts_not_installed">Not Installed</string>
+    <string name="reminder_audio_tts_unavailable_title">Text To Speech unavailable</string>
+    <string name="reminder_audio_tts_unavailable_msg">No Text-to-Speech engine is installed. Voice reminders require Google Speech Services. Please install it from Google Play.</string>
+    <string name="reminder_audio_google_play_unavailable_title">Google Play unavailable</string>
+    <string name="reminder_audio_google_play_unavailable_msg">Google Play Services are unavailable on this device. Text To Speech cannot be installed automatically.</string>
+    <string name="reminder_audio_install">Install</string>
+    <string name="reminder_audio_tts_preview">Voice test is working.</string>
     <string name="reminder_voice_template">It\'s time for your %1$s habit.</string>
     <string name="reminder_voice_preview">Voice test is working.</string>
 

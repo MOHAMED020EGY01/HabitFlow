@@ -1,13 +1,22 @@
 package com.example.presentation.screens.settings
 
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -15,39 +24,35 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.presentation.navigation.Routes
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Info
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import com.example.domain.audio.AudioEngineType
+import com.example.domain.audio.TTSStatus
+import kotlinx.coroutines.launch
+import java.util.Locale
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,12 +68,26 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
+    // Alarm Sound Picker Launcher
+    val alarmPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            }
+            uri?.let { viewModel.setAlarmUri(it.toString()) }
+        }
+    }
+
     // Register ActivityResult Photo Picker Launcher
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         uri?.let {
-            // Persist read permission for the uri if needed, or simply save string
             viewModel.updateUserPhoto(it.toString())
         }
     }
@@ -80,7 +99,7 @@ fun SettingsScreen(
         uiState.appLanguage == "ar"
     }
     Scaffold(
-        containerColor = androidx.compose.ui.graphics.Color.Transparent
+        containerColor = Color.Transparent
     ) { innerPadding ->
         val screenBgModifier = if (androidx.compose.foundation.isSystemInDarkTheme())
             Modifier.background(MaterialTheme.colorScheme.background)
@@ -222,55 +241,6 @@ fun SettingsScreen(
                 }
             }
 
-            // Theme Configuration Card - Hidden for Task 4 fix
-            if (false) {
-                com.example.presentation.components.GlassCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Text(
-                            text = stringResource(com.example.R.string.theme),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            listOf("light", "dark", "system").forEach { themeOption ->
-                                val isSelected = uiState.appTheme == themeOption
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(36.dp)
-                                        .clip(RoundedCornerShape(18.dp))
-                                        .background(
-                                            if (isSelected) MaterialTheme.colorScheme.primary
-                                            else MaterialTheme.colorScheme.background
-                                        )
-                                        .clickable { viewModel.updateTheme(themeOption) }
-                                        .testTag("theme_$themeOption"),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = themeOption.replaceFirstChar { it.uppercase() },
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary
-                                        else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             // Language Selector Card
             com.example.presentation.components.GlassCard(
                 modifier = Modifier.fillMaxWidth(),
@@ -298,8 +268,6 @@ fun SettingsScreen(
                         onOptionSelected = { langCode ->
                             if (uiState.appLanguage != langCode) {
                                 viewModel.updateLanguage(langCode)
-                                // AppCompatDelegate.setApplicationLocales inside updateLanguage 
-                                // handles recreation. Manual recreate() is removed to avoid clash.
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -321,13 +289,13 @@ fun SettingsScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = androidx.compose.ui.res.stringResource(com.example.R.string.card_animations),
+                            text = stringResource(com.example.R.string.card_animations),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = androidx.compose.ui.res.stringResource(com.example.R.string.card_animations_desc),
+                            text = stringResource(com.example.R.string.card_animations_desc),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -431,7 +399,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Speech Reminder Settings Card
+            // Reminder Audio Card
             com.example.presentation.components.GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -441,112 +409,156 @@ fun SettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = stringResource(com.example.R.string.reminder_voice),
+                        text = stringResource(com.example.R.string.reminder_audio_title),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(com.example.R.string.speech_enabled),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp
-                            )
-                        }
-                        Switch(
-                            checked = uiState.isSpeechEnabled,
-                            onCheckedChange = { viewModel.setSpeechEnabled(it) }
+                    // Engine Selection
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ReminderAudioOption(
+                            title = stringResource(com.example.R.string.reminder_audio_engine_alarm),
+                            selected = uiState.audioSettings.selectedEngine == AudioEngineType.ALARM,
+                            onClick = { viewModel.setAudioEngine(AudioEngineType.ALARM) }
+                        )
+
+                        val isTtsAvailable = uiState.ttsStatus == TTSStatus.AVAILABLE
+                        ReminderAudioOption(
+                            title = stringResource(com.example.R.string.reminder_audio_engine_tts),
+                            selected = uiState.audioSettings.selectedEngine == AudioEngineType.TTS,
+                            enabled = true,
+                            onClick = {
+                                if (uiState.ttsStatus == TTSStatus.NOT_INSTALLED) {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.tts"))
+                                    try {
+                                        context.startActivity(intent)
+                                    } catch (e: Exception) {
+                                        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.tts"))
+                                        context.startActivity(webIntent)
+                                    }
+                                } else {
+                                    viewModel.setAudioEngine(AudioEngineType.TTS)
+                                }
+                            },
+                            subtitle = if (!isTtsAvailable && uiState.ttsStatus == TTSStatus.NOT_INSTALLED) 
+                                stringResource(com.example.R.string.reminder_audio_tts_not_installed) else null
                         )
                     }
 
-                    if (uiState.isSpeechEnabled) {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = stringResource(com.example.R.string.speech_pitch),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = String.format("%.1f", uiState.speechPitch),
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Slider(
-                                value = uiState.speechPitch,
-                                onValueChange = { viewModel.setSpeechPitch(it) },
-                                valueRange = 0.5f..2.0f,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
 
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = stringResource(com.example.R.string.speech_rate),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = String.format("%.1f", uiState.speechRate),
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Slider(
-                                value = uiState.speechRate,
-                                onValueChange = { viewModel.setSpeechRate(it) },
-                                valueRange = 0.5f..2.0f,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = stringResource(com.example.R.string.reminder_volume),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = "${(uiState.reminderVolume * 100).toInt()}%",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            Slider(
-                                value = uiState.reminderVolume,
-                                onValueChange = { viewModel.setReminderVolume(it) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-
+                    // Contextual Settings
+                    if (uiState.audioSettings.selectedEngine == AudioEngineType.ALARM) {
+                        // Alarm Settings
                         Button(
-                            onClick = { viewModel.previewVoice(uiState.reminderVolume, uiState.speechPitch, uiState.speechRate) },
+                            onClick = {
+                                val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(com.example.R.string.reminder_audio_alarm_select))
+                                    val alarmUri = if (uiState.audioSettings.alarmUri.isNotEmpty()) Uri.parse(uiState.audioSettings.alarmUri) else null
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmUri)
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+                                    putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                                }
+                                alarmPickerLauncher.launch(intent)
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text(text = stringResource(com.example.R.string.preview_voice))
+                            Text(text = stringResource(com.example.R.string.reminder_audio_alarm_select))
                         }
+
+                        // Duration Selection
+                        Column {
+                            Text(
+                                text = stringResource(com.example.R.string.reminder_audio_duration),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                listOf(
+                                    15 to stringResource(com.example.R.string.reminder_audio_duration_15s),
+                                    30 to stringResource(com.example.R.string.reminder_audio_duration_30s),
+                                    60 to stringResource(com.example.R.string.reminder_audio_duration_60s),
+                                    -1 to stringResource(com.example.R.string.reminder_audio_duration_infinite)
+                                ).forEach { (dur, label) ->
+                                    val isSel = uiState.audioSettings.alarmDurationSeconds == dur
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(if (isSel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
+                                            .clickable { viewModel.setAlarmDuration(dur) }
+                                            .padding(vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = label.split(" ")[0],
+                                            fontSize = 10.sp,
+                                            color = if (isSel) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // TTS Settings
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            // Repeats
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(stringResource(com.example.R.string.reminder_audio_tts_repeats), fontSize = 14.sp)
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    listOf(1, 2).forEach { count ->
+                                        val isSel = uiState.audioSettings.ttsRepeats == count
+                                        FilterChip(
+                                            selected = isSel,
+                                            onClick = { viewModel.setTtsRepeats(count) },
+                                            label = { Text(if (count == 1) "1x" else "2x") }
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Pitch/Rate Sliders
+                            AudioSettingSlider(
+                                label = stringResource(com.example.R.string.speech_pitch),
+                                currentValue = uiState.audioSettings.pitch,
+                                onValueChange = { viewModel.setSpeechPitch(it) }
+                            )
+
+                            AudioSettingSlider(
+                                label = stringResource(com.example.R.string.speech_rate),
+                                currentValue = uiState.audioSettings.rate,
+                                onValueChange = { viewModel.setSpeechRate(it) }
+                            )
+                        }
+                    }
+
+                    // Dynamic Test Button
+                    Button(
+                        onClick = { viewModel.testReminder() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(com.example.R.string.reminder_audio_test_button),
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -649,6 +661,163 @@ fun SettingsScreen(
                 }
             }
         )
+    }
+}
+
+@Composable
+private fun AudioSettingSlider(
+    label: String,
+    currentValue: Float,
+    onValueChange: (Float) -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    
+    // LAYER 1: Local UI State (Source of truth for Slider and Label)
+    var localValue by remember { mutableFloatStateOf(currentValue) }
+    
+    // Helper to ensure callbacks always have the latest value
+    val currentOnValueChange by rememberUpdatedState(onValueChange)
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isDragged by interactionSource.collectIsDraggedAsState()
+    
+    // Animation state tracking (not used for dragging, only for presets)
+    var isAnimating by remember { mutableStateOf(false) }
+
+    // LAYER 3 Sync: Update local state from Persistent state only when idle
+    LaunchedEffect(currentValue) {
+        if (!isDragged && !isAnimating) {
+            localValue = currentValue
+        }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            // Numeric Display updates immediately from Layer 1
+            Text(
+                text = String.format(Locale.US, "%.2fx", localValue),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        // Preset Chips
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            listOf(
+                "Low" to 0.5f,
+                "Default" to 1.0f,
+                "High" to 1.5f
+            ).forEach { (name, presetValue) ->
+                val isSelected = abs(localValue - presetValue) < 0.02f
+                val backgroundColor by animateColorAsState(
+                    if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                    label = "chip_bg"
+                )
+                val contentColor by animateColorAsState(
+                    if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    label = "chip_content"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(backgroundColor)
+                        .clickable(enabled = !isAnimating) {
+                            // LAYER 2: Animation State
+                            scope.launch {
+                                isAnimating = true
+                                val anim = Animatable(localValue)
+                                anim.animateTo(
+                                    targetValue = presetValue,
+                                    animationSpec = tween(200)
+                                ) {
+                                    // Update ONLY local UI state during animation frames
+                                    localValue = this.value
+                                }
+                                // Commit to LAYER 3 exactly once after animation finishes
+                                currentOnValueChange(presetValue)
+                                isAnimating = false
+                            }
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = name,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = contentColor
+                    )
+                }
+            }
+        }
+
+        Slider(
+            value = localValue,
+            onValueChange = {
+                // Dragging updates ONLY local UI state (Layer 1)
+                localValue = it
+            },
+            onValueChangeFinished = {
+                // Commit to LAYER 3 exactly once after dragging ends
+                currentOnValueChange(localValue)
+            },
+            valueRange = 0.5f..2.0f,
+            steps = 29,
+            interactionSource = interactionSource,
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTrackColor = MaterialTheme.colorScheme.primary,
+                inactiveTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+            )
+        )
+    }
+}
+
+@Composable
+fun ReminderAudioOption(
+    title: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    subtitle: String? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent)
+            .clickable(enabled = enabled) { onClick() }
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+            if (subtitle != null) {
+                Text(text = subtitle, fontSize = 11.sp, color = MaterialTheme.colorScheme.error)
+            }
+        }
+        RadioButton(selected = selected, onClick = onClick, enabled = enabled)
     }
 }
 
@@ -839,5 +1008,3 @@ fun ExactAlarmsPermissionRow(isArabic: Boolean) {
         }
     }
 }
-
-

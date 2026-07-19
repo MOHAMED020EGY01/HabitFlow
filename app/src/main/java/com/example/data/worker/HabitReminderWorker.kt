@@ -63,7 +63,7 @@ class HabitReminderWorker(
             val db = com.example.data.local.database.HabitDatabase.getDatabase(context)
             val habit = db.habitDao().getHabitById(habitId)
             if (habit != null) {
-                app.reminderSpeechController.speakHabitReminder(habit.toDomain())
+                app.reminderAudioRepository.playReminder(habit.name)
             }
         } catch (e: Exception) {
             e.printStackTrace()
