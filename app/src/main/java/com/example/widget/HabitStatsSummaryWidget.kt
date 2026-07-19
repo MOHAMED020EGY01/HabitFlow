@@ -163,7 +163,7 @@ private fun HabitStatsSummaryWidgetContent(
                                 )
                             }
 
-                            Spacer(modifier = GlanceModifier.height(2.dp))
+                            Spacer(modifier = GlanceModifier.height(8.dp))
 
                             // Best Streak Card (Top, Full Width)
                             BestStreakCard(
@@ -209,7 +209,7 @@ private fun HabitStatsSummaryWidgetContent(
                                     )
                                 }
                             }
-
+                            Spacer(modifier = GlanceModifier.height(8.dp))
                             // Failed Card (Bottom, Full Width)
                             StatCard(
                                 count = stats.failedCount,
