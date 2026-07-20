@@ -16,7 +16,9 @@ import java.time.LocalDate
 data class HabitsSummary(
     val totalHabits: Int,
     val activeHabits: Int,
-    val completedHabits: Int, // finished all days
+    val inactiveHabits: Int,
+    val completedHabits: Int,
+    val failedHabits: Int,
     val bestStreakHabitName: String,
     val bestStreakCount: Int,
     val bestStreakColorHex: String,
@@ -38,7 +40,10 @@ class GetHabitsSummaryUseCase(private val repository: HabitRepository) {
 
         return combine(habitsFlow, logsFlow) { habitsWithCompletion, completedLogs ->
             val totalHabits = habitsWithCompletion.size
-            val activeHabits = habitsWithCompletion.count { it.habit.isActive }
+            val activeHabits = habitsWithCompletion.count { it.habit.status == com.example.core.model.domain.HabitStatus.ACTIVE }
+            val inactiveHabits = habitsWithCompletion.count { it.habit.status == com.example.core.model.domain.HabitStatus.INACTIVE }
+            val completedHabits = habitsWithCompletion.count { it.habit.status == com.example.core.model.domain.HabitStatus.COMPLETE }
+            val failedHabits = habitsWithCompletion.count { it.habit.status == com.example.core.model.domain.HabitStatus.FAILURE }
 
             val completedLogsGrouped = completedLogs.groupBy { it.habitId }
 
@@ -50,11 +55,6 @@ class GetHabitsSummaryUseCase(private val repository: HabitRepository) {
             // Apply rank
             val rankedLeaderboard = leaderboardItems.mapIndexed { index, item ->
                 item.copy(rank = index + 1)
-            }
-
-            // completedHabits: habits that have officially transitioned to COMPLETE status.
-            val completedHabits = habitsWithCompletion.count { item ->
-                item.habit.status == com.example.core.model.domain.HabitStatus.COMPLETE
             }
 
             // Best streak calculation
@@ -87,7 +87,9 @@ class GetHabitsSummaryUseCase(private val repository: HabitRepository) {
             HabitsSummary(
                 totalHabits = totalHabits,
                 activeHabits = activeHabits,
+                inactiveHabits = inactiveHabits,
                 completedHabits = completedHabits,
+                failedHabits = failedHabits,
                 bestStreakHabitName = bestStreakName,
                 bestStreakCount = bestStreakCount,
                 bestStreakColorHex = bestStreakColor,

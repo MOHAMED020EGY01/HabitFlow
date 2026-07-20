@@ -3,7 +3,6 @@ package com.example.core.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
@@ -85,7 +84,7 @@ fun DaysOfWeekSelector(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    val isDark = true
     
     val app = context.applicationContext as com.example.app.HabitApplication
     val langCode = app.currentLanguageCode

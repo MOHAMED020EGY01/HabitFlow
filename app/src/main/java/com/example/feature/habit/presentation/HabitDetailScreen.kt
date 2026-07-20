@@ -87,10 +87,7 @@ fun HabitDetailScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
-        val detailBgModifier = if (androidx.compose.foundation.isSystemInDarkTheme())
-            Modifier.background(MaterialTheme.colorScheme.background)
-        else
-            Modifier.background(com.example.core.ui.theme.LightBackgroundGradientBrush)
+        val detailBgModifier = Modifier.background(MaterialTheme.colorScheme.background)
 
         if (uiState.isLoading) {
             Box(

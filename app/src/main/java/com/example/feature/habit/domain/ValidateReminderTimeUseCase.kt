@@ -47,11 +47,11 @@ class ValidateReminderTimeUseCase(
             }
         }
 
-        // 2. Check against every OTHER active habit in the database
+        // 2. Check against every OTHER habit in the database (Active, Inactive, etc.)
         val allHabits = habitRepository.getAllHabitsSync()
         for (habit in allHabits) {
-            // Only check other active habits
-            if (!habit.isActive || habit.id == editingHabitId) continue
+            // Only skip the habit currently being edited
+            if (habit.id == editingHabitId) continue
 
             // Only check if they share at least one active day
             val sharedDays = habit.activeDays.intersect(proposedActiveDays)

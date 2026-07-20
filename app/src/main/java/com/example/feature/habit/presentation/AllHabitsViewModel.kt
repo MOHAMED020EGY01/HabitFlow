@@ -42,6 +42,28 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         observeData()
+        enforceActiveLimitIfNeeded()
+    }
+
+    private fun enforceActiveLimitIfNeeded() {
+        viewModelScope.launch {
+            val habits = app.repository.getAllHabitsSync()
+            val activeHabits = habits.filter { it.status == com.example.core.model.domain.HabitStatus.ACTIVE }
+            if (activeHabits.size > com.example.core.model.domain.MAX_ACTIVE_HABITS) {
+                // Keep only the first 6 (ordered by startedAt/createdAt)
+                val toDeactivate = activeHabits
+                    .sortedBy { it.startedAt ?: it.createdAt }
+                    .drop(com.example.core.model.domain.MAX_ACTIVE_HABITS)
+                
+                toDeactivate.forEach { habit ->
+                    app.toggleHabitActiveUseCase(habit.id, makeActive = false)
+                }
+                
+                _uiEvent.emit(AllHabitsUiEvent.ShowSnackbar(
+                    app.applicationContext.getString(com.example.R.string.add_habit_limit_warning, com.example.core.model.domain.MAX_ACTIVE_HABITS)
+                ))
+            }
+        }
     }
 
     private fun observeData() {
@@ -150,16 +172,25 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
                     _uiEvent.emit(AllHabitsUiEvent.ShowSnackbar(app.applicationContext.getString(com.example.R.string.habit_activated_success)))
                 }
                 is com.example.core.model.domain.ActivationResult.SavedAsInactive -> {
-                    _uiEvent.emit(AllHabitsUiEvent.ShowSnackbar(
-                        app.applicationContext.getString(com.example.R.string.add_habit_limit_reached_desc)
-                    ))
+                    val habit = app.repository.getHabitById(habitId)
+                    if (habit != null) {
+                        _uiEvent.emit(AllHabitsUiEvent.ShowSwapDialog(habit))
+                    }
                 }
                 else -> Unit
             }
+        }
+    }
+
+    fun swapHabits(toActivateId: Int, toDeactivateId: Int) {
+        viewModelScope.launch {
+            app.swapHabitsUseCase(toActivateId, toDeactivateId)
+            _uiEvent.emit(AllHabitsUiEvent.ShowSnackbar(app.applicationContext.getString(com.example.R.string.habit_activated_success)))
         }
     }
 }
 
 sealed class AllHabitsUiEvent {
     data class ShowSnackbar(val message: String) : AllHabitsUiEvent()
+    data class ShowSwapDialog(val habitToActivate: Habit) : AllHabitsUiEvent()
 }

@@ -24,7 +24,7 @@
     <string name="reliable_reminders_protected">Fully protected ✓</string>
     <string name="reliable_reminders_setup_needed">Setup needed (%1$d of %2$d steps)</string>
     <string name="reliable_reminders_fix_now">Fix Now</string>
-    <string name="reliable_reminders_path_guide">Use manual path if disabled: Settings > Apps > Special access > Display over other apps</string>
+    <string name="reliable_reminders_path_guide">Use manual path if disabled: Settings > Apps > App Management > Display over other apps</string>
     <string name="display_over_apps">Display Over Other Apps</string>
     <string name="run_in_background">Run in Background</string>
     <string name="run_in_background_desc">Keeps reminders &amp; overlay reliable even when the app is closed</string>
@@ -268,6 +268,8 @@
     <string name="days_selector_at_least_one">Select at least one day</string>
     <string name="hide_nav_bar">Hide system navigation bar</string>
     <string name="hide_nav_bar_desc">Hide the Android bottom navigation bar (swipe to reveal)</string>
+    <string name="add_habit_limit_reached">Limit Reached</string>
+    <string name="swap_habit_desc">You already have 6 active habits. Choose one to deactivate to activate this one:</string>
     <string name="habit_created_activated">Habit created and activated successfully! !</string>
     <string name="habit_updated_activated">Habit updated and activated successfully! !</string>
         <string name="habit_created">Habit created successfully! [OK]</string>

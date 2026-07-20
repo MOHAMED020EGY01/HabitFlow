@@ -47,6 +47,7 @@ class HabitApplication : Application() {
     lateinit var getHabitsSummaryUseCase: GetHabitsSummaryUseCase
     lateinit var validateReminderTimeUseCase: ValidateReminderTimeUseCase
     lateinit var toggleHabitActiveUseCase: ToggleHabitActiveUseCase
+    lateinit var swapHabitsUseCase: SwapHabitsUseCase
     lateinit var getActiveHabitsCountUseCase: GetActiveHabitsCountUseCase
 
     @Volatile
@@ -127,6 +128,7 @@ class HabitApplication : Application() {
             getHabitsSummaryUseCase = GetHabitsSummaryUseCase(repo)
             validateReminderTimeUseCase = ValidateReminderTimeUseCase(repo)
             toggleHabitActiveUseCase = ToggleHabitActiveUseCase(repo, this@HabitApplication)
+            swapHabitsUseCase = SwapHabitsUseCase(repo, this@HabitApplication)
             getActiveHabitsCountUseCase = GetActiveHabitsCountUseCase(repo)
             isInitialized = true
         }

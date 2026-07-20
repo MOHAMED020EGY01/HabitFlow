@@ -115,42 +115,35 @@ class HabitDetailViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun pauseHabit() {
-        val details = _uiState.value.habitDetails ?: return
-        val updatedHabit = details.habit.copy(
-            status = com.example.core.model.domain.HabitStatus.INACTIVE,
-            isActive = false,
-            inactiveSinceTimestamp = System.currentTimeMillis()
-        )
         viewModelScope.launch {
-            app.repository.updateHabit(updatedHabit)
-            HabitReminderWorker.cancelHabitReminders(app, updatedHabit.id)
-            com.example.core.infrastructure.widget.HabitWidgetSyncUpdater.updateNowForced(app.applicationContext)
+            app.toggleHabitActiveUseCase(currentHabitId, makeActive = false)
+            // No need to manually update state here, the observer will catch it
         }
     }
 
     fun resumeHabit() {
-        val details = _uiState.value.habitDetails ?: return
         viewModelScope.launch {
             try {
                 com.example.core.domain.usecase.HabitStatusManager.performDailyRollover(app, app.repository)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val refreshedHabit = app.repository.getHabitById(currentHabitId) ?: details.habit
-            val updatedHabit = refreshedHabit.copy(
-                status = com.example.core.model.domain.HabitStatus.ACTIVE,
-                isActive = true,
-                inactiveSinceTimestamp = null
-            )
-            app.repository.updateHabit(updatedHabit)
-            HabitReminderWorker.scheduleHabitReminders(app, updatedHabit)
-            com.example.core.infrastructure.widget.HabitWidgetSyncUpdater.updateNowForced(app.applicationContext)
+            
+            val result = app.toggleHabitActiveUseCase(currentHabitId, makeActive = true)
+            if (result is com.example.core.model.domain.ActivationResult.SavedAsInactive) {
+                // We can't use a shared flow for snackbars here easily without adding it to the UI state
+                // but we can at least ensure the limit is enforced.
+                // For now, let's just make sure it doesn't bypass the limit.
+            }
         }
     }
 
     fun restartHabit() {
         val details = _uiState.value.habitDetails ?: return
         viewModelScope.launch {
+            val activeCount = app.repository.getActiveHabitsCount()
+            val willBeActive = activeCount < com.example.core.model.domain.MAX_ACTIVE_HABITS
+
             val logs = app.repository.getLogsForHabitSync(details.habit.id)
             val doneCount = logs.count { it.state == "DONE" || it.completed }
             val missCount = logs.count { it.state == "MISS" }
@@ -179,17 +172,21 @@ class HabitDetailViewModel(application: Application) : AndroidViewModel(applicat
             val newEndDate = todayMillis + (details.habit.durationDays * 24L * 60L * 60L * 1000L)
             
             val updatedHabit = details.habit.copy(
-                status = com.example.core.model.domain.HabitStatus.ACTIVE,
-                isActive = true,
+                status = if (willBeActive) com.example.core.model.domain.HabitStatus.ACTIVE else com.example.core.model.domain.HabitStatus.INACTIVE,
+                isActive = willBeActive,
                 cycleStartDate = todayMillis,
                 cycleEndDate = newEndDate,
                 inactiveDaysCount = 0,
-                inactiveSinceTimestamp = null
+                inactiveSinceTimestamp = if (willBeActive) null else todayMillis
             )
 
             app.repository.deleteLogsForHabit(details.habit.id)
             app.repository.updateHabit(updatedHabit)
-            HabitReminderWorker.scheduleHabitReminders(app, updatedHabit)
+            if (willBeActive) {
+                HabitReminderWorker.scheduleHabitReminders(app, updatedHabit)
+            } else {
+                HabitReminderWorker.cancelHabitReminders(app, updatedHabit.id)
+            }
             com.example.core.infrastructure.widget.HabitWidgetSyncUpdater.updateNowForced(app.applicationContext)
         }
     }

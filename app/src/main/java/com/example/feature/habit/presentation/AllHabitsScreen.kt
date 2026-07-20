@@ -27,6 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.core.ui.HabitCard
 import com.example.core.navigation.Routes
+import com.example.core.model.domain.Habit
+import androidx.compose.foundation.shape.CircleShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +38,7 @@ fun AllHabitsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    var habitToSwap by remember { mutableStateOf<Habit?>(null) }
 
     var currentTime by remember { mutableStateOf(java.time.LocalDateTime.now()) }
     LaunchedEffect(Unit) {
@@ -62,18 +65,60 @@ fun AllHabitsScreen(
                 is AllHabitsUiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(event.message)
                 }
+                is AllHabitsUiEvent.ShowSwapDialog -> {
+                    habitToSwap = event.habitToActivate
+                }
             }
         }
+    }
+
+    if (habitToSwap != null) {
+        val activeHabits = uiState.habitsWithProgress.filter { it.habit.status == com.example.core.model.domain.HabitStatus.ACTIVE }
+        
+        AlertDialog(
+            onDismissRequest = { habitToSwap = null },
+            title = { Text(stringResource(com.example.R.string.add_habit_limit_reached)) },
+            text = {
+                Column {
+                    Text(stringResource(com.example.R.string.swap_habit_desc))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    activeHabits.forEach { activeItem ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.swapHabits(habitToSwap!!.id, activeItem.habit.id)
+                                    habitToSwap = null
+                                }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(android.graphics.Color.parseColor(activeItem.habit.colorHex)))
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(activeItem.habit.name, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { habitToSwap = null }) {
+                    Text(stringResource(com.example.R.string.cancel))
+                }
+            }
+        )
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
-        val screenBgModifier = if (androidx.compose.foundation.isSystemInDarkTheme())
-            Modifier.background(MaterialTheme.colorScheme.background)
-        else
-            Modifier.background(com.example.core.ui.theme.LightBackgroundGradientBrush)
+        val screenBgModifier = Modifier.background(MaterialTheme.colorScheme.background)
 
         Column(
             modifier = Modifier

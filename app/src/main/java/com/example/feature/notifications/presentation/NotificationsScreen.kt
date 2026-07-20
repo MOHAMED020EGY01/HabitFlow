@@ -76,10 +76,7 @@ fun NotificationsScreen(
         },
         containerColor = Color.Transparent
     ) { innerPadding ->
-        val screenBgModifier = if (androidx.compose.foundation.isSystemInDarkTheme())
-            Modifier.background(MaterialTheme.colorScheme.background)
-        else
-            Modifier.background(com.example.core.ui.theme.LightBackgroundGradientBrush)
+        val screenBgModifier = Modifier.background(MaterialTheme.colorScheme.background)
 
         Box(
             modifier = Modifier

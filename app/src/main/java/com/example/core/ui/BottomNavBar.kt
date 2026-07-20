@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -42,7 +41,7 @@ fun BottomNavBar(
 ) {
     if (!visible) return
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = true
     val animationsEnabled = LocalCardAnimationsEnabled.current
     val bottomNavBlurCapable = remember { com.example.core.util.DeviceCapability.isBlurCapableDevice() }
 

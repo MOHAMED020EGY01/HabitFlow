@@ -24,7 +24,7 @@
     <string name="reliable_reminders_protected">محمي بالكامل ✓</string>
     <string name="reliable_reminders_setup_needed">مطلوب الإعداد (%1$d من %2$d خطوات)</string>
     <string name="reliable_reminders_fix_now">إصلاح الآن</string>
-    <string name="reliable_reminders_path_guide">استخدم المسار اليدوي في حالة وجدته غير مفعل: الإعدادات > التطبيقات > وصول خاص > الظهور في الأعلى</string>
+    <string name="reliable_reminders_path_guide">استخدم المسار اليدوي في حالة وجدته غير مفعل: الإعدادات > التطبيقات > مدير التطبيقات > الظهور في الأعلى</string>
     <string name="display_over_apps">العرض فوق التطبيقات الأخرى</string>
     <string name="run_in_background">التشغيل في الخلفية</string>
     <string name="run_in_background_desc">يبقي التذكيرات والواجهة العائمة دقيقة حتى لو كان التطبيق مغلقًا</string>
@@ -268,6 +268,8 @@
     <string name="hide_nav_bar">إخفاء شريط التنقل السفلي</string>
     <string name="hide_nav_bar_desc">إخفاء شريط التنقل السفلي في أندرويد (اسحب للإظهار)</string>
     <string name="habit_details_title">تفاصيل العادة</string>
+    <string name="add_habit_limit_reached">تم الوصول للحد الأقصى</string>
+    <string name="swap_habit_desc">لديك بالفعل 6 عادات نشطة. اختر واحدة لإيقافها لتفعيل هذه العادة:</string>
     <string name="habit_created_activated">تم إنشاء العادة وتفعيلها بنجاح! !</string>
     <string name="habit_updated_activated">تم تحديث العادة وتفعيلها بنجاح! !</string>
         <string name="habit_created">تم إنشاء العادة بنجاح! [OK]</string>

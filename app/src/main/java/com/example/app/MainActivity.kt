@@ -14,7 +14,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -95,16 +94,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            // val appTheme by app.preferencesManager.appThemeFlow.collectAsState(initial = "system")
             // Force Dark Mode always — Task 4 fix
             val darkTheme = true
-            /*
-            val darkTheme = when (appTheme) {
-                "dark" -> true
-                "light" -> false
-                else -> isSystemInDarkTheme()
-            }
-            */
 
             val appLanguage by app.preferencesManager.appLanguageFlow.collectAsState(initial = app.currentLanguageCode)
             val isCardAnimationsEnabled by app.preferencesManager.isCardAnimationsEnabledFlow.collectAsState(initial = true)

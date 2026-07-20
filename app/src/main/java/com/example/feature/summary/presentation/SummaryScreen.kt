@@ -37,10 +37,7 @@ fun SummaryScreen(
     Scaffold(
         containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
-        val screenBgModifier = if (androidx.compose.foundation.isSystemInDarkTheme())
-            Modifier.background(MaterialTheme.colorScheme.background)
-        else
-            Modifier.background(com.example.core.ui.theme.LightBackgroundGradientBrush)
+        val screenBgModifier = Modifier.background(MaterialTheme.colorScheme.background)
 
         Column(
             modifier = Modifier
@@ -74,49 +71,101 @@ fun SummaryScreen(
                 val sum = summary!!
 
                 // Bento Statistics Layout
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Total Habits Card
-                    com.example.core.ui.GlassCard(
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = com.example.core.util.AppFormatters.forceWesternDigits("${sum.totalHabits}"),
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = androidx.compose.ui.res.stringResource(com.example.R.string.summary_total_habits),
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        // Total Habits Card
+                        com.example.core.ui.GlassCard(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = com.example.core.util.AppFormatters.forceWesternDigits("${sum.totalHabits}"),
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = androidx.compose.ui.res.stringResource(com.example.R.string.summary_total_habits),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
+                        // Completed Habits Card
+                        com.example.core.ui.GlassCard(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = com.example.core.util.AppFormatters.forceWesternDigits("${sum.completedHabits}"),
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF4CAF50) // Green
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = androidx.compose.ui.res.stringResource(com.example.R.string.summary_fully_completed),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
 
-                    // Completed Habits Card
-                    com.example.core.ui.GlassCard(
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(16.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = com.example.core.util.AppFormatters.forceWesternDigits("${sum.completedHabits}"),
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = androidx.compose.ui.res.stringResource(com.example.R.string.summary_fully_completed),
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        // Active Habits Card
+                        com.example.core.ui.GlassCard(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = com.example.core.util.AppFormatters.forceWesternDigits("${sum.activeHabits}"),
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF138FD0) // Blue
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = androidx.compose.ui.res.stringResource(com.example.R.string.filter_active),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+
+                        // Inactive Habits Card
+                        com.example.core.ui.GlassCard(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = com.example.core.util.AppFormatters.forceWesternDigits("${sum.inactiveHabits}"),
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFE5CE35) // Yellow
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = androidx.compose.ui.res.stringResource(com.example.R.string.filter_inactive),
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
@@ -192,7 +241,7 @@ fun SummaryScreen(
 
                         if (sum.leaderboard.isEmpty()) {
                             Text(
-                                text = "No habits to rank yet.",
+                                text = androidx.compose.ui.res.stringResource(com.example.R.string.no_habits_rank),
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

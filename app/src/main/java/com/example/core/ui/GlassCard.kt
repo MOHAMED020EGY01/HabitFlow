@@ -2,7 +2,6 @@ package com.example.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -94,7 +93,7 @@ fun GlassCard(
     isScrolling: Boolean = false, // New parameter to optimize performance
     content: @Composable BoxScope.() -> Unit
 ) {
-    val isDark = isSystemInDarkTheme()
+    val isDark = true
     val defaultPrimary = MaterialTheme.colorScheme.primary
     val accentColor = habitColor ?: defaultPrimary
     val surfaceColor = MaterialTheme.colorScheme.surface
