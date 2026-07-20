@@ -29,18 +29,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.feature.main.presentation.MainPagerScreen
 import com.example.core.navigation.Routes
+import com.example.core.navigation.rememberNavigationMotionEngine
+import com.example.core.navigation.MainTab
 import com.example.core.navigation.NavAnimations
 import com.example.feature.habit.presentation.AddHabitScreen
-import com.example.feature.habit.presentation.AllHabitsScreen
 import com.example.feature.habit.presentation.HabitDetailScreen
-import com.example.feature.home.presentation.HomeScreen
 import com.example.feature.onboarding.presentation.OnboardingScreen
-import com.example.feature.settings.presentation.SettingsScreen
 import com.example.feature.splash.presentation.SplashScreen
 import com.example.feature.calendar.presentation.CalendarScreen
 import com.example.feature.notifications.presentation.NotificationsScreen
-import com.example.feature.summary.presentation.SummaryScreen
 import com.example.core.ui.theme.HabitFlowTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -182,23 +181,10 @@ class MainActivity : AppCompatActivity() {
                         }
                         val currentRoute = rawRoute ?: lastNonNullRoute.value
 
-                        val showBottomBar = currentRoute in listOf(
-                            Routes.HOME,
-                            Routes.ALL_HABITS,
-                            Routes.SUMMARY,
-                            Routes.SETTINGS
-                        )
-
-                        val onNavigate = androidx.compose.runtime.remember(navController) {
-                            { route: String -> navController.navigateToTopLevelDestination(route) }
-                        }
-
                         AppNavigation(
                             navController = navController,
                             isRtl = isRtl,
                             currentRoute = currentRoute,
-                            showBottomBar = showBottomBar,
-                            onNavigate = onNavigate,
                             navBarPaddingRequired = !isNavBarHidden
                         )
                     }
@@ -256,8 +242,6 @@ private fun AppNavigation(
     navController: NavHostController,
     isRtl: Boolean,
     currentRoute: String?,
-    showBottomBar: Boolean,
-    onNavigate: (String) -> Unit,
     navBarPaddingRequired: Boolean = true
 ) {
     val enterTransition = NavAnimations.enterTransition(isRtl)
@@ -265,12 +249,14 @@ private fun AppNavigation(
     val popEnterTransition = NavAnimations.popEnterTransition(isRtl)
     val popExitTransition = NavAnimations.popExitTransition(isRtl)
 
+    val engine = rememberNavigationMotionEngine()
+    val isMainPagerActive = currentRoute?.startsWith(Routes.MAIN_PAGER.split("?").first()) == true
+
     Scaffold(
         bottomBar = {
-            BottomNavBar(
-                selectedRoute = currentRoute,
-                onNavigate = onNavigate,
-                visible = showBottomBar,
+            com.example.core.ui.BottomNavBar(
+                engine = engine,
+                visible = isMainPagerActive,
                 navBarPaddingRequired = navBarPaddingRequired
             )
         },
@@ -295,9 +281,28 @@ private fun AppNavigation(
                 composable(route = Routes.ONBOARDING) {
                     OnboardingScreen(navController = navController)
                 }
-                composable(route = Routes.HOME) {
-                    HomeScreen(navController = navController)
+                
+                composable(
+                    route = Routes.MAIN_PAGER,
+                    arguments = listOf(
+                        navArgument("initialTab") {
+                            type = NavType.IntType
+                            defaultValue = 0
+                        }
+                    )
+                ) { backStackEntry ->
+                    val initialTabIndex = backStackEntry.arguments?.getInt("initialTab") ?: 0
+                    
+                    LaunchedEffect(initialTabIndex) {
+                        engine.scrollTo(MainTab.entries[initialTabIndex])
+                    }
+                    
+                    MainPagerScreen(
+                        navController = navController,
+                        engine = engine
+                    )
                 }
+
                 composable(
                     route = Routes.ADD_HABIT,
                     arguments = listOf(
@@ -324,15 +329,6 @@ private fun AppNavigation(
                 ) { backStackEntry ->
                     val habitId = backStackEntry.arguments?.getInt("habitId") ?: 0
                     HabitDetailScreen(navController = navController, habitId = habitId)
-                }
-                composable(route = Routes.ALL_HABITS) {
-                    AllHabitsScreen(navController = navController)
-                }
-                composable(route = Routes.SUMMARY) {
-                    SummaryScreen(navController = navController)
-                }
-                composable(route = Routes.SETTINGS) {
-                    SettingsScreen(navController = navController)
                 }
                 composable(route = Routes.CALENDAR) {
                     CalendarScreen(navController = navController)

@@ -98,7 +98,7 @@ private fun HabitStatsSummaryWidgetContent(
     val borderTint = ColorProvider(day = Color.Black.copy(alpha = 0.08f), night = Color.White.copy(alpha = 0.15f))
 
     val intent = Intent(context, MainActivity::class.java).apply {
-        putExtra("DEEP_LINK_ROUTE", Routes.SUMMARY)
+        putExtra("DEEP_LINK_ROUTE", Routes.MAIN_PAGER.replace("{initialTab}", "2"))
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
 

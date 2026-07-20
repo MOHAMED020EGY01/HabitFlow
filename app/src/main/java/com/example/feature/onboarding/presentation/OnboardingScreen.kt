@@ -110,8 +110,9 @@ fun OnboardingScreen(navController: NavController) {
                         scope.launch {
                             app.preferencesManager.saveUserName(userName.trim())
                             app.preferencesManager.saveOnboardingComplete(true)
-                            navController.navigate(Routes.HOME) {
+                            navController.navigate(Routes.MAIN_PAGER.replace("{initialTab}", "0")) {
                                 popUpTo(Routes.ONBOARDING) { inclusive = true }
+                                launchSingleTop = true
                             }
                         }
                     } else {

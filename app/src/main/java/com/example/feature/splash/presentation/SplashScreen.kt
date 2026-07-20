@@ -19,8 +19,9 @@ fun SplashScreen(navController: NavController) {
         val isOnboardingComplete = app.preferencesManager.isOnboardingCompleteFlow.first()
         
         if (isOnboardingComplete) {
-            navController.navigate(Routes.HOME) {
+            navController.navigate(Routes.MAIN_PAGER.replace("{initialTab}", "0")) {
                 popUpTo(Routes.SPLASH) { inclusive = true }
+                launchSingleTop = true
             }
         } else {
             navController.navigate(Routes.ONBOARDING) {

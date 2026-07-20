@@ -48,6 +48,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.R
 import com.example.core.ui.HabitCard
+import com.example.core.navigation.LocalNavigationMotionEngine
+import com.example.core.navigation.MainTab
 import com.example.core.navigation.Routes
 import com.example.core.navigation.navigateToTopLevelDestination
 import java.time.LocalDate
@@ -60,6 +62,7 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = viewModel()
 ) {
+    val engine = LocalNavigationMotionEngine.current
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
     val userPhotoUri by viewModel.userPhotoUri.collectAsStateWithLifecycle()
@@ -376,7 +379,7 @@ fun HomeScreen(
                                     .fillMaxWidth()
                                     .testTag("reliable_reminders_banner"),
                                 habitColor = MaterialTheme.colorScheme.error,
-                                onClick = { navController.navigate(Routes.SETTINGS) },
+                                onClick = { engine?.navigateTo(MainTab.SETTINGS) },
                                 shape = RoundedCornerShape(14.dp)
                             ) {
                                 Row(
@@ -449,7 +452,7 @@ fun HomeScreen(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                             TextButton(
-                                onClick = { navController.navigateToTopLevelDestination(Routes.ALL_HABITS) },
+                                onClick = { engine?.navigateTo(MainTab.ALL_HABITS) },
                                 modifier = Modifier.testTag("see_all_button")
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
