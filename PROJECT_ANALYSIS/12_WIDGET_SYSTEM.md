@@ -56,7 +56,7 @@ graph TD
 * **Evidence / الأدلة**:
   - تم فحص كود التحديث المباشر `WidgetDirectUpdater.kt` وآلية دمج التحديثات `HabitWidgetSyncUpdater.kt` وطريقة رسم الكامفاس لحلقات التقدم المكتوبة.
 * **Files Used / الملفات المستخدمة**:
-  - [WidgetDirectUpdater.kt](app/src/main/java/com/example/widget/WidgetDirectUpdater.kt#L19-L59)
-  - [HabitWidgetSyncUpdater.kt](app/src/main/java/com/example/widget/HabitWidgetSyncUpdater.kt#L16-L121)
-  - [AllHabitsWidget.kt](app/src/main/java/com/example/widget/AllHabitsWidget.kt)
+  - [WidgetDirectUpdater.kt](app/src/main/java/com/example/core/infrastructure/widget/WidgetDirectUpdater.kt#L19-L59)
+  - [HabitWidgetSyncUpdater.kt](app/src/main/java/com/example/core/infrastructure/widget/HabitWidgetSyncUpdater.kt#L16-L121)
+  - [AllHabitsWidget.kt](app/src/main/java/com/example/core/infrastructure/widget/AllHabitsWidget.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

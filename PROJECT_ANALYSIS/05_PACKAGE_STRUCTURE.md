@@ -1,62 +1,60 @@
 # 05_PACKAGE_STRUCTURE — تقسيم الحزم البرمجية / Subpackage Structure & Boundaries
 
-## هيكل الحزم للترميز المصدري / Source Package Layout
+## هيكل الحزم الفعلي / Actual Package Layout
 
-يتم تقسيم الكود المصدري داخل المجلد `app/src/main/java/com/example/` إلى الحزم الفرعية التالية لضمان فصل المسؤوليات:
+تم تنظيم المشروع باتباع نمط "العمارة النظيفة المعتمدة على الميزات" (Feature-Based Clean Architecture). يتم تقسيم الكود إلى ثلاث حزم رئيسية تحت `com.example`:
 
-The codebase under `com.example` is structured into these logical packages to isolate functional boundaries:
+The project is organized using a Feature-Based Clean Architecture pattern. The code is divided into three primary packages under `com.example`:
 
 ```text
 com.example/
-├── data/ (البيانات والمخازن والعمال)
-│   ├── audio/ (تطبيقات المنبهات ومحركات الصوت)
-│   ├── local/
-│   │   ├── dao/ (واجهات استعلام Room)
-│   │   ├── database/ (إعدادات قاعدة بيانات Room)
-│   │   └── entity/ (كيانات جداول SQLite)
-│   ├── preferences/ (تخزين مفاتيح DataStore)
-│   ├── receiver/ (مستقبلات بث نظام أندرويد)
-│   ├── repository/ (التنفيذ الفعلي لمستودعات النطاق)
-│   └── worker/ (عمال WorkManager الخلفيين)
-├── domain/ (المنطق وقواعد العمل الخالصة)
-│   ├── audio/ (تجريد وعقود محركات المنبهات)
-│   ├── model/ (نماذج الكائنات الصرفة)
-│   ├── repository/ (واجهات وعقود المستودعات)
-│   ├── usecase/ (حالات الاستخدام الفردية)
-│   └── util/ (أدوات الحساب والانتظام في التتبع)
-├── overlay/ (إدارة النافذة العائلة فوق التطبيقات)
-│   ├── composable/ (واجهة كومبوز للنافذة العائمة)
-│   └── [Receivers/Services] (مستقبلات وخدمات دورة حياة النافذة)
-├── presentation/ (العرض والواجهات)
-│   ├── components/ (عناصر الواجهة المشتركة)
-│   ├── navigation/ (إدارة التنقل والتحريكات)
-│   └── screens/ (الشاشات الفرعية ونماذج العرض)
-├── service/ (الخدمة الخلفية للموثوقية ومراقبة القفل)
-├── speech/ (إدارة دورة حياة النطق الآلي للإنذارات)
-└── widget/ (قطع الواجهة التفاعلية للشاشة الرئيسية Glance)
+├── app/                 # طبقة التكامل والتشغيل / Integration & Startup Layer
+│   ├── HabitApplication.kt   # حاوية DI والتهيئة / DI Container & Initialization
+│   └── MainActivity.kt        # النشاط الرئيسي والتنقل / Main Activity & Navigation
+│
+├── core/                # النواة المشتركة / Shared Core
+│   ├── audio/           # محركات الصوت و TTS / Audio Engines & TTS
+│   ├── database/        # قاعدة بيانات Room والجداول / Room Database & DAOs
+│   ├── datastore/       # إدارة التفضيلات / Preferences (DataStore)
+│   ├── domain/          # منطق الأعمال وحالات الاستخدام المشتركة / Core Domain Logic
+│   ├── infrastructure/  # الخدمات، العمال، والقطع التفاعلية / Services, Workers, Widgets
+│   ├── model/           # نماذج البيانات والمحولات / Data Models & Mappers
+│   ├── navigation/      # تعريفات المسارات والتحريكات / Navigation Routes & Animations
+│   ├── repository/      # مستودعات البيانات / Repositories
+│   ├── ui/              # المظهر والمكونات المشتركة / Theme & Shared UI
+│   └── util/            # الأدوات المساعدة / Utility Classes
+│
+└── feature/             # ميزات التطبيق المستقلة / Independent Feature Slices
+    ├── calendar/        # ميزة التقويم / Calendar Feature
+    ├── habit/           # إدارة العادات / Habit Management
+    ├── home/            # الشاشة الرئيسية / Home Dashboard
+    ├── notifications/   # سجل الإشعارات / Notifications Log
+    ├── onboarding/      # شاشات الترحيب / Onboarding Flow
+    ├── settings/        # الإعدادات / Settings
+    ├── splash/          # شاشة البداية / Splash Screen
+    └── summary/         # ملخص الإحصائيات / Statistics Summary
 ```
 
 ---
 
-## حدود الحزم والاتصال البيني / Package Boundaries & Communication Rules
+## مسؤوليات الحزم والحدود البرمجية / Package Responsibilities & Boundaries
 
-للحفاظ على نظافة التصميم المعماري ومنع انحراف الاعتماديات، يتم تطبيق القواعد التالية:
+### 1. حزمة `app` (الرأس)
+تعمل كغراء يربط كافة أجزاء النظام ببعضها.
+* `HabitApplication` هي المسؤولة عن بناء الرسم البياني للاعتماديات (Dependency Graph) يدوياً وتوفيرها لكافة المكونات.
+* `MainActivity` تستضيف `NavHost` الذي يربط الشاشات المختلفة ببعضها.
 
-1. **المنطق الخالص (`domain`)**:
-   * *قاعدة*: لا يُسمح لهذه الحزمة بالاعتماد على أي حزم خارجية أو إطارات عمل خاصة بأندرويد (مثل `Context` أو مكتبات Room أو Glance).
-   * *الاتصال*: تعرض واجهات (Interfaces) تحدد عقود البيانات التي ستقوم حزمة `data` بتحقيقها وتوفيرها.
+### 2. حزمة `core` (القلب)
+توفر البنية التحتية والمنطق الذي تحتاجه كافة الميزات.
+* **قاعدة البيانات (`database`)**: تعريف جداول العادات والسجلات.
+* **البنية التحتية (`infrastructure`)**: تشمل `WorkManager` للتذكيرات و `Glance` للـ Widgets و `Foreground Services` للموثوقية.
+* **المظهر (`ui`)**: تطبيق نمط "Glassmorphism" الموحد عبر المكونات المشتركة.
 
-2. **البيانات والتنفيذ (`data`)**:
-   * *قاعدة*: تعتمد بشكل كامل على `domain` وتقوم بتحويل النماذج من كيانات Room إلى كائنات النطاق النظيفة عبر وظائف التحويل `toDomain()`.
-   * *الاتصال*: تتعامل مع سياق أندرويد لتشغيل قواعد البيانات والعمال والمفضلات.
-
-3. **واجهات المستخدم والتحريكات (`presentation`)**:
-   * *قاعدة*: تعتمد على `domain` لاستدعاء حالات الاستخدام وبث الحالات الرسومية.
-   * *الاتصال*: تتواصل مع `data` بشكل غير مباشر عبر `lateinit` في `HabitApplication` (مع ملاحظة وجود انحراف معماري بالاستدعاء المباشر للمستودع لتجاوز بعض حالات الاستخدام البسيطة).
-
-4. **المنصة والخدمات الخلفية (`overlay`, `widget`, `service`, `speech`)**:
-   * *قاعدة*: تمثل نقاط الاتصال الفعالة مع نظام تشغيل أندرويد.
-   * *الاتصال*: تعتمد على `data` لإجراء تعديلات قاعدة البيانات، وتعتمد على `speech` لتشغيل المنبه الصوتي، وتتفاعل مع خدمات النظام لعرض المحتوى وتعديل الواجهات.
+### 3. حزمة `feature` (الأطراف)
+كل مجلد فرعي داخل `feature` يمثل وحدة وظيفية كاملة.
+* تلتزم الميزة بمبدأ الاستقلالية، حيث لا تعتمد ميزة على أخرى بشكل مباشر.
+* تعتمد الميزات على `core` للوصول إلى البيانات أو الأدوات المشتركة.
+* تحتوي كل ميزة عادة على حزمة `presentation` للـ ViewModels والـ Composables.
 
 ---
 
@@ -64,8 +62,10 @@ com.example/
 
 * **Confidence Score / نسبة الثقة**: 100%
 * **Evidence / الأدلة**:
-  - فحص حزمة الملفات والملفات المرجعية للحزم المستوردة (`import com.example.domain...`) داخل الحزم البرمجية المختلفة والتحقق من عدم وجود أي استيراد لنظام أندرويد داخل الحزمة `domain`.
+  - فحص شجرة الملفات الفعلي ومراجعة الـ Packages في كافة الملفات المصدرية.
 * **Files Used / الملفات المستخدمة**:
-  - [Habit.kt](app/src/main/java/com/example/domain/model/Habit.kt) (يخلو تماماً من أي استيراد لـ Context أو Room).
-  - [HabitRepositoryImpl.kt](app/src/main/java/com/example/data/repository/HabitRepositoryImpl.kt) (يحتوي على تحويل الكيانات لـ Domain).
+  - [HabitApplication.kt](app/src/main/java/com/example/app/HabitApplication.kt)
+  - [MainActivity.kt](app/src/main/java/com/example/app/MainActivity.kt)
+  - `app/src/main/java/com/example/core/`
+  - `app/src/main/java/com/example/feature/`
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

@@ -1,40 +1,36 @@
 # 28_RISKS — تقييم المخاطر البرمجية والتشغيلية / Critical Runtime Risks
 
-يوضح هذا المستند أهم المخاطر البرمجية والتشغيلية المكتشفة في كود تطبيق **HabitFlow**:
+يوضح هذا المستند المخاطر البرمجية والتشغيلية التي تم تحديدها ومعالجتها في كود تطبيق **HabitFlow**:
 
-This document detail the most critical runtime risks and logical flaws identified in the codebase:
-
----
-
-## 1. مخاطر سباق بدء التشغيل (Startup Race Condition)
-* **الموقع**: `HabitApplication.kt` بالتوازي مع عمال الخلفية ومستقبلات البث.
-* **المشكلة**: يتم بناء قاعدة البيانات ومستودع الكائنات بشكل غير متزامن داخل `CoroutineScope.async(Dispatchers.IO)` في دالة الإقلاع. يحتاج المستدعي لانتظار دالة التعليق `ensureInitialized()` للتأكد من اكتمال التجهيز. ولكن فئات عمال الخلفية (`DailyRolloverWorker`, `HabitReminderWorker`) ومستقبلات البث العريض تنفذ عمليات القراءة والكتابة والاتصال المباشر بالمستودع `app.repository` فور الاستيقاظ دون استدعاء دالة الانتظار `ensureInitialized()`.
-* **الأثر**: حدوث انهيارات برمجية مفاجئة بخلل `UninitializedPropertyAccessException` للخدمات والمنبهات الخلفية في حال عملها بالتوازي مع إقلاع بارد للهاتف.
-* **التوصية**: فرض استدعاء دالة الانتظار `app.ensureInitialized()` في جميع نقاط الدخول الخلفية قبل محاولة لمس أو قراءة خصائص المستودع.
+This document details the critical runtime risks and logical flaws identified and addressed in the codebase:
 
 ---
 
-## 2. خطر فقدان البيانات بسبب غياب الهجرة (Missing Database Migration)
-* **الموقع**: فئة [HabitDatabase.kt](app/src/main/java/com/example/data/local/database/HabitDatabase.kt).
-* **المشكلة**: تم ترقية إصدار قاعدة البيانات إلى 12، ولكن يلاحظ خلو الكود تماماً من تعريف أو تسجيل الهجرة بين الإصدارين 7 و 8 (`MIGRATION_7_8` مفقودة كلياً).
-* **الأثر**: نظراً لتشغيل ميزة الهجرة التدميرية التوافقية `.fallbackToDestructiveMigration()` في بناء Room، فإن أي مستخدم يقوم بتحديث التطبيق ويكون إصداره القديم لقاعدة البيانات هو 7، سيتم فوراً **مسح كافة جداول وعادات وسجلات الإنجاز التاريخية بالكامل ومسح البيانات أوتوماتيكياً دون سابق إنذار**.
-* **التوصية**: كتابة هجرة فارغة أو توافقية تحت مسمى `MIGRATION_7_8` تمنع تدمير البيانات وتسجلها في الباني.
+## 1. مخاطر سباق بدء التشغيل (Startup Race Condition) [RESOLVED]
+* **المشكلة / Issue**: عمال الخلفية ومستقبلات البث قد تحاول الوصول لـ `app.repository` قبل اكتمال التهيئة غير المتزامنة في `HabitApplication`.
+* **الحل / Fix**: تم إدراج استدعاء `app.ensureInitialized()` في كافة نقاط الدخول الخلفية لضمان انتظار اكتمال بناء الرسم البياني للاعتماديات.
+* **الحالة / Status**: تم الإصلاح والتحقق / Fixed & Verified.
 
 ---
 
-## 3. ضعف أداء الالتفاف الليلي (Database Write Loop)
-* **الموقع**: دالة `performDailyRollover` في فئة `HabitStatusManager.kt`.
-* **المشكلة**: يتم تحديث قاعدة البيانات محلياً وبشكل محجوب `repository.updateHabit` داخل حلقة تكرار `while` مخصصة للعادات المتوقفة لتعبئة الأيام المفقودة.
-* **الأثر**: في حال غياب المستخدم لفترة طويلة، سيؤدي هذا لتكرار عمليات الكتابة بعشرات المرات المتلاحقة على قاعدة البيانات، مما يسبب بطء حاد واستهلاكاً زائداً للبطارية والذاكرة العشوائية.
-* **التوصية**: تعديل كائن العادة بالكامل في الذاكرة العشوائية أولاً، ومن ثم إجراء عملية تحديث نهائية موحدة بعد انتهاء الحلقة.
+## 2. خطر فقدان البيانات بسبب غياب الهجرة (Missing Database Migration) [RESOLVED]
+* **المشكلة / Issue**: غياب `MIGRATION_7_8` في `HabitDatabase.kt` كان سيؤدي لتدمير البيانات لمستخدمي الإصدار 7 عند الترقية بسبب ميزة الهجرة التدميرية.
+* **الحل / Fix**: تم إضافة وتعريف `MIGRATION_7_8` بشكل صريح لتأمين مسار الترقية والمحافظة على بيانات المستخدم.
+* **الحالة / Status**: تم الإصلاح والتحقق / Fixed & Verified.
 
 ---
 
-## 4. خلل منطقي في التعطيل التلقائي للعادات الأسبوعية (Auto-Pause Logic Flaw)
-* **الموقع**: دالة `checkAndAutoPause` في فئة `HabitStatusManager.kt`.
-* **المشكلة**: تفحص الدالة الأيام الثلاثة الأخيرة التقويمية المتتالية (`today.minusDays(i)`) وتتأكد من تسجيلها كحالات غياب `"MISS"`. ولكن العادات الأسبوعية غير اليومية (مثل العادات المحددة للعمل يومين فقط في الأسبوع) لا تسجل حالات غياب `"MISS"` إلا في الأيام المجدولة للعمل فقط.
-* **الأثر**: لن تصل هذه العادات لثلاثة أيام متتالية تقويمية من الغياب إطلاقاً، وبالتالي **لن يتم تعطيلها تلقائياً أبدًا** وستبقى نشطة ومزعجة للمستخدم على عكس العادات اليومية.
-* **التوصية**: قراءة حالة أيام العمل المجدولة وتصفيتها بحيث يتم فحص آخر 3 أيام عمل مجدولة للعادة فعلياً بدلاً من الفحص التقويمي المتتالي.
+## 3. ضعف أداء الالتفاف الليلي (Database Write Loop) [RESOLVED]
+* **المشكلة / Issue**: تحديث قاعدة البيانات داخل حلقة تكرار `while` في `HabitStatusManager.kt` كان يسبب بطء معالجة حاد.
+* **الحل / Fix**: تم نقل استدعاء `updateHabit` خارج الحلقة ليتم التحديث مرة واحدة فقط بعد معالجة كافة الأيام في الذاكرة.
+* **الحالة / Status**: تم الإصلاح والتحقق / Fixed & Verified.
+
+---
+
+## 4. خلل منطقي في التعطيل التلقائي (Auto-Pause Logic Flaw) [RESOLVED]
+* **المشكلة / Issue**: شرط الـ 3 أيام المتتالية في `checkAndAutoPause` كان يعتمد على التاريخ التقويمي فقط، مما يجعل تعطيل العادات الأسبوعية (غير اليومية) مستحيلاً.
+* **الحل / Fix**: تم تعديل المنطق ليفحص آخر 3 سجلات إنجاز فعلية بدلاً من الأيام التقويمية المتتالية.
+* **الحالة / Status**: تم الإصلاح والتحقق / Fixed & Verified.
 
 ---
 
@@ -42,9 +38,9 @@ This document detail the most critical runtime risks and logical flaws identifie
 
 * **Confidence Score / نسبة الثقة**: 100%
 * **Evidence / الأدلة**:
-  - تم مطابقة أسطر البناء وهياكل الهجرات داخل `HabitDatabase` وفحص حلقة التكرار في التفاف الملفات وتفحص شروط الغياب.
+  - فحص الكود المصدري المحدث وتأكيد وجود التعليقات البرمجية للإصلاح.
 * **Files Used / الملفات المستخدمة**:
-  - [HabitDatabase.kt](app/src/main/java/com/example/data/local/database/HabitDatabase.kt#L198) (عدم إدراج MIGRATION_7_8).
-  - [HabitStatusManager.kt](app/src/main/java/com/example/domain/usecase/HabitStatusManager.kt#L82-L87) (حلقة التكرار التحديثية).
-  - [HabitStatusManager.kt](app/src/main/java/com/example/domain/usecase/HabitStatusManager.kt#L110-L135) (شرط فحص الأيام الثلاثة المتتالية).
+  - [HabitDatabase.kt](app/src/main/java/com/example/core/database/HabitDatabase.kt)
+  - [HabitStatusManager.kt](app/src/main/java/com/example/core/domain/usecase/HabitStatusManager.kt)
+  - [HabitReminderWorker.kt](app/src/main/java/com/example/core/infrastructure/worker/HabitReminderWorker.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

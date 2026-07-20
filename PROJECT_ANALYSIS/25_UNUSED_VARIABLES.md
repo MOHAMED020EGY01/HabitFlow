@@ -2,18 +2,18 @@
 
 ## فحص الحقول والثوابت البرمجية / Unused Class Fields & Constants
 
-تم إجراء مسح نصي وتدقيق للثوابت والحقول المعرّفة في الفئات (Companion objects or class properties) ولم يتم العثور على متغيرات رئيسية معطلة باستثناء ما يلي:
+تم إجراء مسح نصي وتدقيق للثوابت والحقول المعرّفة في الفئات ولم يتم العثور على متغيرات رئيسية معطلة باستثناء ما يلي:
 
-We scanned static variables and local fields. The Kotlin compiler warns about local variables, but a few class-level properties are unreferenced:
+We scanned static variables and local fields.
 
 ### 1. ثابت `DEFAULT_REMINDER_GAP` المهمل
-* **الموقع**: فئة [ValidateReminderTimeUseCase.kt](app/src/main/java/com/example/domain/usecase/ValidateReminderTimeUseCase.kt).
-* **التفاصيل**: قد يتواجد ثابت يمثل الفاصل الزمني الافتراضي بين التنبيهات.
-* **السبب**: يتم استدعاء التحقق الفعلي بالاعتماد المباشر على الثابت `MIN_GAP_MINUTES = 10` بشكل صلب وصريح في أسطر الفلترة والتحقق.
-* **التوصية**: حذف الثوابت الافتراضية غير المشار إليها لتوحيد أكواد التحقق.
+* **الموقع**: فئة `ValidateReminderTimeUseCase.kt`.
+* **التفاصيل**: كان يتواجد ثابت يمثل الفاصل الزمني الافتراضي بين التنبيهات.
+* **السبب**: يتم استدعاء التحقق الفعلي بالاعتماد المباشر على الثابت `MIN_GAP_MINUTES = 10` بشكل صلب وصريح.
+* **التوصية**: الحذف النهائي إذا عاد للظهور.
 
 ### 2. المتغيرات المحلية المهملة في عمليات البث والعمال
-* في بعض مستقبلات البث والخدمات، يتم تخزين قيم غير مستخدمة لاحقاً مثل سياقات فرعية لـ Intent extras، ولكن يتم تجاهلها دون أثر على العمل الفعلي.
+* في بعض مستقبلات البث والخدمات، يتم تخزين قيم غير مستخدمة لاحقاً مثل سياقات فرعية لـ Intent extras.
 
 ---
 
@@ -23,5 +23,5 @@ We scanned static variables and local fields. The Kotlin compiler warns about lo
 * **Evidence / الأدلة**:
   - فحص ثوابت UseCases والتحقق من طرق استدعاء المعلمات البرمجية لضمان المطابقة.
 * **Files Used / الملفات المستخدمة**:
-  - [ValidateReminderTimeUseCase.kt](app/src/main/java/com/example/domain/usecase/ValidateReminderTimeUseCase.kt)
+  - [ValidateReminderTimeUseCase.kt](app/src/main/java/com/example/feature/habit/domain/ValidateReminderTimeUseCase.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

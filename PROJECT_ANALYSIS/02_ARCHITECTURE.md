@@ -2,75 +2,55 @@
 
 ## نظرة عامة على النمط المعماري / Architectural Pattern Overview
 
-تعتمد بنية تطبيق **HabitFlow** على نمط **الهندسة النظيفة (Clean Architecture)** مدمجاً مع نمط **MVVM (Model-View-ViewModel)** لتنظيم تدفق البيانات وعزل المكونات الرسومية عن كود تخزين البيانات.
+تعتمد بنية تطبيق **HabitFlow** على نمط **الهندسة النظيفة المعتمدة على الميزات (Feature-Based Clean Architecture)**. يهدف هذا التصميم إلى عزل الميزات عن بعضها البعض وتوفير "نواة" (Core) مشتركة للبنية التحتية.
 
-**HabitFlow** implements a hybrid **Clean Architecture** paired with **MVVM (Model-View-ViewModel)** to structure data flow and enforce isolation of business rules from database or visual design changes.
+**HabitFlow** implements a **Feature-Based Clean Architecture** pattern. This design aims to decouple vertical feature slices while providing a shared **Core** for cross-cutting infrastructure and data engines.
 
 ```mermaid
 graph TD
-    subgraph Presentation Layer
-        A[Compose Screens] <--> B[ViewModels]
+    subgraph app [Integration Layer]
+        A[MainActivity / NavHost] --> B[HabitApplication / Manual DI]
     end
-    subgraph Domain Layer
-        C[UseCases] --> D[Domain Models]
-        C --> E[Repository Interfaces]
+    subgraph features [Feature Slices]
+        F1[Home Feature]
+        F2[Habit Feature]
+        F3[Summary Feature]
     end
-    subgraph Data Layer
-        F[Repository Implementations] --> G[Room Database / DAOs]
-        F --> H[Preference DataStore]
+    subgraph core [Shared Core]
+        C1[Core Data / Room]
+        C2[Core UI / Theme]
+        C3[Core Infrastructure]
     end
-    B -- Calls Use Cases --o C
-    B -- Bypasses UseCases - Drift --o F
-    F -- Implements Contract --o E
+    features --> core
+    app --> features
+    app --> core
 ```
 
 ---
 
 ## تفاصيل طبقات البنية البرمجية / Architectural Layers
 
-### 1. طبقة العرض (Presentation Layer)
-* **المكونات الرسومية (Screens / Components)**: مبنية كلياً بـ Jetpack Compose. تلتزم بالـ Unidirectional Data Flow (UDF)؛ حيث تراقب الحالة المعروضة كـ `collectAsState()` وترسل تفاعلات المستخدم كأحداث برمجية إلى نموذج العرض (ViewModel).
-* **نماذج العرض (ViewModels)**: ترث من `AndroidViewModel` للحصول على سياق التطبيق للوصول لحاويات DI اليدوية. تعبّر عن الحالة باستخدام `StateFlow` للأحجام المعقدة وتستخدم `mutableStateListOf` و`mutableStateMapOf` للعمليات الأكثر دقة لحفظ وتحديث عناصر القوائم (Row-level mutation) بشكل سريع لمنع Recomposition كامل للصفحة.
+### 1. طبقة التطبيق (App Integration Layer)
+* **MainActivity**: تعمل كمنسق مركزي (Central Hub) للتنقل، حيث تحتوي على تعريفات `NavHost` وتربط مسارات التنقل بالواجهات البرمجية للميزات.
+* **HabitApplication**: تقوم بدور حاوية حقن الاعتماديات (DI Container).
 
-### 2. طبقة النطاق (Domain Layer)
-* **قواعد العمل (UseCases)**: تمثل العمليات الفردية للتشغيل مثل `AddHabitUseCase` و `ValidateReminderTimeUseCase`.
-* **نماذج البيانات النظيفة (Domain Models)**: تمثل كائنات التطبيق بشكل مستقل عن أندرويد أو مكتبة Room (مثل `Habit.kt`).
-* **واجهات المستودع (Repository Contracts)**: واجهات تجريد تحدد عقود جلب البيانات مثل `interface HabitRepository`.
+### 2. طبقة الميزات (Feature Layer)
+* يتم تقسيم الكود إلى مجلدات بناءً على "المجال" (Domain) وليس "النوع" (Layer).
+* كل ميزة تحتوي بداخلها على طبقاتها الخاصة (Presentation, Domain) لضمان الاستقلالية.
+* **Feature → Core**: الميزات تعتمد فقط على النواة (Core) ولا يمكن لميزة أن تعتمد على ميزة أخرى (Zero Feature-to-Feature dependency).
 
-### 3. طبقة البيانات (Data Layer)
-* **مستودعات البيانات (Repository Implementation)**: فئة `HabitRepositoryImpl.kt` تحقق عقود المستودعات وتنسق حركة البيانات والتحويل البرمجي بين كيانات قاعدة البيانات Room ونماذج النطاق النظيفة.
-* **إدارة التخزين (Room & DataStore)**: تخزين الجداول وتحديثاتها والتحقق من المفضلات واللغات.
+### 3. طبقة النواة (Core Layer)
+* **Core Data**: تحتوي على إعدادات `HabitDatabase` و `UserPreferencesManager` والمستودعات المشتركة.
+* **Core Infrastructure**: تضم العمال (Workers)، الخدمات (Services)، والقطع البرمجية (Widgets).
+* **Core UI**: نظام التصميم الموحد، الألوان، الخطوط، والمكونات الزجاجية المشتركة.
 
 ---
 
 ## حقن الاعتماديات اليدوي / Manual Dependency Injection
 
-تمت إزالة مكتبات Hilt/Dagger كلياً لصالح **حاوية حقن يدوية** معرّفة داخل فئة `HabitApplication`.
+تعتمد الحاوية اليدوية في `HabitApplication` على تهيئة الكائنات بشكل استباقي وغير متزامن لضمان توفرها لكافة الميزات فور الطلب.
 
-Instead of Hilt or Dagger, dependencies are instantiated inside the `HabitApplication` onCreate callback. These variables are initialized asynchronously on an IO thread inside a coroutine. ViewModels and Workers lookup these properties by casting the Application context.
-
-```kotlin
-// HabitApplication.kt - Manual DI setup
-_servicesReady = applicationScope.async(kotlinx.coroutines.Dispatchers.IO) {
-    val database = HabitDatabase.getDatabase(this@HabitApplication)
-    val repo = HabitRepositoryImpl(database.habitDao(), database.notificationDao())
-    repository = repo
-    // Initialize Use Cases
-    getAllHabitsUseCase = GetAllHabitsUseCase(repo)
-    addHabitUseCase = AddHabitUseCase(repo, this@HabitApplication)
-    ...
-    isInitialized = true
-}
-```
-
----
-
-## انحراف التصميم المعماري الفعلي / Architectural Drift
-
-### 🔴 الوصول المباشر للمستودعات من نماذج العرض / Direct Repository Access
-تقوم نماذج العرض `HomeViewModel` و `AllHabitsViewModel` و `HabitDetailViewModel` باستدعاء المستودع `app.repository` بشكل مباشر لتنفيذ عمليات القراءة والتعديل العادية بدلاً من المرور عبر طبقة حالات الاستخدام (UseCases). 
-
-ViewModels (specifically `HomeViewModel` and `AllHabitsViewModel`) bypass the UseCase layer, importing `app.repository` directly to perform simple CRUD queries or toggle completions. This is an architectural deviation from strict Clean Architecture, implemented to simplify boilerplate code.
+Manual DI is implemented inside `HabitApplication`. Dependencies (Database, Repositories, UseCases) are instantiated inside an `applicationScope.async` block on a background thread. Features access these dependencies by casting the context to `HabitApplication`.
 
 ---
 
@@ -78,9 +58,9 @@ ViewModels (specifically `HomeViewModel` and `AllHabitsViewModel`) bypass the Us
 
 * **Confidence Score / نسبة الثقة**: 100%
 * **Evidence / الأدلة**:
-  - فحص الاستدعاءات داخل `HomeViewModel` و `AddHabitViewModel` و `HabitApplication` للتأكد من نمط تمرير المتغيرات lateinits والوصول المباشر لخصائص المستودع.
+  - تم فحص توزيع المجلدات تحت `com.example.feature` و `com.example.core`.
+  - التحقق من `HabitApplication.kt` الذي يحتوي على كافة حالات الاستخدام (UseCases) والمستودعات كمتغيرات `lateinit`.
 * **Files Used / الملفات المستخدمة**:
-  - [HabitApplication.kt](app/src/main/java/com/example/HabitApplication.kt#L100-L127)
-  - [HomeViewModel.kt](app/src/main/java/com/example/presentation/screens/home/HomeViewModel.kt#L98-L104)
-  - [AddHabitUseCase.kt](app/src/main/java/com/example/domain/usecase/AddHabitUseCase.kt)
+  - [HabitApplication.kt](app/src/main/java/com/example/app/HabitApplication.kt)
+  - [MainActivity.kt](app/src/main/java/com/example/app/MainActivity.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

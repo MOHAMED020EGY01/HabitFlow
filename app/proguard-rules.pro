@@ -6,8 +6,8 @@
 # Application
 ########################################
 
--keep class com.example.HabitApplication { *; }
--keep class com.example.MainActivity { *; }
+-keep class com.example.app.HabitApplication { *; }
+-keep class com.example.app.MainActivity { *; }
 
 ########################################
 # Android Components

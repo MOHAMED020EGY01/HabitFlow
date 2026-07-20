@@ -22,11 +22,10 @@
 ## مخاطر تسريب الذاكرة النشطة المكتشفة / Memory Leaks Risk Analysis
 
 ### 🔴 خطورة مرتفعة — تهيئة LeakCanary عبر الانعكاس
-* **الموقع**: فئة [HabitApplication.kt](app/src/main/java/com/example/HabitApplication.kt#L130-L165).
+* **الموقع**: فئة [HabitApplication.kt](app/src/main/java/com/example/app/HabitApplication.kt#L164-L182)
 * **التفاصيل**: يقوم الكود بمحاولة تهيئة وتنشيط مكتبة `LeakCanary` برمجياً عبر استخدام الانعكاس (Reflection):
   ```kotlin
-  val leakCanaryClass = Class.forName("leakcanary.LeakCanary")
-  val configMethod = leakCanaryClass.getMethod("getConfig")
+  Class.forName("leakcanary.LeakCanary")
   ```
   هذه التهيئة مبنية لإخفاء استخدام المكتبة في نسخ النشر والإنتاج (Release builds)؛ لكون LeakCanary مدرجة كـ `debugImplementation` وغير متوافرة في تجميع الإنتاج.
 * **الأثر والخطورة**:
@@ -42,7 +41,7 @@
 * **Evidence / الأدلة**:
   - تم التحقق من سلوك إيقاف الـ TTS ودورة حياة الـ Custom Lifecycle Owner في النافذة العائمة، ومطابقة كتل استدعاء LeakCanary.
 * **Files Used / الملفات المستخدمة**:
-  - [ReminderSpeechManager.kt](app/src/main/java/com/example/speech/ReminderSpeechManager.kt#L101-L125)
-  - [HabitOverlayService.kt](app/src/main/java/com/example/overlay/HabitOverlayService.kt#L250-L310)
-  - [HabitApplication.kt](app/src/main/java/com/example/HabitApplication.kt#L130-L165)
+  - [ReminderSpeechManager.kt](app/src/main/java/com/example/core/audio/ReminderSpeechManager.kt)
+  - [HabitOverlayService.kt](app/src/main/java/com/example/core/infrastructure/overlay/HabitOverlayService.kt)
+  - [HabitApplication.kt](app/src/main/java/com/example/app/HabitApplication.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

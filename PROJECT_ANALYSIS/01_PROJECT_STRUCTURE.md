@@ -2,93 +2,66 @@
 
 ## هيكل مجلدات المشروع / Directory Tree Map
 
-هيكل مجلدات المشروع الفعلي وحزم الأكواد البرمجية والموارد:
+هيكل مجلدات المشروع الفعلي المعتمد على الميزات (Feature-Based) ونمط "العمارة النظيفة":
 
-The structural map of the project's source code, assets, resource files, and Gradle build configurations:
+The structural map of the project's source code following the Feature-Based Clean Architecture pattern:
 
 ```text
 habitflow/
 ├── app/
 │   ├── src/
 │   │   ├── main/
-│   │   │   ├── AndroidManifest.xml (ملف المانيفست لتسجيل المكونات والصلاحيات / App manifest for component registrations)
+│   │   │   ├── AndroidManifest.xml (المانيفست المركزي / Main Manifest)
 │   │   │   ├── java/com/example/
-│   │   │   │   ├── HabitApplication.kt (حاوية حقن الاعتماديات والتهيئة / Application initialization and manual DI)
-│   │   │   │   ├── MainActivity.kt (النشاط الرئيسي ونقطة انطلاق الواجهة / Entry Activity and UI launch point)
-│   │   │   │   ├── data/ (طبقة البيانات - القواعد والمستودعات والعمال / Data layer - databases, repositories, workers)
-│   │   │   │   │   ├── audio/ (محركات تشغيل الإنذار الصوتي والنطق / Alarm sound and TTS engine implementations)
-│   │   │   │   │   ├── local/
-│   │   │   │   │   │   ├── dao/ (واجهات الاستعلام عن البيانات Room / Room Database DAO interfaces)
-│   │   │   │   │   │   ├── database/ (قاعدة البيانات وإعدادات المخطط / Database definitions and migrations)
-│   │   │   │   │   │   └── entity/ (نماذج الجداول وقواعد التثبيت / Database Room entity classes)
-│   │   │   │   │   ├── preferences/ (إدارة البيانات البسيطة DataStore / Preferences DataStore manager)
-│   │   │   │   │   ├── receiver/ (مستقبلات بث النظام مثل الإقلاع / Broadcast receivers like Boot completed)
-│   │   │   │   │   ├── repository/ (تنفيذ واجهات المستودعات / Concrete repository implementations)
-│   │   │   │   │   └── worker/ (عمال المهام الدورية الخلفية / Background WorkManager workers)
-│   │   │   │   ├── domain/ (طبقة المنطق وقواعد العمل الخالصة / Domain layer - business rules and use cases)
-│   │   │   │   │   ├── audio/ (واجهات وإعدادات محركات التذكير الصوتي / Reminder audio abstract contracts)
-│   │   │   │   │   ├── model/ (النماذج العامة المستقلة لبيانات التطبيق / Pure domain entities and model classes)
-│   │   │   │   │   ├── repository/ (عقود وواجهات المستودعات / Domain repository interfaces contract)
-│   │   │   │   │   ├── usecase/ (منطق وحالات الاستخدام النظيفة / Business usecase classes)
-│   │   │   │   │   └── util/ (أدوات الحساب مثل الانتظام والمنبهات / Domain calculation helpers)
-│   │   │   │   ├── overlay/ (النافذة العائلة وإطلاق الخدمة الأمامية / Floating overlay window logic)
-│   │   │   │   │   ├── composable/ (واجهة النافذة العائمة بكومبوز / Overlay Compose views)
-│   │   │   │   │   └── [Receivers/Services] (مكونات بث وخدمات تشغيل التذكير العائم / Services and receivers)
-│   │   │   │   ├── presentation/ (طبقة العرض والواجهات ونماذج العرض / Presentation UI and ViewModels)
-│   │   │   │   │   ├── components/ (عناصر الواجهة الزجاجية المشتركة / Modular glassmorphism UI components)
-│   │   │   │   │   ├── navigation/ (إدارة التنقل والتحريكات البرمجية / Navigation graph and animations)
-│   │   │   │   │   └── screens/ (الشاشات الفردية ونماذج العرض لكل ميزة / Feature screens and view models)
-│   │   │   │   ├── service/ (الخدمة الخلفية للموثوقية ومراقبة الفتح / Background reliability foreground service)
-│   │   │   │   ├── speech/ (محرك معالجة التكلم TTS ومراقبة الدورات / Text-To-Speech engine lifecycle managers)
-│   │   │   │   ├── ui/theme/ (نظام التصميم وألوان الخطوط والمظهر / Accent colors, typography, shapes)
-│   │   │   │   ├── util/ (ملفات مساعدة للتعريب والاتجاه والتنسيق / General helpers for formatters and RTL direction)
-│   │   │   │   └── widget/ (قطع الشاشة الرئيسية Glance والمزامنة والتحديث / Home Glance app widget providers)
-│   │   │   └── res/ (ملفات الموارد المترجمة والصور والتخطيطات / App resources values and translations)
-│   │   └── test/ (حزم اختبارات الوحدات ولقطات الشاشة / Unit and Roborazzi snapshot tests)
-│   ├── build.gradle.kts (إعداد بناء وحدة التطبيق والاعتماديات / App module gradle configuration)
-│   └── proguard-rules.pro (قواعد ضغط وتقليل حجم الكود المترجم / Proguard / R8 rules)
+│   │   │   │   ├── app/ (نقطة التكامل / Integration Layer)
+│   │   │   │   │   ├── HabitApplication.kt (حاوية DI والتهيئة / DI Container & Init)
+│   │   │   │   │   └── MainActivity.kt (النشاط الرئيسي والتنقل / Root Activity & Nav)
+│   │   │   │   ├── core/ (البنية التحتية المشتركة / Shared Infrastructure)
+│   │   │   │   │   ├── audio/ (محركات الصوت و TTS / Audio & TTS Engines)
+│   │   │   │   │   ├── database/ (إعداد Room والجداول / Room DB & DAOs)
+│   │   │   │   │   ├── datastore/ (إدارة التفضيلات / Preferences DataStore)
+│   │   │   │   │   ├── domain/ (منطق الأعمال المشترك / Shared Domain Logic)
+│   │   │   │   │   ├── infrastructure/ (العمال والخدمات والويدجت / Workers, Services, Widgets)
+│   │   │   │   │   ├── model/ (النماذج والمحولات / Models & Mappers)
+│   │   │   │   │   ├── navigation/ (تعريفات المسارات / Navigation Routes)
+│   │   │   │   │   ├── repository/ (مستودعات البيانات / Data Repositories)
+│   │   │   │   │   ├── ui/ (مكونات الواجهة والمظهر / Shared UI & Theme)
+│   │   │   │   │   └── util/ (أدوات المساعدة العامة / General Utilities)
+│   │   │   │   └── feature/ (شرائح الميزات الرأسية / Vertical Feature Slices)
+│   │   │   │       ├── habit/ (إدارة العادات / Habit Management)
+│   │   │   │       ├── home/ (لوحة التحكم / Dashboard)
+│   │   │   │       ├── summary/ (التحليلات / Analytics)
+│   │   │   │       ├── calendar/ (التقويم / Calendar)
+│   │   │   │       ├── notifications/ (سجل التنبيهات / Notification Log)
+│   │   │   │       ├── settings/ (الإعدادات / Settings)
+│   │   │   │       ├── onboarding/ (الترحيب / Onboarding)
+│   │   │   │       └── splash/ (شاشة التحميل / Splash)
+│   │   │   └── res/ (الموارد المترجمة والصور / Resources & Assets)
+│   │   └── test/ (اختبارات الوحدات / Unit Tests)
+│   ├── build.gradle.kts (إعداد بناء الوحدة / App Module Gradle)
+│   └── proguard-rules.pro (قواعد الحماية والضغط / Proguard Rules)
 ├── gradle/
-│   └── libs.versions.toml (فهرس إصدارات المكاتب والملحقات / Version catalog definitions)
-├── build.gradle.kts (ملف بناء المشروع الرئيسي / Root level gradle configuration)
-├── settings.gradle.kts (إعدادات النواة ومجلدات التطبيقات المضمنة / Root gradle project configuration)
-└── gradle.properties (إعدادات الذاكرة لمحرك جافا والتجميع / JVM and compile options)
+│   └── libs.versions.toml (فهرس الإصدارات / Version Catalog)
+├── build.gradle.kts (بناء المشروع الرئيسي / Root Gradle)
+└── settings.gradle.kts (إعدادات المشروع / Settings Gradle)
 ```
 
 ---
 
 ## مسؤوليات الحزم الرئيسية / Package Responsibilities
 
-* **`com.example.data`**:
-  * إدارة استعلامات قاعدة البيانات Room المحلية وتحديثاتها.
-  * قراءة وكتابة تفضيلات المستخدم المخزنة في Preference DataStore.
-  * جدولة عمال الخلفية (`CoroutineWorker`) لتحسين مساحة قاعدة البيانات وعملية الالتفاف اليومي في منتصف الليل.
-  * استقبال بث النظام (كالإقلاع أو فتح القفل) لإحياء التذكيرات.
+* **`com.example.app`**:
+  * تنسيق تشغيل الميزات وتهيئة حاوية حقن الاعتماديات اليدوية.
+  * إدارة الرسم البياني للتنقل (NavHost) في `MainActivity`.
 
-* **`com.example.domain`**:
-  * تمثيل بيانات العادة وحالاتها بشكل نقي خارج نطاق نظام أندرويد.
-  * حساب التواريخ القادمة للتنبيهات وسلاسل إنجاز العادات (Streaks).
-  * تفعيل منطق التحقق (مثل التأكد من خلو الجدولة من تعارض التنبيهات بفاصل 10 دقائق).
+* **`com.example.core`**:
+  * توفير الأدوات والبنية التحتية التي تعتمد عليها كافة الميزات.
+  * إدارة التخزين المركزي (Room, DataStore) والتواصل مع النظام (Workers, Services).
+  * توفير نظام التصميم الموحد (Theme, GlassCard).
 
-* **`com.example.presentation`**:
-  * عرض الحالة الرسومية للمستخدم بنمط التصاميم الزجاجية وتأثيرات الإضاءة المنزلقة.
-  * تجميع الأحداث والتفاعل داخل فئات ViewModels ومعالجتها.
-  * توجيه التنقل بين شاشات التطبيق العشرة.
-
-* **`com.example.data`**:
-  * Manages SQLite/Room database writes, queries, and migrations.
-  * Accesses key-value configurations inside Preference DataStore.
-  * Launches WorkManager background tasks for midnight rollovers and database vacuuming.
-  * Responds to OS broadcast actions (e.g. system boot completion).
-
-* **`com.example.domain`**:
-  * Declares pure Kotlin models of Habits, logs, and cycles.
-  * Computes streak counts and next schedule times.
-  * Validates business logic (e.g., maximum active habit limit of 6 and 10-minute spacing).
-
-* **`com.example.presentation`**:
-  * Renders glassmorphism card views, dynamic gradients, and progress rings.
-  * Coordinates screen flows via ViewModels using StateFlow.
-  * Connects and animates transitions between the 10 screen destinations.
+* **`com.example.feature.<name>`**:
+  * كبسولة برمجية مستقلة تحتوي على واجهات العرض (Presentation) ومنطق الميزة الخاص.
+  * تلتزم بعدم الاعتماد على ميزات أخرى بشكل مباشر، بل تعتمد على `core`.
 
 ---
 
@@ -96,8 +69,8 @@ habitflow/
 
 * **Confidence Score / نسبة الثقة**: 100%
 * **Evidence / الأدلة**:
-  - فحص حزمة الملفات والملفات المرجعية لمجلد الموارد `res/` وحزم `java/com/example/` التي تم مسحها برمجياً للتأكد من وجود كل مجلد فني ومسؤوليته المحددة.
+  - فحص شجرة المجلدات الفعلي ومحتوى الملفات البرمجية.
 * **Files Used / الملفات المستخدمة**:
-  - [AndroidManifest.xml](app/src/main/AndroidManifest.xml)
-  - [settings.gradle.kts](settings.gradle.kts)
+  - `app/src/main/java/com/example/`
+  - [HabitApplication.kt](app/src/main/java/com/example/app/HabitApplication.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

@@ -1,53 +1,58 @@
-# 13_REMINDER_SYSTEM — نظام التذكير والإنذارات الموثق / Reminder System Specification
+# 13_REMINDER_SYSTEM — نظام التذكيرات الصوتي والعائم / Audio & Floating Reminder System
 
-## مكونات التذكير الصوتي والمرئي / Audio & Visual Reminder Pipeline
+## نظرة عامة / Overview
 
-يستخدم تطبيق **HabitFlow** تركيبة صوتية مرئية متطورة لتأمين انطلاق التذكيرات بمواعيد العادات النشطة:
+يعتبر نظام التذكيرات في **HabitFlow** هو الميزة الأكثر تعقيداً وأهمية، حيث يجمع بين عمال `WorkManager` للتوقيت، وخدمات `Foreground Services` لضمان الاستمرارية، و `WindowManager` لعرض واجهات عائمة (Overlays)، ومحركات `TTS/MediaPlayer` للتنبيه الصوتي.
 
-The reminder architecture connects alarm scheduling, background triggers, audio engines, and window overlay presentation:
+The reminder system is the core of **HabitFlow**. It orchestrates `WorkManager` for scheduling, `Foreground Services` for reliability, `WindowManager` for interactive floating overlays, and a dual-engine `TTS/MediaPlayer` for audio alerts.
+
+---
+
+## المكونات الرئيسية / Core Components
+
+### 1. مجدول المهام (`HabitReminderWorker`)
+المسؤول عن جدولة التذكيرات باستخدام `WorkManager`. يتم استخدام `PeriodicWorkRequestBuilder` بفترة 24 ساعة لضمان تكرار التنبيه يومياً.
+* **التوقيت**: يتم حساب `initialDelay` بدقة بناءً على الوقت الحالي والوقت المستهدف.
+* **التحقق**: قبل التشغيل، يتحقق العامل من كون اليوم الحالي هو يوم عمل نشط للعادة (`activeDays`).
+
+### 2. واجهة العرض العائمة (`HabitOverlayService`)
+خدمة أمامية (Foreground Service) تقوم برسم واجهة مستخدم Compose فوق كافة التطبيقات.
+* **التقنية**: تستخدم `WindowManager` مع نوع `TYPE_APPLICATION_OVERLAY`.
+* **التفاعل**: تدعم السحب (Dragging) والرد السريع (Mark Done) الذي يقوم بتحديث قاعدة البيانات والقطع التفاعلية فوراً.
+* **الانتظار الذكي**: إذا كان الجهاز مغلقاً (Locked)، يتم تخزين الطلب في `PendingOverlayStore` وعرضه فور فتح القفل عبر `HabitBackgroundService`.
+
+### 3. محرك الصوت (`ReminderAudioRepository`)
+يدير عملية التنبيه الصوتي مع دعم محركين:
+* **TTS Engine**: يقوم بنطق اسم العادة ("حان وقت [اسم العادة]").
+* **Alarm Engine**: يقوم بتشغيل نغمة المنبه الافتراضية للنظام باستخدام `USAGE_ALARM`.
+* **المرونة**: يتم التبديل تلقائياً إلى محرك المنبه إذا كان محرك جوجل للنطق غير مثبت أو غير مفعل.
+
+---
+
+## تدفق عملية التنبيه / Execution Flow
 
 ```mermaid
 graph TD
-    A[WorkManager / Alarm Trigger] --> B[HabitReminderWorker]
-    B -->|Trigger Audio| C[ReminderAudioRepositoryImpl]
-    B -->|Check locked state| D{Device Locked?}
-    D -->|Yes| E[Save to PendingOverlayStore]
-    D -->|No| F[Broadcast to HabitOverlayReceiver]
-    E -->|Unlock Action ACTION_USER_PRESENT| G[PendingOverlayReceiver]
-    G -->|Trigger Service| H[HabitOverlayService]
-    F -->|Trigger Service| H
-    H -->|Add View| I[WindowManager overlayView]
-    H -->|Stop Audio| C
+    A[WorkManager Trigger] --> B{Is Active Day?}
+    B -- No --> C[Success / Skip]
+    B -- Yes --> D[Trigger Audio Playback]
+    D --> E{Is Device Locked?}
+    E -- Yes --> F[Save to PendingOverlayStore]
+    E -- No --> G[Start HabitOverlayService]
+    G --> H[Display Floating Compose UI]
+    H --> I[User Taps Done]
+    I --> J[Stop Audio & Log Completion]
+    J --> K[Update Glance Widgets]
 ```
 
 ---
 
-## 1. محرك التذكير الصوتي المشترك / Combined Audio Engine
+## نظام التنبيه الذكي عند فتح القفل / Catch-up System
 
-يتحكم كائن `ReminderAudioRepositoryImpl.kt` بعملية النطق والمنبهات عبر دمج محركين فرعيين:
-
-* **TextToSpeechEngine (محرك نطق النصوص)**:
-  * *الوظيفة*: ينطق بصوت آلي قالب نصوص مخصص يحتوي على اسم العادة (مثل: *"حان وقت القيام بـ تفعيل القراءة"*).
-  * *التحكم*: يربط بالـ `ReminderSpeechManager` ويقود `ReminderSpeechEngine` الذي يؤمن قفل الصوت `AudioAttributes.USAGE_ALARM` ليرفع الصوت عبر قناة المنبه التابعة للنظام حتى لو كان الهاتف صامتاً.
-  * *دورة حياة TTS*: يتضمن نظام التكلم مهلة أمان قصوى مدتها **30 ثانية** لإنهاء النطق تلقائياً وتفادي تعليق المحركات، مع إغلاق وتحرير كلي للمحرك عند عدم الاستخدام لمدة دقيقة واحدة (`IDLE_TIMEOUT_MS = 60_000L`) لحماية الذاكرة العشوائية.
-* **AlarmSoundEngine (محرك رنين المنبه)**:
-  * *الوظيفة*: تشغيل نغمة المنبه الافتراضية للجهاز أو نغمة مخصصة مسجلة عبر `Uri`.
-  * *التحكم*: يستخدم كائن `MediaPlayer` مدمجاً مع خصائص `USAGE_ALARM` ويكرر تشغيل النغمة بشكل حلقي مستمر حتى يغلق المستخدم النافذة العائمة.
-
----
-
-## 2. شاشات التنبيه العائمة / WindowManager Overlays
-
-* **البنية والتداخل**: عند إطلاق التذكير والهاتف غير مقفل، تقوم خدمة `HabitOverlayService` بحقن شاشة ComposeView داخل الـ `WindowManager` باستخدام نوع تخطيط `TYPE_APPLICATION_OVERLAY`.
-* **الحمل والموثوقية**: نظراً لأن خدمات أندرويد لا تملك تسلسلاً للمكونات الرسومية natively، تؤسس الفئة كائناً خاصاً باسم `ServiceLifecycleOwner` يحاكي الحفظ والاسترجاع للواجهات الرسومية، مما يمكن Jetpack Compose من العمل والاستقرار بسلاسة ودون انهيارات.
-* **سحب وتحريك النافذة**: تدعم واجهة التنبيه ميزات الحركة الحرة وسحب البطاقة الرسومية (Drag-to-reposition physics) عبر رصد أحداث اللمس `setOnTouchListener` لتبتعد عن منتصف الشاشة وتتيح للمستخدم رؤية ما خلفها.
-
----
-
-## 3. تأجيل المنبهات عند قفل الهاتف / Lock-Screen Catch-up Queue
-
-* **مخزن التأجيل**: عند استيقاظ عامل التذكير في الخلفية ورصد أن الهاتف مغلق بواسطة قفل الشاشة، يتم تأجيل إظهار النافذة العائمة فوراً وكتابة بياناتها داخل `PendingOverlayStore` المبني بـ DataStore.
-* **مستقبل فتح القفل (`PendingOverlayReceiver`)**: يستمع للبث العام للنظام `ACTION_USER_PRESENT` عند فتح قفل الهاتف؛ حيث يقوم فوراً بقراءة وتفريغ محتويات مخزن التنبيهات الموقوفة وبدء تشغيل `HabitOverlayService` لعرض منبهات العادات التي فاتت المستخدم أثناء قفل هاتفه بالترتيب الزمني الصحيح.
+تعتمد الموثوقية الفائقة للتطبيق على `HabitBackgroundService` الذي يعمل بشكل دائم في الخلفية:
+1. يستمع لإشارة `ACTION_USER_PRESENT` (فتح قفل الجهاز).
+2. يقوم بفحص أي تذكيرات "فاتت" خلال فترة غلق الجهاز.
+3. يقوم بعرض النوافذ العائمة المتراكمة بالتتابع لضمان عدم ضياع أي مهمة.
 
 ---
 
@@ -55,10 +60,12 @@ graph TD
 
 * **Confidence Score / نسبة الثقة**: 100%
 * **Evidence / الأدلة**:
-  - تم فحص كود التكلم وإدارة دورة حياة الـ TTS وملفات التهيئة والتحكم بـ WindowManager.
+  - كود `HabitReminderWorker` لجدولة WorkManager.
+  - كود `HabitOverlayService` واستخدام `WindowManager`.
+  - كود `HabitBackgroundService` لمراقبة فتح القفل.
 * **Files Used / الملفات المستخدمة**:
-  - [ReminderSpeechEngine.kt](app/src/main/java/com/example/speech/ReminderSpeechEngine.kt#L191-L252)
-  - [ReminderSpeechManager.kt](app/src/main/java/com/example/speech/ReminderSpeechManager.kt#L30-L50)
-  - [HabitOverlayService.kt](app/src/main/java/com/example/overlay/HabitOverlayService.kt#L118-L248)
-  - [PendingOverlayReceiver.kt](app/src/main/java/com/example/overlay/PendingOverlayReceiver.kt)
+  - [HabitReminderWorker.kt](app/src/main/java/com/example/core/infrastructure/worker/HabitReminderWorker.kt)
+  - [HabitOverlayService.kt](app/src/main/java/com/example/core/infrastructure/overlay/HabitOverlayService.kt)
+  - [HabitBackgroundService.kt](app/src/main/java/com/example/core/infrastructure/service/HabitBackgroundService.kt)
+  - [ReminderAudioRepositoryImpl.kt](app/src/main/java/com/example/core/repository/ReminderAudioRepositoryImpl.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

@@ -33,6 +33,6 @@
 * **Evidence / الأدلة**:
   - تم رصد كتل التحديث وحلقات التكرار داخل `HabitStatusManager` وتطبيق `runBlocking` وقت الإقلاع داخل `HabitApplication`.
 * **Files Used / الملفات المستخدمة**:
-  - [HabitStatusManager.kt](app/src/main/java/com/example/domain/usecase/HabitStatusManager.kt#L54-L90)
-  - [HabitApplication.kt](app/src/main/java/com/example/HabitApplication.kt#L90-L127)
+  - [HabitStatusManager.kt](app/src/main/java/com/example/core/domain/usecase/HabitStatusManager.kt)
+  - [HabitApplication.kt](app/src/main/java/com/example/app/HabitApplication.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

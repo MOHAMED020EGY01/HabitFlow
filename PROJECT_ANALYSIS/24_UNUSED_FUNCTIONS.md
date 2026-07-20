@@ -2,26 +2,24 @@
 
 ## قائمة الوظائف والدوال الزائدة / Unused & Legacy Functions
 
-تم إجراء تدقيق واستعراض لجميع الملحقات والدوال المساعدة المحددة في فئات التطبيق المساعدة، وخلص التقرير الفني لتعيين الدوال التالية كإرث قديم (Legacy overloads) يمكن الاستغناء عنها وتوحيد استدعاءاتها:
+تم إجراء تدقيق واستعراض لجميع الملحقات والدوال المساعدة، وخلص التقرير الفني لتعيين الدوال التالية كإرث قديم (Legacy overloads) يمكن الاستغناء عنها وتوحيد استدعاءاتها:
 
-A code audit of utility and helper classes identified several deprecated or legacy method overloads that remain in the codebase for compatibility but are bypassed by cleaner, parameter-driven equivalents:
+A code audit identified several legacy method overloads that remain in the codebase for compatibility but are bypassed by cleaner equivalents in most new features:
 
 ### 1. دوال تنسيق التوقيت القديمة في `AppFormatters`
-* **الموقع**: فئة [AppFormatters.kt](app/src/main/java/com/example/util/AppFormatters.kt#L83-L88).
+* **الموقع**: فئة `AppFormatters.kt`.
 * **الدوال**:
-  * `fun formatTime(hour: Int, minute: Int, isArabic: Boolean): String`
-  * `fun formatTime(time: LocalTime, isArabic: Boolean): String`
-* **التفاصيل**: وظائف تنسيق تعتمد على المتغير الثنائي `isArabic` لتحديد لغة تنسيق الوقت وتأكيد الـ AM/PM باللغة المقابلة.
-* **السبب**: تم استبدال استخداماتها وتعميمها بنظام تمرير رمز اللغة المباشر `langCode: String? = null` الذي يدعم المظاهر المتعددة والتهيئة المعيارية بشكل أنظف وموسع.
-* **التوصية**: تحويل الاستدعاءات القليلة المتبقية في التقويم الموحد وحذفها لتبسيط الفئة.
+  * `fun formatTime(hour: Int, minute: Int, isArabic: Boolean)`
+  * `fun formatTime(time: LocalTime, isArabic: Boolean)`
+* **التفاصيل**: وظائف تنسيق تعتمد على المتغير الثنائي `isArabic` لتحديد لغة تنسيق الوقت.
+* **السبب**: تم استبدال استخداماتها وتعميمها بنظام تمرير رمز اللغة المباشر `langCode` الذي يدعم المظاهر المتعددة.
 
 ### 2. دالة تنسيق التواريخ ذات كائن الـ Locale في `AppFormatters`
-* **الموقع**: فئة [AppFormatters.kt](app/src/main/java/com/example/util/AppFormatters.kt#L104).
+* **الموقع**: فئة `AppFormatters.kt`.
 * **الدالة**:
-  * `fun formatDate(date: LocalDate, pattern: String, locale: Locale): String`
-* **التفاصيل**: دالة تقوم بتحويل التاريخ معتمدة على تمرير كائن Locale كامل من جافا.
-* **السبب**: يتم توفير السياق وتحديد اللغات والاتجاهات RTL تلقائياً عبر فئة `LocaleDirectionHelper` وقنوات تمرير الـ `langCode` النصية الموحدة في التطبيق.
-* **التوصية**: الحذف بعد تعديل السطر المتبقي في تقويم شاشة المتابعة.
+  * `fun formatDate(date: LocalDate, pattern: String, locale: Locale)`
+* **التفاصيل**: دالة تقوم بتحويل التاريخ معتمدة على تمرير كائن Locale كامل.
+* **السبب**: يتم توفير السياق وتحديد اللغات تلقائياً عبر فئة `LocaleDirectionHelper`.
 
 ---
 
@@ -31,5 +29,5 @@ A code audit of utility and helper classes identified several deprecated or lega
 * **Evidence / الأدلة**:
   - تم فحص وتتبع الاستدعاءات للدوال المعرفة في فئة `AppFormatters` وتحديد طرق التمرير المزدوجة بالسطر والدليل.
 * **Files Used / الملفات المستخدمة**:
-  - [AppFormatters.kt](app/src/main/java/com/example/util/AppFormatters.kt)
+  - [AppFormatters.kt](app/src/main/java/com/example/core/util/AppFormatters.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

@@ -110,15 +110,16 @@ erDiagram
 شهد مخطط قاعدة البيانات 12 إصداراً. فيما يلي ملخص للهجرات المعرّفة في `HabitDatabase`:
 
 * **1 ← 2**: إضافة حقول الحالة `status` وتواريخ الدورة `cycleStartDate` و `cycleEndDate` وجدول الأرشيف `habit_cycle_history`.
-* **2 ← 3**: إعادة بناء الجداول لإضافة قيود المفتاح الخارجي `ForeignKey` مع حذف متتالي `ON DELETE CASCADE` وتأمين فهارس البحث.
-* **3 ← 4**: إضافة فهارس البحث لعقول العادات النشطة وتاريخ الإنشاء.
-* **4 ← 5**: إعادة تهيئة التذكيرات لإزالة مصفوفة الأقواس `[` و `]` في قاعدة البيانات وتسهيل تحويلها.
-* **5 ← 6**: إضافة حقل أيام العمل الأسبوعية `activeDays` في جدول العادات.
-* **6 ← 7**: إضافة فهرس بحث على حقل `startedAt` في جدول العادات.
-* **8 ← 9**: إنشاء وتأسيس جدول الإشعارات وسجل التاريخ `notifications`.
+* **2 ← 3**: إضافة قيود المفتاح الخارجي `ForeignKey` مع حذف متتالي `ON DELETE CASCADE`.
+* **3 ← 4**: إضافة فهارس البحث.
+* **4 ← 5**: إعادة تهيئة التذكيرات.
+* **5 ← 6**: إضافة حقل أيام العمل الأسبوعية `activeDays`.
+* **6 ← 7**: إضافة فهرس بحث على حقل `startedAt`.
+* **7 ← 8**: (هجرة فارغة لتأمين المخطط).
+* **8 ← 9**: إنشاء جدول الإشعارات `notifications`.
 * **9 ← 10**: إضافة حقل وقت التوقف الأخير `inactiveSinceTimestamp`.
 * **10 ← 11**: إضافة حقل صوت المنبه المخصص `reminderVoice`.
-* **11 ← 12**: تحديث داخلي وتجديد هاش الهوية لملف قاعدة البيانات Room.
+* **11 ← 12**: تحديث وتجديد هاش الهوية.
 
 ---
 
@@ -128,8 +129,8 @@ erDiagram
 * **Evidence / الأدلة**:
   - تم التحقق من الكود المصدري لكيانات Room وتطبيق المخطط البرمجي وواجهات DAO وقائمة الهجرات المعرفة.
 * **Files Used / الملفات المستخدمة**:
-  - [HabitEntity.kt](app/src/main/java/com/example/data/local/entity/HabitEntity.kt)
-  - [HabitLogEntity.kt](app/src/main/java/com/example/data/local/entity/HabitLogEntity.kt)
-  - [HabitCycleHistoryEntity.kt](app/src/main/java/com/example/data/local/entity/HabitCycleHistoryEntity.kt)
-  - [HabitDatabase.kt](app/src/main/java/com/example/data/local/database/HabitDatabase.kt#L17-L216)
+  - [HabitEntity.kt](app/src/main/java/com/example/core/model/entity/HabitEntity.kt)
+  - [HabitLogEntity.kt](app/src/main/java/com/example/core/model/entity/HabitLogEntity.kt)
+  - [HabitCycleHistoryEntity.kt](app/src/main/java/com/example/core/model/entity/HabitCycleHistoryEntity.kt)
+  - [HabitDatabase.kt](app/src/main/java/com/example/core/database/HabitDatabase.kt)
 * **Verification Status / حالة التحقق**: VERIFIED / مؤكد

@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
-        android:name="com.example.HabitApplication"
+        android:name="com.example.app.HabitApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,7 +28,7 @@
             android:name="autoStoreLocales"
             android:value="true" />
         <activity
-            android:name="com.example.MainActivity"
+            android:name="com.example.app.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize|uiMode"
             android:exported="true"
             android:label="@string/app_name"
@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.example.data.receiver.BootReceiver" android:exported="true">
+        <receiver android:name="com.example.core.infrastructure.receiver.BootReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -49,7 +49,7 @@
 
         <!-- Overlay Foreground Service -->
         <service
-            android:name="com.example.overlay.HabitOverlayService"
+            android:name="com.example.core.infrastructure.overlay.HabitOverlayService"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             tools:node="merge">
@@ -60,7 +60,7 @@
 
         <!-- Background Reliability Foreground Service -->
         <service
-            android:name="com.example.service.HabitBackgroundService"
+            android:name="com.example.core.infrastructure.service.HabitBackgroundService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
@@ -70,12 +70,12 @@
 
         <!-- Broadcast Receiver -->
         <receiver
-            android:name="com.example.overlay.HabitOverlayReceiver"
+            android:name="com.example.core.infrastructure.overlay.HabitOverlayReceiver"
             android:exported="false" />
 
         <!-- Pending Overlay Receiver (User Present/Unlock) -->
         <receiver
-            android:name="com.example.overlay.PendingOverlayReceiver"
+            android:name="com.example.core.infrastructure.overlay.PendingOverlayReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
@@ -84,7 +84,7 @@
 
         <!-- All Habits Widget Receiver -->
         <receiver
-            android:name="com.example.widget.AllHabitsWidgetReceiver"
+            android:name="com.example.core.infrastructure.widget.AllHabitsWidgetReceiver"
             android:exported="true"
             android:label="HabitFlow — All Habits">
             <intent-filter>
@@ -97,7 +97,7 @@
 
         <!-- Inactive Habits Widget Receiver -->
         <receiver
-            android:name="com.example.widget.InactiveHabitsWidgetReceiver"
+            android:name="com.example.core.infrastructure.widget.InactiveHabitsWidgetReceiver"
             android:exported="true"
             android:label="HabitFlow — Inactive Habits">
             <intent-filter>
@@ -110,7 +110,7 @@
 
         <!-- Habit Summary Widget Receiver -->
         <receiver
-            android:name="com.example.widget.HabitStatsSummaryWidgetReceiver"
+            android:name="com.example.core.infrastructure.widget.HabitStatsSummaryWidgetReceiver"
             android:exported="true"
             android:label="HabitFlow — Habit Summary">
             <intent-filter>
