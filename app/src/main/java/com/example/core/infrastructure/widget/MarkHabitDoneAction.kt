@@ -40,6 +40,9 @@ class MarkHabitDoneAction : ActionCallback {
         withContext(Dispatchers.IO) {
             repository.markHabitDoneToday(habitId)
             
+            // Stop active reminder sound if any
+            app.reminderAudioRepository.stop()
+            
             // Check for instant cycle completion if this was the last day
             com.example.core.domain.usecase.HabitStatusManager.checkHabitCompletion(
                 app.applicationContext,

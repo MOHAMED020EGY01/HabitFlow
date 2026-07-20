@@ -24,6 +24,7 @@
     <string name="reliable_reminders_protected">Fully protected ✓</string>
     <string name="reliable_reminders_setup_needed">Setup needed (%1$d of %2$d steps)</string>
     <string name="reliable_reminders_fix_now">Fix Now</string>
+    <string name="reliable_reminders_path_guide">Use manual path if disabled: Settings > Apps > Special access > Display over other apps</string>
     <string name="display_over_apps">Display Over Other Apps</string>
     <string name="run_in_background">Run in Background</string>
     <string name="run_in_background_desc">Keeps reminders &amp; overlay reliable even when the app is closed</string>
@@ -93,13 +94,13 @@
     <string name="reminder_audio_engine_alarm">Alarm Sound (Recommended)</string>
     <string name="reminder_audio_engine_tts">Text To Speech</string>
     <string name="reminder_audio_test_button">Test Reminder</string>
+    <string name="reminder_test_delay_warning">It may be delayed the first time only</string>
     <string name="reminder_audio_alarm_select">Choose Alarm Sound</string>
     <string name="reminder_audio_current_alarm">Current Alarm: %1$s</string>
     <string name="reminder_audio_duration">Alarm Duration</string>
     <string name="reminder_audio_duration_15s">15 seconds</string>
     <string name="reminder_audio_duration_30s">30 seconds (Default)</string>
     <string name="reminder_audio_duration_60s">60 seconds</string>
-    <string name="reminder_audio_duration_infinite">Infinite</string>
     <string name="reminder_audio_tts_repeats">Repeat Voice</string>
     <string name="reminder_audio_tts_once">Speak once</string>
     <string name="reminder_audio_tts_twice">Repeat twice</string>

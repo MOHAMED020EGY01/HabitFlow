@@ -91,6 +91,7 @@ fun GlassCard(
     glowColor: Color? = habitColor,
     glowCornerRadius: Dp = 24.dp,
     fillAlpha: Float? = null,
+    isScrolling: Boolean = false, // New parameter to optimize performance
     content: @Composable BoxScope.() -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
@@ -102,11 +103,13 @@ fun GlassCard(
     // ── Glass effect mode (blur on/off) ─────────────────────────────────
     val glassEffectMode = LocalGlassEffectMode.current
     val deviceBlurCapable = remember(context) { DeviceCapability.isBlurCapableDevice() }
-    val shouldBlur = remember(glassEffectMode, deviceBlurCapable) {
-        when (glassEffectMode) {
-            0 -> deviceBlurCapable       // Auto
-            1 -> true                    // Force On
-            else -> false                // Force Off (mode 2 or any other)
+    val shouldBlur = remember(glassEffectMode, deviceBlurCapable, isScrolling) {
+        if (isScrolling) false else { // Disable blur during scroll for high performance
+            when (glassEffectMode) {
+                0 -> deviceBlurCapable       // Auto
+                1 -> true                    // Force On
+                else -> false                // Force Off
+            }
         }
     }
 
@@ -117,7 +120,7 @@ fun GlassCard(
     }
 
     // ── Animations on/off ────────────────────────────────────────────────
-    val isAnimationsEnabled = LocalCardAnimationsEnabled.current
+    val isAnimationsEnabled = LocalCardAnimationsEnabled.current && !isScrolling
     val cometColor = glowColor ?: accentColor
 
     // Read the shared clock State reference ONCE in the composable body.

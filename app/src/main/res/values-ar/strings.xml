@@ -24,6 +24,7 @@
     <string name="reliable_reminders_protected">محمي بالكامل ✓</string>
     <string name="reliable_reminders_setup_needed">مطلوب الإعداد (%1$d من %2$d خطوات)</string>
     <string name="reliable_reminders_fix_now">إصلاح الآن</string>
+    <string name="reliable_reminders_path_guide">استخدم المسار اليدوي في حالة وجدته غير مفعل: الإعدادات > التطبيقات > وصول خاص > الظهور في الأعلى</string>
     <string name="display_over_apps">العرض فوق التطبيقات الأخرى</string>
     <string name="run_in_background">التشغيل في الخلفية</string>
     <string name="run_in_background_desc">يبقي التذكيرات والواجهة العائمة دقيقة حتى لو كان التطبيق مغلقًا</string>
@@ -93,13 +94,13 @@
     <string name="reminder_audio_engine_alarm">صوت التنبيه (موصى به)</string>
     <string name="reminder_audio_engine_tts">تحويل النص إلى كلام</string>
     <string name="reminder_audio_test_button">اختبار التذكير</string>
+    <string name="reminder_test_delay_warning">قد يتأخر في أول مرة فقط</string>
     <string name="reminder_audio_alarm_select">اختر صوت التنبيه</string>
     <string name="reminder_audio_current_alarm">التنبيه الحالي: %1$s</string>
     <string name="reminder_audio_duration">مدة التنبيه</string>
     <string name="reminder_audio_duration_15s">15 ثانية</string>
     <string name="reminder_audio_duration_30s">30 ثانية (افتراضي)</string>
     <string name="reminder_audio_duration_60s">60 ثانية</string>
-    <string name="reminder_audio_duration_infinite">لانهائي</string>
     <string name="reminder_audio_tts_repeats">تكرار الصوت</string>
     <string name="reminder_audio_tts_once">تحدث مرة واحدة</string>
     <string name="reminder_audio_tts_twice">تكرار مرتين</string>

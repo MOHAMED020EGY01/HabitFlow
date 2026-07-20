@@ -47,42 +47,67 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+import android.util.Log
+import com.example.BuildConfig
+
 class AllHabitsWidget : GlanceAppWidget() {
+    companion object {
+        private const val TAG = "AllHabitsWidget_DIAG"
+    }
 
     override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        Log.d(TAG, "[1] provideGlance started | id: $id")
         val app = context.applicationContext as HabitApplication
         
         try {
             app.ensureInitialized(timeoutMs = 2000L)
-        } catch (_: Exception) {}
+            Log.d(TAG, "[2] ensureInitialized success")
+        } catch (e: Exception) {
+            Log.e(TAG, "[2] ensureInitialized FAILED", e)
+        }
 
         val repository = try {
             HabitWidgetRepository(app.repository)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "[3] Repository creation FAILED", e)
             null
         }
 
         val habitDataList = try {
-            repository?.getTopActiveHabitsForWidgets() ?: emptyList()
+            val data = repository?.getTopActiveHabitsForWidgets() ?: emptyList()
+            Log.d(TAG, "[4] habitDataList size: ${data.size}")
+            data
         } catch (e: Exception) {
+            Log.e(TAG, "[4] getTopActiveHabitsForWidgets FAILED", e)
             emptyList()
         }
 
         val langCode = try {
-            app.preferencesManager.appLanguageFlow.first()
-        } catch (_: Exception) {
+            val code = app.preferencesManager.appLanguageFlow.first()
+            Log.d(TAG, "[5] langCode: $code")
+            code
+        } catch (e: Exception) {
+            Log.e(TAG, "[5] langCode read FAILED", e)
             "system"
         }
-        val localizedContext = com.example.core.util.LocaleDirectionHelper.getLocalizedContext(context, langCode)
+        
+        val localizedContext = try {
+            com.example.core.util.LocaleDirectionHelper.getLocalizedContext(context, langCode)
+        } catch (e: Exception) {
+            Log.e(TAG, "[6] Localization FAILED", e)
+            context
+        }
 
         provideContent {
+            Log.d(TAG, "[7] provideContent composition starting")
             AllHabitsWidgetContent(
                 context = localizedContext,
                 habitDataList = habitDataList,
                 langCode = langCode
             )
+            Log.d(TAG, "[7] provideContent composition finished")
         }
     }
 }
@@ -93,6 +118,8 @@ private fun AllHabitsWidgetContent(
     habitDataList: List<HabitWidgetRepository.WidgetHabitData>,
     langCode: String
 ) {
+    Log.d("AllHabitsWidget_DIAG", "[8] Rendering AllHabitsWidgetContent")
+    
     val primaryColor = Color(0xFF7C4DFF)
     val backgroundColor = Color(0xFF0F0F1A)
     val glassTint = primaryColor.copy(alpha = 0.15f)
@@ -116,14 +143,13 @@ private fun AllHabitsWidgetContent(
                     .fillMaxSize()
                     .background(glassTint)
                     .cornerRadius(19.dp)
-                    .padding(8.dp) // Clear outer breathing room
-
+                    .padding(8.dp)
             ) {
                 Column(
                     modifier = GlanceModifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Title in a smaller, oval-like card
+                    // Title
                     Box(
                         modifier = GlanceModifier
                             .background(ColorProvider(day = Color(0xFF7C4DFF).copy(alpha = 0.2f), night = Color(0xFF7C4DFF).copy(alpha = 0.3f)))
@@ -142,6 +168,7 @@ private fun AllHabitsWidgetContent(
                         )
                     }
                     Spacer(modifier = GlanceModifier.height(3.dp))
+                    
                     for (rowIndex in 0..1) {
                         if (rowIndex > 0) {
                             Spacer(modifier = GlanceModifier.height(5.dp))
@@ -154,11 +181,11 @@ private fun AllHabitsWidgetContent(
                                 val slotIndex = rowIndex * 3 + colIndex
                                 val habitData = habitDataList.getOrNull(slotIndex)
                                 
-                                // FIX: Use explicit Spacers for gaps instead of padding-before-background
                                 val habitColor = if (habitData != null) {
                                     try {
                                         Color(android.graphics.Color.parseColor(habitData.colorHex))
-                                    } catch (_: Exception) {
+                                    } catch (e: Exception) {
+                                        Log.e("AllHabitsWidget_DIAG", "Color parse error: ${habitData.colorHex}", e)
                                         Color(0xFF7C4DFF)
                                     }
                                 } else {
@@ -216,16 +243,7 @@ internal fun HabitSlotContent(
     habitData: HabitWidgetRepository.WidgetHabitData,
     langCode: String
 ) {
-    val habitColor = try {
-        Color(android.graphics.Color.parseColor(habitData.colorHex))
-    } catch (_: Exception) {
-        Color(0xFF7C4DFF) // Primary fallback
-    }
-
     val ringSize = 65.dp
-    val nameFontSize = 11.sp
-    val statusFontSize = 9.sp
-    val paddingVertical = 2.dp
     
     Box(
         modifier = GlanceModifier.fillMaxSize(),
@@ -235,11 +253,10 @@ internal fun HabitSlotContent(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .clickable(actionStartActivity(buildHabitDetailOrAddIntent(context, habitData.habitId)))
-                .padding(horizontal = 4.dp, vertical = paddingVertical),
+                .padding(horizontal = 4.dp, vertical = 2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Task 1.2: Circular ring centered
             val density = context.resources.displayMetrics.density
             val sizePx = (ringSize.value * density).roundToInt()
             val strokeWidthPx = 7f * density
@@ -257,7 +274,7 @@ internal fun HabitSlotContent(
             Box(contentAlignment = Alignment.Center) {
                 Image(
                     provider = ImageProvider(bitmap),
-                    contentDescription = "${habitData.name} progress",
+                    contentDescription = null,
                     modifier = GlanceModifier.size(ringSize)
                 )
                 Text(
@@ -272,19 +289,17 @@ internal fun HabitSlotContent(
 
             Spacer(modifier = GlanceModifier.height(4.dp))
 
-            // Task 1.3: Habit Name
             Text(
                 text = habitData.name,
                 maxLines = 1,
                 style = TextStyle(
                     color = ColorProvider(day = Color(0xFFE8E8F0), night = Color(0xFFE8E8F0)),
-                    fontSize = nameFontSize,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
             )
 
-            // Task 1.4: Day-progress text (muted)
             val mutedWhite = Color.White.copy(alpha = 0.7f)
             Text(
                 text = com.example.core.util.AppFormatters.forceWesternDigits(
@@ -298,14 +313,13 @@ internal fun HabitSlotContent(
                 maxLines = 1,
                 style = TextStyle(
                     color = ColorProvider(day = mutedWhite, night = mutedWhite),
-                    fontSize = statusFontSize,
+                    fontSize = 9.sp,
                     textAlign = TextAlign.Center
                 )
             )
 
             Spacer(modifier = GlanceModifier.height(5.dp))
 
-            // Task 1.6: Mark Done button
             val today = java.time.LocalDate.now().dayOfWeek
             val isScheduledToday = today in habitData.activeDays
 
@@ -356,6 +370,11 @@ internal fun HabitSlotContent(
                     )
                 }
             } else {
+                val habitColor = try {
+                    Color(android.graphics.Color.parseColor(habitData.colorHex))
+                } catch (e: Exception) {
+                    Color(0xFF7C4DFF)
+                }
                 Box(
                     modifier = GlanceModifier
                         .background(habitColor.copy(alpha = 0.15f))
@@ -387,19 +406,15 @@ internal fun HabitSlotContent(
 @Composable
 internal fun EmptyHabitSlotContent(context: Context) {
     val ringSize = 65.dp
-    val nameFontSize = 11.sp
-    val statusFontSize = 9.sp
-    val paddingVertical = 2.dp
 
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
             .clickable(actionStartActivity(buildHabitDetailOrAddIntent(context, null)))
-            .padding(horizontal = 4.dp, vertical = paddingVertical),
+            .padding(horizontal = 4.dp, vertical = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Task 2.1: Dashed circle outline (ghost of progress ring)
         val density = context.resources.displayMetrics.density
         val sizePx = (ringSize.value * density).roundToInt()
         val strokeWidthPx = 7f * density
@@ -420,13 +435,12 @@ internal fun EmptyHabitSlotContent(context: Context) {
 
         Spacer(modifier = GlanceModifier.height(5.dp))
 
-        // Task 2.2: Muted text
         val mutedGray = Color(0xFF8A8AA0)
         Text(
             text = context.getString(com.example.R.string.widget_no_active),
             style = TextStyle(
                 color = ColorProvider(day = mutedGray, night = mutedGray),
-                fontSize = nameFontSize,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -434,13 +448,12 @@ internal fun EmptyHabitSlotContent(context: Context) {
 
         Spacer(modifier = GlanceModifier.height(2.dp))
 
-        // Task 2.3: Tap to add link (Primary color)
         val primaryColor = Color(0xFF7C4DFF)
         Text(
             text = context.getString(com.example.R.string.widget_tap_add),
             style = TextStyle(
                 color = ColorProvider(day = primaryColor, night = primaryColor),
-                fontSize = statusFontSize,
+                fontSize = 9.sp,
                 textAlign = TextAlign.Center
             )
         )

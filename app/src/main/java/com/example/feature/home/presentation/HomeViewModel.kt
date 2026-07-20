@@ -170,6 +170,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             
             // Check for instant cycle completion if this was the last day
             if (completed) {
+                // Stop active reminder sound if any
+                app.reminderAudioRepository.stop()
+
                 com.example.core.domain.usecase.HabitStatusManager.checkHabitCompletion(
                     app.applicationContext, 
                     app.repository, 

@@ -346,16 +346,18 @@ fun HabitDetailScreen(
                 }
 
                 // 3. Reminders Card
-                RemindersCard(
-                    reminderTimes = details.habit.reminderTimes,
-                    habitColor = habitColor,
-                    activeDays = details.habit.activeDays
-                )
-
-                // 4. "Mark Today as Done" Button
                 val isTodayCompleted = remember(details.logs) {
                     details.logs.any { it.logDate == LocalDate.now().toString() && it.completed }
                 }
+
+                RemindersCard(
+                    reminderTimes = details.habit.reminderTimes,
+                    habitColor = habitColor,
+                    activeDays = details.habit.activeDays,
+                    isCompletedToday = isTodayCompleted
+                )
+
+                // 4. "Mark Today as Done" Button
                 val isHabitActive = details.habit.status == com.example.core.model.domain.HabitStatus.ACTIVE
 
                 if (isTodayCompleted) {
@@ -610,7 +612,8 @@ fun StatChip(
 fun RemindersCard(
     reminderTimes: List<String>,
     habitColor: Color? = null,
-    activeDays: Set<DayOfWeek> = DayOfWeek.values().toSet()
+    activeDays: Set<DayOfWeek> = DayOfWeek.values().toSet(),
+    isCompletedToday: Boolean = false
 ) {
     var currentTime by remember { mutableStateOf(LocalDateTime.now()) }
     val context = LocalContext.current
@@ -627,7 +630,8 @@ fun RemindersCard(
         }
     }
 
-    val nextReminder = remember(reminderTimes, currentTime, activeDays) {
+    val nextReminder = remember(reminderTimes, currentTime, activeDays, isCompletedToday) {
+        if (isCompletedToday) return@remember null
         val parsedTimes = reminderTimes.mapNotNull {
             try {
                 val parts = it.split(":")

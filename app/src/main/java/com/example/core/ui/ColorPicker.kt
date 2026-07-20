@@ -40,11 +40,13 @@ import androidx.compose.ui.unit.sp
  */
 val PresetColors = listOf(
     "#E53935", // Red
-    "#FB8C00", // Orange
-    "#FDD835", // Yellow
-    "#43A047", // Green
-    "#1E88E5", // Blue
+    "#D81B60", // Pink
     "#8E24AA", // Purple
+    "#1E88E5", // Blue
+    "#00ACC1", // Cyan
+    "#43A047", // Green
+    "#FDD835", // Yellow
+    "#FB8C00", // Orange
     "#757575"  // Gray
 )
 
@@ -100,14 +102,13 @@ fun ColorPicker(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // ── 2 rows × 4 swatches ───────────────────────────────
-                // Row 1: presets 0..3
+                // ── Row 1: presets 0..4 (5 swatches) ────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    PresetColors.take(4).forEach { colorHex ->
+                    PresetColors.take(5).forEach { colorHex ->
                         ColorSwatch(
                             colorHex = colorHex,
                             isSelected = selectedColorHex.equals(colorHex, ignoreCase = true),
@@ -116,13 +117,13 @@ fun ColorPicker(
                     }
                 }
 
-                // Row 2: presets 4..6 + Custom swatch
+                // ── Row 2: presets 5..8 + Custom swatch (5 swatches) ──
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    PresetColors.drop(4).forEach { colorHex ->
+                    PresetColors.drop(5).forEach { colorHex ->
                         ColorSwatch(
                             colorHex = colorHex,
                             isSelected = selectedColorHex.equals(colorHex, ignoreCase = true),

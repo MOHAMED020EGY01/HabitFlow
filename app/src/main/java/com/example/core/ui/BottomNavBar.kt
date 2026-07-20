@@ -9,7 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -46,7 +50,9 @@ fun BottomNavBar(
         modifier = modifier
             .fillMaxWidth()
             .then(if (navBarPaddingRequired) Modifier.navigationBarsPadding() else Modifier)
-            .height(80.dp)
+            .padding(start = 24.dp, end = 24.dp, bottom = 18.dp) // Floating margin
+            .height(64.dp), // Compact height
+        contentAlignment = Alignment.Center
     ) {
         BottomBarBackground(isDark, animationsEnabled, bottomNavBlurCapable)
 
@@ -74,9 +80,10 @@ private fun BottomBarBackground(
     animationsEnabled: Boolean,
     blurCapable: Boolean
 ) {
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
     val glassSurfaceColor = MaterialTheme.colorScheme.surface
     val glassBackgroundColor = MaterialTheme.colorScheme.background
-    val shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+    val shape = CircleShape
 
     val glassBrush = remember(isDark, animationsEnabled, glassSurfaceColor, glassBackgroundColor) {
         val topColor = glassSurfaceColor.copy(alpha = if (animationsEnabled) 0.85f else 0.95f)
@@ -87,10 +94,16 @@ private fun BottomBarBackground(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .shadow(12.dp, shape, clip = false)
+            .shadow(
+                elevation = 16.dp, 
+                shape = shape, 
+                clip = false, 
+                ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), 
+                spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+            )
             .background(glassBrush, shape)
-            .then(if (animationsEnabled && blurCapable) Modifier.blur(16.dp) else Modifier)
-            .border(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f), shape)
+            .then(if (animationsEnabled && blurCapable) Modifier.blur(12.dp) else Modifier)
+            .border(1.dp, outlineColor, shape)
             .clip(shape)
     )
 }
@@ -102,9 +115,16 @@ private fun SlidingIndicator(
     isDark: Boolean,
     animationsEnabled: Boolean
 ) {
-    val pillColor = MaterialTheme.colorScheme.primary
+    val pillColor = MaterialTheme.colorScheme.primaryContainer
     val layoutDirection = LocalLayoutDirection.current
     
+    // Interaction pulse and movement glow
+    val movementAlpha by animateFloatAsState(
+        targetValue = if (engine.isAnimating) 0.6f else 0.25f,
+        animationSpec = tween(300),
+        label = "MovementAlpha"
+    )
+
     Box(
         modifier = Modifier
             .fillMaxHeight()
@@ -113,23 +133,27 @@ private fun SlidingIndicator(
                 val isRtl = layoutDirection == LayoutDirection.Rtl
                 val multiplier = if (isRtl) -1f else 1f
                 translationX = multiplier * engine.progress * size.width
-            },
+            }
+            .padding(vertical = 8.dp, horizontal = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .width(72.dp)
-                .height(58.dp)
-                .shadow(
-                    elevation = if (animationsEnabled) 6.dp else 0.dp,
-                    shape = RoundedCornerShape(16.dp),
-                    ambientColor = pillColor.copy(alpha = 0.35f),
-                    spotColor = pillColor.copy(alpha = 0.45f)
-                )
-                .background(
-                    color = pillColor.copy(alpha = if (isDark) 0.65f else 0.55f),
-                    shape = RoundedCornerShape(16.dp)
-                )
+                .fillMaxSize()
+                .drawBehind {
+                    if (animationsEnabled) {
+                        // Dynamic soft manual glow
+                        drawCircle(
+                            brush = Brush.radialGradient(
+                                colors = listOf(pillColor.copy(alpha = movementAlpha), Color.Transparent),
+                                center = center,
+                                radius = size.maxDimension * 0.9f
+                            ),
+                            radius = size.maxDimension * 0.9f
+                        )
+                    }
+                }
+                .background(pillColor, CircleShape)
         )
     }
 }
@@ -143,10 +167,17 @@ private fun BottomNavigationRow(
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MainTab.entries.forEach { tab ->
+        MainTab.entries.forEachIndexed { index, tab ->
+            // Calculate interpolation progress for this specific tab
+            val tabProgress = remember(engine.progress) {
+                // Returns 1.0 if the pager is exactly on this index, 0.0 if away.
+                // It creates a smooth ramp as the user swipes.
+                (1f - kotlin.math.abs(engine.progress - index)).coerceIn(0f, 1f)
+            }
+
             BottomNavigationItem(
                 tab = tab,
-                isSelected = tab == engine.targetTab,
+                progress = tabProgress,
                 animationsEnabled = animationsEnabled,
                 onClick = { engine.navigateTo(tab) },
                 modifier = Modifier.weight(1f)
@@ -158,7 +189,7 @@ private fun BottomNavigationRow(
 @Composable
 private fun BottomNavigationItem(
     tab: MainTab,
-    isSelected: Boolean,
+    progress: Float,
     animationsEnabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -166,25 +197,27 @@ private fun BottomNavigationItem(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val animSpec = if (animationsEnabled) tween<Float>(400, easing = FastOutSlowInEasing) else snap()
-    val colorSpec = if (animationsEnabled) tween<Color>(400, easing = FastOutSlowInEasing) else snap()
+    val activeColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val inactiveColor = MaterialTheme.colorScheme.onSurfaceVariant
+    
+    // Linear color interpolation based on shared engine progress
+    val tint = remember(progress, activeColor, inactiveColor) {
+        androidx.compose.ui.graphics.lerp(inactiveColor, activeColor, progress)
+    }
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.96f else if (isSelected) 1.15f else 1.0f,
-        animationSpec = if (isPressed) snap() else animSpec,
-        label = "TabScale"
-    )
-
-    val tint by animateColorAsState(
-        targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary 
-                     else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f),
-        animationSpec = colorSpec,
-        label = "TabTint"
+    val pressScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.96f else 1.0f,
+        animationSpec = if (isPressed) snap() else spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "PressScale"
     )
 
     Box(
         modifier = modifier
             .fillMaxHeight()
+            .clip(CircleShape)
             .clickable(
                 interactionSource = interactionSource,
                 indication = ripple(bounded = true),
@@ -193,21 +226,39 @@ private fun BottomNavigationItem(
             .testTag("nav_item_${tab.name}"),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Icon(
-                imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
+                imageVector = if (progress > 0.5f) tab.selectedIcon else tab.unselectedIcon,
                 contentDescription = null,
                 tint = tint,
-                modifier = Modifier.size(24.dp).graphicsLayer { scaleX = scale; scaleY = scale }
+                modifier = Modifier
+                    .size(22.dp)
+                    .graphicsLayer {
+                        // Unify scaling: Combine manual press scale with progress-based selection scale
+                        val selectionScale = 1f + (0.04f * progress)
+                        val finalScale = pressScale * selectionScale
+                        scaleX = finalScale
+                        scaleY = finalScale
+                    }
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            
             Text(
                 text = stringResource(tab.titleRes),
                 style = MaterialTheme.typography.labelSmall,
                 color = tint,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.graphicsLayer { scaleX = scale; scaleY = scale }
+                modifier = Modifier.graphicsLayer { 
+                    // Smooth alpha and scale transition perfectly synced with progress
+                    alpha = progress
+                    val selectionScale = 0.9f + (0.1f * progress)
+                    val finalScale = pressScale * selectionScale
+                    scaleX = finalScale
+                    scaleY = finalScale
+                }
             )
         }
     }

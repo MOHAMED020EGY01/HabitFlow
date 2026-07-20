@@ -59,7 +59,7 @@ class AlarmSoundEngine : ReminderAudioEngine {
                 )
                 
                 // Apply configured reminder volume
-                isLooping = settings.alarmDurationSeconds == -1
+                isLooping = false
                 prepare()
                 
                 // Explicitly set volume twice to override some aggressive system drivers

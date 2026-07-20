@@ -19,7 +19,8 @@ data class AllHabitsUiState(
     val isCheckedTodayMap: Map<Int, Boolean> = emptyMap(),
     val filter: HabitFilter = HabitFilter.ALL,
     val sortBy: HabitSort = HabitSort.START_DATE,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val hasMore: Boolean = false
 )
 
 @Immutable
@@ -34,6 +35,7 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
     private val _filter = MutableStateFlow(HabitFilter.ALL)
     private val _sortBy = MutableStateFlow(HabitSort.START_DATE)
     private val _searchQuery = MutableStateFlow("")
+    private val _visibleLimit = MutableStateFlow(10) // يبدأ بـ 10 كما طلبت
 
     private val _uiState = MutableStateFlow(AllHabitsUiState())
     val uiState: StateFlow<AllHabitsUiState> = _uiState.asStateFlow()
@@ -48,8 +50,10 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
             app.repository.getAllHabitsWithCompletion(todayStr),
             _filter,
             _sortBy,
-            _searchQuery
-        ) { habitsWithCompletion, filter, sortBy, query ->
+            _searchQuery,
+            _visibleLimit
+        ) { habitsWithCompletion, filter, sortBy, query, limit ->
+            // ... (منطق الفلترة) ...
             var filteredHabits = when (filter) {
                 HabitFilter.ALL -> habitsWithCompletion
                 HabitFilter.ACTIVE -> habitsWithCompletion.filter { it.habit.status == com.example.core.model.domain.HabitStatus.ACTIVE }
@@ -64,7 +68,11 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }
 
-            val progressItems = filteredHabits.map { item ->
+            val totalCount = filteredHabits.size
+            val pagedHabits = filteredHabits.take(limit) // نأخذ فقط العدد المطلوب حالياً
+
+            // P9: Optimization for 902 habits - mapping only on visible subset
+            val progressItems = pagedHabits.map { item ->
                 HabitProgressItem(item.habit, item.completedCount)
             }
 
@@ -76,8 +84,7 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }
 
-            // P9: compute checkedMap only for the filtered subset
-            val checkedMap = filteredHabits.associate { item ->
+            val checkedMap = pagedHabits.associate { item ->
                 item.habit.id to item.isCompletedToday
             }
 
@@ -86,7 +93,8 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
                 isCheckedTodayMap = checkedMap,
                 filter = filter,
                 sortBy = sortBy,
-                searchQuery = query
+                searchQuery = query,
+                hasMore = limit < totalCount
             )
         }
         .flowOn(kotlinx.coroutines.Dispatchers.Default)
@@ -95,7 +103,14 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
         }.launchIn(viewModelScope)
     }
 
+    fun loadMore() {
+        if (_uiState.value.hasMore) {
+            _visibleLimit.value += 4 // زيادة 4 عادات في كل مرة
+        }
+    }
+
     fun setFilter(filter: HabitFilter) {
+        _visibleLimit.value = 10 // Reset limit on filter change
         _filter.value = filter
     }
 
@@ -104,6 +119,7 @@ class AllHabitsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setSearchQuery(query: String) {
+        _visibleLimit.value = 10 // Reset limit on search
         _searchQuery.value = query
     }
 

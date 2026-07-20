@@ -15,7 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -42,15 +42,18 @@ fun HabitCard(
     modifier: Modifier = Modifier,
     onActivateClick: (() -> Unit)? = null,
     streakDays: Int = 0,
-    animationDelayMs: Int = 0
+    animationDelayMs: Int = 0,
+    currentTime: LocalDateTime = LocalDateTime.now(),
+    isScrolling: Boolean = false
 ) {
-    val habitColor = try {
-        Color(android.graphics.Color.parseColor(habit.colorHex))
-    } catch (e: Exception) {
-        MaterialTheme.colorScheme.primary
+    val habitColor = remember(habit.colorHex) {
+        try {
+            Color(android.graphics.Color.parseColor(habit.colorHex))
+        } catch (e: Exception) {
+            Color(0xFF7C4DFF) // Default fallback
+        }
     }
 
-    var currentTime by remember { mutableStateOf(LocalDateTime.now()) }
     val context = LocalContext.current
     val isArabic = remember {
         val app = context.applicationContext as? com.example.app.HabitApplication
@@ -58,14 +61,8 @@ fun HabitCard(
         (app?.currentLanguageCode == "system" && androidx.core.os.ConfigurationCompat.getLocales(context.resources.configuration).get(0)?.language == "ar")
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(60_000)
-            currentTime = LocalDateTime.now()
-        }
-    }
-
-    val nextReminder = remember(habit.reminderTimes, currentTime, habit.activeDays) {
+    val nextReminder = remember(habit.reminderTimes, currentTime, habit.activeDays, isCheckedToday) {
+        if (isCheckedToday) return@remember null
         val parsedTimes = habit.reminderTimes.mapNotNull {
             try {
                 val parts = it.split(":")
@@ -90,17 +87,16 @@ fun HabitCard(
     GlassCard(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(
-                elevation = 12.dp,
-                shape = RoundedCornerShape(24.dp),
-                clip = false,
-                ambientColor = habitColor.copy(alpha = 0.25f),
-                spotColor = habitColor.copy(alpha = 0.35f)
-            ),
+            .graphicsLayer {
+                // Use graphicsLayer for shadow-like effect to reduce overdraw on older GPUs
+                clip = true
+                shape = RoundedCornerShape(24.dp)
+            },
         habitColor = habitColor,
         onClick = onClick,
         shape = RoundedCornerShape(24.dp),
-        animationDelayMs = animationDelayMs
+        animationDelayMs = animationDelayMs,
+        isScrolling = isScrolling
     ) {
         Row(
             modifier = Modifier

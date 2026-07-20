@@ -3,7 +3,7 @@ package com.example.core.audio
 data class ReminderAudioSettings(
     val selectedEngine: AudioEngineType = AudioEngineType.ALARM,
     val alarmUri: String = "", // Empty means system default alarm
-    val alarmDurationSeconds: Int = 30, // 15, 30, 60, -1 (until dismissed)
+    val alarmDurationSeconds: Int = 30, // 15, 30, 60
     val ttsRepeats: Int = 1, // 1, 2
     val voiceVolume: Float = 1.0f,
     val ringtoneVolume: Float = 1.0f,

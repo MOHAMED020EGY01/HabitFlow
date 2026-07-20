@@ -6,11 +6,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 
+import android.util.Log
+
 /**
  * Renders a FULL 360° circular progress ring as a Bitmap.
  * Corrective implementation for the final approved widget design.
  */
 object CircularProgressRingRenderer {
+    private const val TAG = "CircularProgressRenderer_DIAG"
 
     fun render(
         context: Context,
@@ -19,12 +22,21 @@ object CircularProgressRingRenderer {
         sizePx: Int = 150,
         strokeWidthPx: Float = 12f
     ): Bitmap {
-        val bitmap = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+        Log.d(TAG, "render starting | progress: $progressPercent | color: $colorHex | size: $sizePx")
+        
+        val bitmap = try {
+            Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+        } catch (e: Exception) {
+            Log.e(TAG, "Bitmap.createBitmap FAILED | size: $sizePx", e)
+            // Emergency fallback bitmap to avoid crash
+            Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        }
         val canvas = Canvas(bitmap)
 
         val accentColor = try {
             android.graphics.Color.parseColor(colorHex)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Color.parseColor FAILED for $colorHex", e)
             android.graphics.Color.parseColor("#7C4DFF")
         }
 
@@ -36,26 +48,31 @@ object CircularProgressRingRenderer {
             sizePx.toFloat() - padding
         )
 
-        // 1. Full circular track (faint white)
-        val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = strokeWidthPx
-            strokeCap = Paint.Cap.ROUND
-            color = android.graphics.Color.argb(30, 255, 255, 255) // ~12% white
-        }
-        canvas.drawCircle(sizePx / 2f, sizePx / 2f, (sizePx - 2 * padding) / 2f, trackPaint)
-
-        // 2. Progress arc (colored, percentage)
-        // startAngle = -90f (12 o'clock)
-        val sweepAngle = 360f * (progressPercent.coerceIn(0f, 100f) / 100f)
-        if (sweepAngle > 0f) {
-            val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        try {
+            // 1. Full circular track (faint white)
+            val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 style = Paint.Style.STROKE
                 strokeWidth = strokeWidthPx
                 strokeCap = Paint.Cap.ROUND
-                color = accentColor
+                color = android.graphics.Color.argb(30, 255, 255, 255) // ~12% white
             }
-            canvas.drawArc(rectF, -90f, sweepAngle, false, progressPaint)
+            canvas.drawCircle(sizePx / 2f, sizePx / 2f, (sizePx - 2 * padding) / 2f, trackPaint)
+
+            // 2. Progress arc (colored, percentage)
+            // startAngle = -90f (12 o'clock)
+            val sweepAngle = 360f * (progressPercent.coerceIn(0f, 100f) / 100f)
+            if (sweepAngle > 0f) {
+                val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    style = Paint.Style.STROKE
+                    strokeWidth = strokeWidthPx
+                    strokeCap = Paint.Cap.ROUND
+                    color = accentColor
+                }
+                canvas.drawArc(rectF, -90f, sweepAngle, false, progressPaint)
+            }
+            Log.d(TAG, "render success | progress: $progressPercent")
+        } catch (e: Exception) {
+            Log.e(TAG, "Canvas drawing FAILED", e)
         }
 
         return bitmap

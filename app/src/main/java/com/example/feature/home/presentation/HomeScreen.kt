@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -143,6 +144,14 @@ fun HomeScreen(
     val appLocale = remember(appLanguage) { com.example.core.util.LocaleDirectionHelper.getLocale(appLanguage) }
     val todayDateFormatted = remember(appLocale) {
         LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", appLocale))
+    }
+
+    var currentTime by remember { mutableStateOf(java.time.LocalDateTime.now()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(60_000)
+            currentTime = java.time.LocalDateTime.now()
+        }
     }
 
     Scaffold(
@@ -482,14 +491,17 @@ fun HomeScreen(
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 Column(
-                                    modifier = Modifier.padding(24.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
                                         text = stringResource(com.example.R.string.home_no_active_habits),
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        textAlign = TextAlign.Center
                                     )
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
@@ -497,7 +509,10 @@ fun HomeScreen(
                                         fontSize = 14.sp,
                                         fontStyle = FontStyle.Italic,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(horizontal = 8.dp)
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp),
+                                        textAlign = TextAlign.Center
                                     )
                                     Spacer(modifier = Modifier.height(20.dp))
                                     Button(
@@ -533,7 +548,8 @@ fun HomeScreen(
                                 onClick = onClick,
                                 modifier = Modifier.testTag("habit_card_${item.habit.id}"),
                                 streakDays = item.streakDays,
-
+                                currentTime = currentTime,
+                                isScrolling = lazyListState.isScrollInProgress
                             )
                         }
                     }

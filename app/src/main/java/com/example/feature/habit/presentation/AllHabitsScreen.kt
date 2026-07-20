@@ -37,7 +37,16 @@ fun AllHabitsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var currentTime by remember { mutableStateOf(java.time.LocalDateTime.now()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(60_000)
+            currentTime = java.time.LocalDateTime.now()
+        }
+    }
+
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val lazyListState = androidx.compose.foundation.lazy.rememberLazyListState()
     LaunchedEffect(savedStateHandle) {
         savedStateHandle?.getStateFlow<String?>("habit_save_result", null)?.collect { message ->
             if (message != null) {
@@ -211,7 +220,24 @@ fun AllHabitsScreen(
                     )
                 }
             } else {
+                val habitsCount = uiState.habitsWithProgress.size
+                
+                // تحسين نظام مراقبة التمرير باستخدام derivedStateOf (لأعلى أداء)
+                val shouldLoadMore by remember {
+                    derivedStateOf {
+                        val lastVisibleItem = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()
+                        lastVisibleItem != null && lastVisibleItem.index >= habitsCount - 2
+                    }
+                }
+
+                LaunchedEffect(shouldLoadMore) {
+                    if (shouldLoadMore && uiState.hasMore) {
+                        viewModel.loadMore()
+                    }
+                }
+
                 LazyColumn(
+                    state = lazyListState,
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(vertical = 8.dp)
@@ -240,8 +266,21 @@ fun AllHabitsScreen(
                             onActivateClick = onActivateClick,
                             modifier = Modifier
                                 .animateItem()
-                                .testTag("habit_card_${item.habit.id}")
+                                .testTag("habit_card_${item.habit.id}"),
+                            currentTime = currentTime,
+                            isScrolling = lazyListState.isScrollInProgress
                         )
+                    }
+
+                    if (uiState.hasMore) {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                            }
+                        }
                     }
                 }
             }

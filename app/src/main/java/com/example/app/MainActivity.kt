@@ -208,14 +208,16 @@ class MainActivity : AppCompatActivity() {
                 val isEnabled = app.preferencesManager.isBackgroundServiceEnabledFlow.first()
                 if (isEnabled) {
                     val habits = app.repository.getAllHabitsSync()
-
-                    habits.forEach { habit ->
-                        if (habit.isActive) {
+                    // Only schedule the top 10 most relevant active habits on resume
+                    // to prevent IPC flooding and system server lag
+                    habits.filter { it.isActive }
+                        .sortedByDescending { it.createdAt }
+                        .take(10) 
+                        .forEach { habit ->
                             com.example.core.infrastructure.worker.HabitReminderWorker.scheduleHabitReminders(
                                 appContext, habit
                             )
                         }
-                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -34,6 +34,12 @@ class HabitReminderWorker(
 
         android.util.Log.e("ReminderChain", "[HabitReminderWorker] doWork started for '$habitName' (ID: $habitId). Scheduled for: $scheduledTimeStr. Actual time: ${java.time.LocalDateTime.now()}")
 
+        // ── Smart Skip: skip if already completed today ───────────────
+        if (app.repository.isHabitCompletedToday(habitId)) {
+            android.util.Log.d("HabitReminder", "Skipping reminder for '$habitName' — already completed today")
+            return Result.success()
+        }
+
         // ── Respect activeDays: skip if today is not an active day ───────
         val todayDayName = java.time.LocalDate.now().dayOfWeek.name
         if (activeDaysCsv != null && activeDaysCsv.isNotBlank()) {

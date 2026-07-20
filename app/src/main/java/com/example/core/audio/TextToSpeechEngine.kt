@@ -67,20 +67,27 @@ class TextToSpeechEngine(private val speechManager: ReminderSpeechManager) : Rem
         val localizedContext = LocaleDirectionHelper.getLocalizedContext(context, langCode)
         val textToSpeak = localizedContext.getString(R.string.reminder_voice_preview)
 
+        var requestsPending = settings.ttsRepeats.coerceAtLeast(1)
         _isPlaying.value = true
-        speechManager.speak(
-            ReminderSpeechManager.SpeechRequest(
-                text = textToSpeak,
-                locale = locale,
-                voiceVolume = settings.voiceVolume,
-                pitch = settings.pitch,
-                rate = settings.rate,
-                onDone = {
-                    Log.d("TTS", "[TTS] Preview finished")
-                    _isPlaying.value = false
-                }
+
+        repeat(requestsPending) {
+            speechManager.speak(
+                ReminderSpeechManager.SpeechRequest(
+                    text = textToSpeak,
+                    locale = locale,
+                    voiceVolume = settings.voiceVolume,
+                    pitch = settings.pitch,
+                    rate = settings.rate,
+                    onDone = {
+                        requestsPending--
+                        if (requestsPending <= 0) {
+                            Log.d("TTS", "[TTS] Preview finished")
+                            _isPlaying.value = false
+                        }
+                    }
+                )
             )
-        )
+        }
     }
 
     override fun updateVolume(volume: Float) {

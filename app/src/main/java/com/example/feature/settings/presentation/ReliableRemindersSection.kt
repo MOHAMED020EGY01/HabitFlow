@@ -269,6 +269,17 @@ fun ReliableRemindersSection(
                 }
             }
 
+            // Manual Path Guide
+            if (!isFullyProtected) {
+                Text(
+                    text = stringResource(R.string.reliable_reminders_path_guide),
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+
             // Manufacturer Auto-start fallback link if needed
             val manufacturer = Build.MANUFACTURER.lowercase()
             if (!isFullyProtected && manufacturer in listOf("xiaomi", "huawei", "honor", "oppo", "vivo", "samsung")) {

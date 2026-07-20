@@ -488,8 +488,7 @@ fun SettingsScreen(
                                     listOf(
                                         15 to stringResource(com.example.R.string.reminder_audio_duration_15s),
                                         30 to stringResource(com.example.R.string.reminder_audio_duration_30s),
-                                        60 to stringResource(com.example.R.string.reminder_audio_duration_60s),
-                                        -1 to stringResource(com.example.R.string.reminder_audio_duration_infinite)
+                                        60 to stringResource(com.example.R.string.reminder_audio_duration_60s)
                                     ).forEach { (dur, label) ->
                                         val isSel = uiState.audioSettings.alarmDurationSeconds == dur
                                         Box(
@@ -537,12 +536,12 @@ fun SettingsScreen(
                             ) {
                                 Text(stringResource(com.example.R.string.reminder_audio_tts_repeats), fontSize = 14.sp)
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    listOf(1, 2).forEach { count ->
+                                    listOf(1, 2, 5).forEach { count ->
                                         val isSel = uiState.audioSettings.ttsRepeats == count
                                         FilterChip(
                                             selected = isSel,
                                             onClick = { viewModel.setTtsRepeats(count) },
-                                            label = { Text(if (count == 1) "1x" else "2x") }
+                                            label = { Text(if (count == 5) "5x" else if (count == 2) "2x" else "1x") }
                                         )
                                     }
                                 }
@@ -593,6 +592,16 @@ fun SettingsScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = stringResource(com.example.R.string.reminder_test_delay_warning),
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -690,38 +699,39 @@ fun SettingsScreen(
                 }
             }
 
+            // App Version at the bottom
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "HabitFlow Version ${com.example.BuildConfig.VERSION_NAME}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
+
             Spacer(modifier = Modifier.height(40.dp))
         }
     }
 
     if (showResetDialog) {
-        AlertDialog(
-            onDismissRequest = { showResetDialog = false },
-            title = { Text(text = stringResource(com.example.R.string.reset_data)) },
-            text = { Text(text = stringResource(com.example.R.string.confirm_reset)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.resetAllData {
-                            navController.navigate(Routes.SPLASH) {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        }
-                        showResetDialog = false
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    ),
-                    modifier = Modifier.testTag("confirm_reset")
-                ) {
-                    Text(text = stringResource(com.example.R.string.reset))
+        com.example.core.ui.GlassDeleteModal(
+            title = stringResource(com.example.R.string.reset_data),
+            message = stringResource(com.example.R.string.confirm_reset),
+            confirmText = stringResource(com.example.R.string.reset),
+            cancelText = stringResource(com.example.R.string.cancel),
+            onConfirm = {
+                viewModel.resetAllData {
+                    navController.navigate(Routes.SPLASH) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
+                showResetDialog = false
             },
-            dismissButton = {
-                TextButton(onClick = { showResetDialog = false }) {
-                    Text(text = stringResource(com.example.R.string.cancel))
-                }
-            }
+            onDismiss = { showResetDialog = false }
         )
     }
 }

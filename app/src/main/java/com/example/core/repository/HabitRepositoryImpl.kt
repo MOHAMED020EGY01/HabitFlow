@@ -185,6 +185,11 @@ class HabitRepositoryImpl(
         }.distinctUntilChanged()
     }
 
+    override suspend fun isHabitCompletedToday(habitId: Int): Boolean {
+        val today = java.time.LocalDate.now().toString()
+        return habitDao.getLogForDate(habitId, today)?.completed ?: false
+    }
+
     // === NEW LIGHTWEIGHT METHODS ===
 
     override fun getActiveHabitsWithCompletion(today: String): Flow<List<com.example.core.model.domain.HabitWithCompletion>> {

@@ -40,6 +40,8 @@ interface HabitRepository {
     fun getAllHabitsWithCompletion(today: String): Flow<List<com.example.core.model.domain.HabitWithCompletion>>
     fun getCompletedLogDates(): Flow<List<com.example.core.model.domain.HabitLogDate>>
 
+    suspend fun isHabitCompletedToday(habitId: Int): Boolean
+
     // === NEW LIGHTWEIGHT METHODS ===
     /** Only active top-6 habits with pre-calculated completion data */
     fun getActiveHabitsWithCompletion(today: String): Flow<List<com.example.core.model.domain.HabitWithCompletion>>

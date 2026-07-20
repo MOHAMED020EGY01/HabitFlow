@@ -31,6 +31,18 @@ class HabitOverlayWorker(
                 "Scheduled: $scheduledTimeStr. Actual: $now. " +
                 "BatteryOpt: ignoring=$isIgnoringBattery, powerSave=$isPowerSaveMode")
 
+        // ── Smart Skip: skip if already completed today ───────────────
+        val app = applicationContext as com.example.app.HabitApplication
+        try {
+            app.ensureInitialized()
+            if (app.repository.isHabitCompletedToday(habitId)) {
+                android.util.Log.d("HabitOverlayWorker", "Skipping overlay for '$habitName' — already completed today")
+                return Result.success()
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("HabitOverlayWorker", "Smart skip check failed", e)
+        }
+
         // ── Respect activeDays: skip if today is not an active day ───────
         val todayDayName = java.time.LocalDate.now().dayOfWeek.name
         if (activeDaysCsv != null && activeDaysCsv.isNotBlank()) {

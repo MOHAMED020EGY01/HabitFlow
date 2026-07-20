@@ -226,12 +226,30 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun resetAllData(onComplete: () -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            // 1. Clear Preferences
             app.preferencesManager.clearAllData()
+            
+            // 2. Clear Database
             val db = com.example.core.database.HabitDatabase.getDatabase(app)
             db.clearAllTables()
+            
+            // 3. Delete Local Files (Profile Pictures)
+            try {
+                val filesDir = app.filesDir
+                filesDir.listFiles { _, name -> 
+                    (name.startsWith("profile_avatar_") && name.endsWith(".jpg")) 
+                }?.forEach { it.delete() }
+            } catch (e: Exception) {
+                Log.e("SETTINGS", "Failed to delete local files during reset", e)
+            }
+            
+            // 4. Update Widgets
             com.example.core.infrastructure.widget.HabitWidgetSyncUpdater.updateNowForced(app.applicationContext)
-            onComplete()
+            
+            launch(Dispatchers.Main) {
+                onComplete()
+            }
         }
     }
 }
