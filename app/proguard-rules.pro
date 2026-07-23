@@ -25,6 +25,18 @@
 -keep class * extends androidx.glance.appwidget.GlanceAppWidgetReceiver
 -keep class androidx.glance.** { *; }
 
+
+########################################
+# Glance ActionCallback (Reflection)
+########################################
+
+-keep class * extends androidx.glance.appwidget.action.ActionCallback {
+    public <init>();
+    *;
+}
+
+-keep class androidx.glance.appwidget.action.** { *; }
+
 ########################################
 # WorkManager
 ########################################
