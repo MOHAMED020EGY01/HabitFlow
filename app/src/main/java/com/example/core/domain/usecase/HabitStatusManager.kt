@@ -29,8 +29,9 @@ object HabitStatusManager {
 
             val cycleStart = Instant.ofEpochMilli(habit.cycleStartDate)
                 .atZone(ZoneId.systemDefault()).toLocalDate()
-            val cycleEnd = Instant.ofEpochMilli(habit.cycleEndDate)
-                .atZone(ZoneId.systemDefault()).toLocalDate()
+            val cycleEnd = habit.cycleEndDate?.let {
+                Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+            }
 
             if (cycleStart.isAfter(yesterday)) continue
 
@@ -46,7 +47,7 @@ object HabitStatusManager {
             var currentHabit = habit
             var tempDate = effectiveStart
 
-            while (!tempDate.isAfter(yesterday) && tempDate.isBefore(cycleEnd)) {
+            while (!tempDate.isAfter(yesterday) && (cycleEnd == null || tempDate.isBefore(cycleEnd))) {
                 val dateStr = tempDate.toString()
 
                 // ── activeDays check for ACTIVE habits ────────────────────
@@ -73,7 +74,7 @@ object HabitStatusManager {
                             completed = false,
                             state = "INACTIVE_SKIPPED"
                         ))
-                        val newEndDate = currentHabit.cycleEndDate + 86400000L
+                        val newEndDate = currentHabit.cycleEndDate?.let { it + 86400000L }
                         currentHabit = currentHabit.copy(
                             inactiveDaysCount = currentHabit.inactiveDaysCount + 1,
                             cycleEndDate = newEndDate
@@ -131,6 +132,8 @@ object HabitStatusManager {
                 inactiveSinceTimestamp = System.currentTimeMillis()
             )
             repository.updateHabit(updated)
+            // CRITICAL: Cancel reminders when auto-paused
+            com.example.core.infrastructure.worker.HabitReminderWorker.cancelHabitReminders(context, updated.id)
             sendInactivityNotification(context, repository, updated)
         }
     }
@@ -141,15 +144,45 @@ object HabitStatusManager {
         habit: Habit,
         today: LocalDate,
         cycleStart: LocalDate,
-        cycleEnd: LocalDate
+        cycleEnd: LocalDate?
     ) {
         if (habit.status != HabitStatus.ACTIVE) return
 
-        // ── Completion Condition ──────────────────────────────────────────
-        // A cycle is eligible for completion if:
-        // 1. Today is strictly AFTER the cycle end (traditional rollover logic).
-        // 2. Today IS the cycle end day AND the user has marked it done.
-        // ──────────────────────────────────────────────────────────────────
+        if (habit.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+            val target = habit.targetOccurrenceCount ?: 0
+            val completedCount = repository.getCompletedCountForCycle(habit.id, cycleStart.toString())
+            
+            if (completedCount >= target) {
+                val updated = habit.copy(
+                    status = HabitStatus.COMPLETE,
+                    isActive = false
+                )
+                repository.updateHabit(updated)
+                // CRITICAL: Cancel reminders when completed
+                com.example.core.infrastructure.worker.HabitReminderWorker.cancelHabitReminders(context, updated.id)
+
+                val updatedLogs = repository.getLogsForHabitSync(habit.id)
+                    .filter { log ->
+                        val d = LocalDate.parse(log.logDate)
+                        !d.isBefore(cycleStart)
+                    }
+                val logsSnapshot = updatedLogs.joinToString(";") { "${it.logDate}:${it.state}" }
+                val history = com.example.core.model.domain.HabitCycleHistory(
+                    habitId = updated.id,
+                    cycleStartDate = updated.cycleStartDate,
+                    cycleEndDate = System.currentTimeMillis(), // Current time for occurrence
+                    completionPercentage = 100.0,
+                    result = HabitStatus.COMPLETE.name,
+                    logsSnapshot = logsSnapshot
+                )
+                repository.insertCycleHistory(history)
+            }
+            return
+        }
+
+        // ── Calendar Completion Condition ──────────────────────────────────────────
+        if (cycleEnd == null) return // Should not happen for CALENDAR
+
         val lastScheduledDay = cycleEnd.minusDays(1)
         val isLastDayOrLater = !today.isBefore(lastScheduledDay)
         
@@ -185,13 +218,15 @@ object HabitStatusManager {
             isActive = false
         )
         repository.updateHabit(updated)
+        // CRITICAL: Cancel reminders
+        com.example.core.infrastructure.worker.HabitReminderWorker.cancelHabitReminders(context, updated.id)
 
         // Store cycle history with simple string format (no Gson)
         val logsSnapshot = updatedLogs.joinToString(";") { "${it.logDate}:${it.state}" }
         val history = com.example.core.model.domain.HabitCycleHistory(
             habitId = updated.id,
             cycleStartDate = updated.cycleStartDate,
-            cycleEndDate = updated.cycleEndDate,
+            cycleEndDate = updated.cycleEndDate ?: updated.cycleStartDate,
             completionPercentage = completionPercentage,
             result = finalStatus.name,
             logsSnapshot = logsSnapshot
@@ -208,8 +243,9 @@ object HabitStatusManager {
         val today = LocalDate.now()
         val cycleStart = Instant.ofEpochMilli(habit.cycleStartDate)
             .atZone(ZoneId.systemDefault()).toLocalDate()
-        val cycleEnd = Instant.ofEpochMilli(habit.cycleEndDate)
-            .atZone(ZoneId.systemDefault()).toLocalDate()
+        val cycleEnd = habit.cycleEndDate?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+        }
 
         checkAndCompleteCycle(context, repository, habit, today, cycleStart, cycleEnd)
     }

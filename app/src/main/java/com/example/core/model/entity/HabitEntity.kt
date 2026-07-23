@@ -19,6 +19,8 @@ data class HabitEntity(
     val name: String,
     val description: String,
     val durationDays: Int,
+    val durationType: String = "CALENDAR",
+    val targetOccurrenceCount: Int? = null,
     val colorHex: String,
     val isActive: Boolean,
     val reminderTimes: List<String>, // Converted automatically via Converters
@@ -26,7 +28,7 @@ data class HabitEntity(
     val startedAt: Long?,
     val status: String = "ACTIVE",
     val cycleStartDate: Long = 0,
-    val cycleEndDate: Long = 0,
+    val cycleEndDate: Long? = 0,
     val inactiveDaysCount: Int = 0,
     val activeDays: List<String> = listOf("MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"),
     val inactiveSinceTimestamp: Long? = null,

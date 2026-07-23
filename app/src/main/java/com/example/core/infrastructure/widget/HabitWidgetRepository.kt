@@ -22,6 +22,7 @@ class HabitWidgetRepository(
         val isCompletedToday: Boolean,
         val reminderTimes: List<String>,
         val activeDays: Set<DayOfWeek>,
+        val durationType: com.example.core.model.domain.HabitDurationType = com.example.core.model.domain.HabitDurationType.CALENDAR,
         val inactiveSinceTimestamp: Long? = null
     )
 
@@ -41,7 +42,8 @@ class HabitWidgetRepository(
                 progressPercent = info.progressPercent,
                 isCompletedToday = info.isCompletedToday,
                 reminderTimes = info.reminderTimes,
-                activeDays = info.activeDays
+                activeDays = info.activeDays,
+                durationType = info.durationType
             )
         }
     }
@@ -59,12 +61,13 @@ class HabitWidgetRepository(
                 name = habit.name,
                 colorHex = habit.colorHex,
                 daysCompleted = 0, // Not strictly needed for this widget
-                totalDays = habit.durationDays,
+                totalDays = habit.getScheduledDaysCount(),
                 daysRemaining = 0,
                 progressPercent = 0f,
                 isCompletedToday = false,
                 reminderTimes = habit.reminderTimes,
                 activeDays = habit.activeDays,
+                durationType = habit.durationType,
                 inactiveSinceTimestamp = habit.inactiveSinceTimestamp
             )
         }

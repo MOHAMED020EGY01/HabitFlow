@@ -110,6 +110,10 @@ class HabitRepositoryImpl(
         return getLogsForHabitSync(habitId).count { it.completed }
     }
 
+    override suspend fun getCompletedCountForCycle(habitId: Int, startDate: String): Int {
+        return getLogsForHabitSync(habitId).count { it.completed && it.logDate >= startDate }
+    }
+
     override suspend fun getActiveHabitsCount(): Int {
         return habitDao.getActiveHabitsCount()
     }
@@ -157,7 +161,8 @@ class HabitRepositoryImpl(
                 progressPercent = percent,
                 isCompletedToday = displayEntity.isCompletedToday,
                 reminderTimes = habit.reminderTimes,
-                activeDays = habit.activeDays
+                activeDays = habit.activeDays,
+                durationType = habit.durationType
             )
         }
     }

@@ -204,104 +204,164 @@ fun AddHabitScreen(
                 )
             }
 
-            // Habit Duration Input
+            // Duration Type Selector
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = stringResource(com.example.R.string.add_habit_duration_label),
+                    text = stringResource(com.example.R.string.add_habit_duration_type_label),
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                    SegmentedButton(
+                        selected = uiState.durationType == com.example.core.model.domain.HabitDurationType.CALENDAR,
+                        onClick = { viewModel.onDurationTypeChange(com.example.core.model.domain.HabitDurationType.CALENDAR) },
+                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                    ) {
+                        Text(stringResource(com.example.R.string.add_habit_duration_type_calendar))
+                    }
+                    SegmentedButton(
+                        selected = uiState.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE,
+                        onClick = { viewModel.onDurationTypeChange(com.example.core.model.domain.HabitDurationType.OCCURRENCE) },
+                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                    ) {
+                        Text(stringResource(com.example.R.string.add_habit_duration_type_occurrence))
+                    }
+                }
+            }
 
-                // Duration Chips Row
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    presets.forEach { preset ->
-                        val isSelected = !isCustomMode && uiState.durationDays == preset
+            // Habit Duration/Occurrence Input
+            if (uiState.durationType == com.example.core.model.domain.HabitDurationType.CALENDAR) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(com.example.R.string.add_habit_duration_label),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    // Duration Chips Row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        presets.forEach { preset ->
+                            val isSelected = !isCustomMode && uiState.durationDays == preset
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(50))
+                                    .background(
+                                        if (isSelected) MaterialTheme.colorScheme.primary
+                                        else Color.Transparent
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                        shape = RoundedCornerShape(50)
+                                    )
+                                    .clickable {
+                                        isCustomMode = false
+                                        viewModel.onDurationChange(preset)
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = com.example.core.util.AppFormatters.forceWesternDigits(
+                                        stringResource(com.example.R.string.add_habit_duration_preset, preset)
+                                    ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                            else MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+
+                        // Custom Chip
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
                                 .background(
-                                    if (isSelected) MaterialTheme.colorScheme.primary
+                                    if (isCustomMode) MaterialTheme.colorScheme.primary
                                     else Color.Transparent
                                 )
                                 .border(
                                     width = 1.dp,
-                                    color = if (isSelected) Color.Transparent else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                    color = if (isCustomMode) Color.Transparent else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                                     shape = RoundedCornerShape(50)
                                 )
                                 .clickable {
-                                    isCustomMode = false
-                                    viewModel.onDurationChange(preset)
+                                    isCustomMode = true
                                 }
                                 .padding(horizontal = 16.dp, vertical = 10.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = com.example.core.util.AppFormatters.forceWesternDigits(
-                                    stringResource(com.example.R.string.add_habit_duration_preset, preset)
-                                ),
+                                text = stringResource(com.example.R.string.add_habit_duration_custom),
                                 style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                                fontWeight = if (isCustomMode) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isCustomMode) MaterialTheme.colorScheme.onPrimary
                                         else MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
 
-                    // Custom Chip
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(
-                                if (isCustomMode) MaterialTheme.colorScheme.primary
-                                else Color.Transparent
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = if (isCustomMode) Color.Transparent else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(50)
-                            )
-                            .clickable {
-                                isCustomMode = true
-                            }
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(com.example.R.string.add_habit_duration_custom),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = if (isCustomMode) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isCustomMode) MaterialTheme.colorScheme.onPrimary
-                                    else MaterialTheme.colorScheme.onBackground
+                    // Custom duration input field (only visible when in Custom mode)
+                    if (isCustomMode) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        GlassTextField(
+                            value = if (uiState.durationDays == 0) "" else uiState.durationDays.toString(),
+                            onValueChange = {
+                                val days = it.toIntOrNull() ?: 0
+                                viewModel.onDurationChange(days)
+                            },
+                            habitColor = habitColor,
+                            placeholder = { Text(stringResource(com.example.R.string.add_habit_duration_custom)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            isError = uiState.durationError != null,
+                            testTag = "habit_duration_input"
                         )
+                        if (uiState.durationError != null) {
+                            com.example.core.ui.InlineErrorBanner(
+                                message = uiState.durationError!!,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
                     }
                 }
+            } else {
+                // OCCURRENCE Mode UI
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(com.example.R.string.add_habit_occurrence_label),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
 
-                // Custom duration input field (only visible when in Custom mode)
-                if (isCustomMode) {
-                    Spacer(modifier = Modifier.height(12.dp))
                     GlassTextField(
-                        value = if (uiState.durationDays == 0) "" else uiState.durationDays.toString(),
+                        value = if (uiState.targetOccurrenceCount == 0) "" else uiState.targetOccurrenceCount.toString(),
                         onValueChange = {
-                            val days = it.toIntOrNull() ?: 0
-                            viewModel.onDurationChange(days)
+                            val count = it.toIntOrNull() ?: 0
+                            viewModel.onTargetOccurrenceChange(count)
                         },
                         habitColor = habitColor,
-                        placeholder = { Text(stringResource(com.example.R.string.add_habit_duration_custom_placeholder)) },
+                        placeholder = { Text(stringResource(com.example.R.string.add_habit_occurrence_placeholder)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = uiState.durationError != null,
-                        testTag = "habit_duration_input"
+                        isError = uiState.occurrenceError != null,
+                        testTag = "habit_occurrence_input"
                     )
-                    if (uiState.durationError != null) {
+                    if (uiState.occurrenceError != null) {
                         com.example.core.ui.InlineErrorBanner(
-                            message = uiState.durationError!!,
+                            message = uiState.occurrenceError!!,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
@@ -496,7 +556,10 @@ fun AddHabitScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Save / Confirm Gradient Button
-            val isButtonEnabled = uiState.name.isNotBlank() && uiState.durationDays > 0 && uiState.reminderTimes.isNotEmpty()
+            val isButtonEnabled = uiState.name.isNotBlank() && 
+                ((uiState.durationType == com.example.core.model.domain.HabitDurationType.CALENDAR && uiState.durationDays > 0) ||
+                 (uiState.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE && uiState.targetOccurrenceCount > 0)) && 
+                uiState.reminderTimes.isNotEmpty()
             val buttonBgModifier = if (isButtonEnabled) {
                 Modifier
                     .fillMaxWidth()

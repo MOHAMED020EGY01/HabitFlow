@@ -21,7 +21,7 @@ import com.example.core.model.entity.NotificationEntity
         HabitCycleHistoryEntity::class,
         NotificationEntity::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -32,6 +32,53 @@ abstract class HabitDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: HabitDatabase? = null
+
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Add new columns to 'habits' table
+                db.execSQL("ALTER TABLE habits ADD COLUMN durationType TEXT NOT NULL DEFAULT 'CALENDAR'")
+                db.execSQL("ALTER TABLE habits ADD COLUMN targetOccurrenceCount INTEGER")
+                
+                // Handle cycleEndDate becoming nullable. 
+                // Since SQLite doesn't support ALTER TABLE DROP COLUMN or ALTER COLUMN,
+                // we'll need to create a temporary table if we want to change NOT NULL to NULL.
+                // However, most code in this project treats 0 as 'unset'.
+                // Let's check if we can just allow NULLs in the existing column if it wasn't NOT NULL.
+                // From MIGRATION_1_2: "cycleEndDate INTEGER NOT NULL DEFAULT 0"
+                
+                // To safely change NOT NULL to NULL in SQLite, we must recreate the table.
+                db.execSQL("CREATE TABLE habits_new (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "name TEXT NOT NULL, " +
+                        "description TEXT NOT NULL, " +
+                        "durationDays INTEGER NOT NULL, " +
+                        "durationType TEXT NOT NULL DEFAULT 'CALENDAR', " +
+                        "targetOccurrenceCount INTEGER, " +
+                        "colorHex TEXT NOT NULL, " +
+                        "isActive INTEGER NOT NULL, " +
+                        "reminderTimes TEXT NOT NULL, " +
+                        "createdAt INTEGER NOT NULL, " +
+                        "startedAt INTEGER, " +
+                        "status TEXT NOT NULL DEFAULT 'ACTIVE', " +
+                        "cycleStartDate INTEGER NOT NULL DEFAULT 0, " +
+                        "cycleEndDate INTEGER, " +
+                        "inactiveDaysCount INTEGER NOT NULL DEFAULT 0, " +
+                        "activeDays TEXT NOT NULL DEFAULT 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY', " +
+                        "inactiveSinceTimestamp INTEGER, " +
+                        "reminderVoice TEXT NOT NULL DEFAULT 'DEFAULT')")
+
+                db.execSQL("INSERT INTO habits_new (id, name, description, durationDays, colorHex, isActive, reminderTimes, createdAt, startedAt, status, cycleStartDate, cycleEndDate, inactiveDaysCount, activeDays, inactiveSinceTimestamp, reminderVoice) " +
+                        "SELECT id, name, description, durationDays, colorHex, isActive, reminderTimes, createdAt, startedAt, status, cycleStartDate, cycleEndDate, inactiveDaysCount, activeDays, inactiveSinceTimestamp, reminderVoice FROM habits")
+                
+                db.execSQL("DROP TABLE habits")
+                db.execSQL("ALTER TABLE habits_new RENAME TO habits")
+                
+                // Re-create indices
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_habits_isActive ON habits (isActive)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_habits_createdAt ON habits (createdAt)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_habits_startedAt ON habits (startedAt)")
+            }
+        }
 
         val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -206,7 +253,7 @@ abstract class HabitDatabase : RoomDatabase() {
                     HabitDatabase::class.java,
                     "habit_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13)
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)

@@ -134,6 +134,7 @@
     <string name="habit_detail_overall_progress">Overall Progress</string>
     <string name="habit_details_title">Habit Details</string>
     <string name="habit_detail_days_remaining">%1$d days left to reach your goal</string>
+    <string name="habit_detail_occurrences_remaining">%1$d completions left to reach your goal</string>
     <string name="habit_detail_goal_reached">Goal reached! !</string>
     <string name="habit_detail_reminders">Reminders</string>
     <string name="habit_detail_no_reminders">No reminders scheduled</string>
@@ -145,6 +146,11 @@
     <string name="next_reminder_duration_m">in %1$dm</string>
     <string name="habit_detail_consistency_heatmap">Consistency Heatmap</string>
     <string name="habit_detail_legend_done">Done</string>
+    <string name="habit_detail_legend_today">Today</string>
+    <string name="habit_detail_legend_missed">Missed</string>
+    <string name="habit_detail_legend_paused">Paused</string>
+    <string name="habit_detail_legend_goal">Goal</string>
+    <string name="habit_detail_legend_remaining">Remaining</string>
     <string name="habit_detail_legend_empty">Empty</string>
     <string name="delete_habit_dialog_title">Delete Habit?</string>
     <string name="delete_habit_dialog_text">Are you sure you want to permanently delete this habit and all its logged history? This action cannot be undone.</string>
@@ -176,7 +182,13 @@
     <string name="add_habit_duration_label">Duration (Days)</string>
     <string name="add_habit_duration_preset">%1$d days</string>
     <string name="add_habit_duration_custom">Custom</string>
-    <string name="add_habit_duration_custom_placeholder">Enter number of days</string>
+    <string name="add_habit_duration_type_label">Duration Type</string>
+    <string name="add_habit_duration_type_calendar">Calendar</string>
+    <string name="add_habit_duration_type_occurrence">Occurrence</string>
+    <string name="add_habit_occurrence_label">Target Completions</string>
+    <string name="add_habit_occurrence_placeholder">e.g. 20 times</string>
+    <string name="add_habit_error_occurrence">Target completions must be greater than 0</string>
+    <string name="habit_card_occurrence_progress">%1$d/%2$d times</string>
     <string name="add_habit_start_now">Start Habit Now</string>
     <string name="add_habit_limit_warning">You already have %1$d active habits (the maximum) — deactivate one first</string>
     <string name="add_habit_activate_desc">Activate immediately to begin tracking. Active habits: %1$d / %2$d</string>

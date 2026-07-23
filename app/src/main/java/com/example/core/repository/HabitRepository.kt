@@ -28,6 +28,7 @@ interface HabitRepository {
     suspend fun toggleLogForDate(habitId: Int, logDate: String, completed: Boolean)
     suspend fun logHabitCompletion(habitId: Int, date: String, completed: Boolean)
     suspend fun getCompletedDaysCount(habitId: Int): Int
+    suspend fun getCompletedCountForCycle(habitId: Int, startDate: String): Int
     suspend fun getActiveHabitsCount(): Int
     fun observeActiveHabitsCount(): Flow<Int>
     suspend fun setHabitActive(habitId: Int, isActive: Boolean, startedAt: Long?, status: com.example.core.model.domain.HabitStatus, inactiveSince: Long?)

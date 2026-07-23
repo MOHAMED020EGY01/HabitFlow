@@ -2,6 +2,7 @@ package com.example.core.model.mapper
 
 import com.example.core.model.domain.Habit
 import com.example.core.model.domain.HabitCycleHistory
+import com.example.core.model.domain.HabitDurationType
 import com.example.core.model.domain.HabitLog
 import com.example.core.model.domain.HabitNotification
 import com.example.core.model.domain.HabitStatus
@@ -16,6 +17,8 @@ fun HabitEntity.toDomain(): Habit = Habit(
     name = name,
     description = description,
     durationDays = durationDays,
+    durationType = try { HabitDurationType.valueOf(durationType) } catch (e: Exception) { HabitDurationType.CALENDAR },
+    targetOccurrenceCount = targetOccurrenceCount,
     colorHex = colorHex,
     isActive = isActive,
     reminderTimes = reminderTimes,
@@ -23,7 +26,11 @@ fun HabitEntity.toDomain(): Habit = Habit(
     startedAt = startedAt,
     status = try { HabitStatus.valueOf(status) } catch(e: Exception) { HabitStatus.ACTIVE },
     cycleStartDate = if (cycleStartDate == 0L) (startedAt ?: createdAt) else cycleStartDate,
-    cycleEndDate = if (cycleEndDate == 0L) ((startedAt ?: createdAt) + durationDays * 24L * 60L * 60L * 1000L) else cycleEndDate,
+    cycleEndDate = if (cycleEndDate == 0L || cycleEndDate == null) {
+        if (try { HabitDurationType.valueOf(durationType) } catch (e: Exception) { HabitDurationType.CALENDAR } == HabitDurationType.CALENDAR) {
+            ((startedAt ?: createdAt) + durationDays * 24L * 60L * 60L * 1000L)
+        } else null
+    } else cycleEndDate,
     inactiveDaysCount = inactiveDaysCount,
     activeDays = activeDays.mapNotNull { name ->
         try { DayOfWeek.valueOf(name) } catch (_: Exception) { null }
@@ -37,6 +44,8 @@ fun Habit.toEntity(): HabitEntity = HabitEntity(
     name = name,
     description = description,
     durationDays = durationDays,
+    durationType = durationType.name,
+    targetOccurrenceCount = targetOccurrenceCount,
     colorHex = colorHex,
     isActive = isActive,
     reminderTimes = reminderTimes,

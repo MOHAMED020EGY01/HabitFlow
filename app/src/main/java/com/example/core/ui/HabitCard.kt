@@ -166,9 +166,14 @@ fun HabitCard(
                                 .clip(RoundedCornerShape(3.dp))
                         )
                         Spacer(modifier = Modifier.width(12.dp))
+                        val progressRes = if (habit.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                            com.example.R.string.habit_card_occurrence_progress
+                        } else {
+                            com.example.R.string.habit_card_days_progress
+                        }
                         Text(
                             text = com.example.core.util.AppFormatters.forceWesternDigits(
-                                context.getString(com.example.R.string.habit_card_days_progress, completedDays, scheduledTotalDays)
+                                context.getString(progressRes, completedDays, scheduledTotalDays)
                             ),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,

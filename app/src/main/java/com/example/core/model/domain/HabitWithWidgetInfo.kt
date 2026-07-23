@@ -12,5 +12,6 @@ data class HabitWithWidgetInfo(
     val progressPercent: Float,
     val isCompletedToday: Boolean,
     val reminderTimes: List<String>,
-    val activeDays: Set<DayOfWeek> = DayOfWeek.values().toSet()
+    val activeDays: Set<DayOfWeek> = DayOfWeek.values().toSet(),
+    val durationType: HabitDurationType = HabitDurationType.CALENDAR
 )

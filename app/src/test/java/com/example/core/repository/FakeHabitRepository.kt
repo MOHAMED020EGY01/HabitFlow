@@ -85,6 +85,15 @@ class FakeHabitRepository : HabitRepository {
         return logsList.count { it.habitId == habitId && it.completed }
     }
 
+    override suspend fun getCompletedCountForCycle(habitId: Int, startDate: String): Int {
+        return logsList.count { it.habitId == habitId && it.completed && it.logDate >= startDate }
+    }
+
+    override suspend fun isHabitCompletedToday(habitId: Int): Boolean {
+        val today = java.time.LocalDate.now().toString()
+        return logsList.any { it.habitId == habitId && it.logDate == today && it.completed }
+    }
+
     override suspend fun getActiveHabitsCount(): Int {
         return habitsMap.values.count { it.isActive }
     }

@@ -187,7 +187,7 @@ fun CustomColorPickerDialog(
                         Box(
                             modifier = Modifier
                                 .size(28.dp)
-                                .clip(RoundedCornerShape(6.dp))
+                                .clip(CircleShape)
                                 .background(color)
                                 .clickable {
                                     try {

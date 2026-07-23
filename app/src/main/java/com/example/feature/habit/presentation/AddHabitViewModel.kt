@@ -29,6 +29,8 @@ data class AddHabitUiState(
     val name: String = "",
     val description: String = "",
     val durationDays: Int = 30,
+    val durationType: com.example.core.model.domain.HabitDurationType = com.example.core.model.domain.HabitDurationType.CALENDAR,
+    val targetOccurrenceCount: Int = 10,
     val colorHex: String = "#E53935",
     val isActive: Boolean = true,
     val reminderTimes: List<String> = listOf("09:00"),
@@ -36,6 +38,7 @@ data class AddHabitUiState(
     val wasActiveBefore: Boolean = false,
     val nameError: String? = null,
     val durationError: String? = null,
+    val occurrenceError: String? = null,
     val reminderTimesError: String? = null,
     val errorMessage: String? = null,
     val saveSuccess: Boolean = false,
@@ -70,6 +73,8 @@ class AddHabitViewModel(application: Application) : AndroidViewModel(application
                         name = habit.name,
                         description = habit.description,
                         durationDays = habit.durationDays,
+                        durationType = habit.durationType,
+                        targetOccurrenceCount = habit.targetOccurrenceCount ?: 10,
                         colorHex = habit.colorHex,
                         isActive = habit.isActive,
                         reminderTimes = habit.reminderTimes,
@@ -92,6 +97,14 @@ class AddHabitViewModel(application: Application) : AndroidViewModel(application
 
     fun onDurationChange(duration: Int) {
         _uiState.update { it.copy(durationDays = duration, durationError = null) }
+    }
+
+    fun onDurationTypeChange(type: com.example.core.model.domain.HabitDurationType) {
+        _uiState.update { it.copy(durationType = type) }
+    }
+
+    fun onTargetOccurrenceChange(count: Int) {
+        _uiState.update { it.copy(targetOccurrenceCount = count, occurrenceError = null) }
     }
 
     fun onColorChange(colorHex: String) {
@@ -165,6 +178,8 @@ class AddHabitViewModel(application: Application) : AndroidViewModel(application
     fun saveHabit() {
         val name = _uiState.value.name.trim()
         val duration = _uiState.value.durationDays
+        val durationType = _uiState.value.durationType
+        val targetOccurrence = _uiState.value.targetOccurrenceCount
         val reminders = _uiState.value.reminderTimes
 
         var hasError = false
@@ -177,11 +192,20 @@ class AddHabitViewModel(application: Application) : AndroidViewModel(application
             _uiState.update { it.copy(nameError = null) }
         }
 
-        if (duration <= 0) {
-            _uiState.update { it.copy(durationError = localizedCtx.getString(com.example.R.string.add_habit_error_duration)) }
-            hasError = true
+        if (durationType == com.example.core.model.domain.HabitDurationType.CALENDAR) {
+            if (duration <= 0) {
+                _uiState.update { it.copy(durationError = localizedCtx.getString(com.example.R.string.add_habit_error_duration)) }
+                hasError = true
+            } else {
+                _uiState.update { it.copy(durationError = null) }
+            }
         } else {
-            _uiState.update { it.copy(durationError = null) }
+            if (targetOccurrence <= 0) {
+                _uiState.update { it.copy(occurrenceError = localizedCtx.getString(com.example.R.string.add_habit_error_occurrence)) }
+                hasError = true
+            } else {
+                _uiState.update { it.copy(occurrenceError = null) }
+            }
         }
 
         if (reminders.isEmpty()) {
@@ -228,7 +252,9 @@ class AddHabitViewModel(application: Application) : AndroidViewModel(application
                 id = _uiState.value.id,
                 name = name,
                 description = _uiState.value.description.trim(),
-                durationDays = duration,
+                durationDays = if (durationType == com.example.core.model.domain.HabitDurationType.CALENDAR) duration else 30, // Fallback for entity
+                durationType = durationType,
+                targetOccurrenceCount = if (durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) targetOccurrence else null,
                 colorHex = _uiState.value.colorHex,
                 isActive = _uiState.value.isActive,
                 reminderTimes = _uiState.value.reminderTimes,

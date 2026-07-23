@@ -133,6 +133,7 @@
     <string name="habit_detail_total">%1$d إجمالي</string>
     <string name="habit_detail_overall_progress">التقدم العام</string>
     <string name="habit_detail_days_remaining">متبقي %1$d يوم للوصول إلى هدفك</string>
+    <string name="habit_detail_occurrences_remaining">متبقي %1$d مرة للوصول إلى هدفك</string>
     <string name="habit_detail_goal_reached">تم الوصول إلى الهدف! !</string>
     <string name="habit_detail_reminders">التذكيرات</string>
     <string name="habit_detail_no_reminders">لا توجد تذكيرات مجدولة</string>
@@ -144,6 +145,11 @@
     <string name="next_reminder_duration_m">خلال %1$d د</string>
     <string name="habit_detail_consistency_heatmap">مخطط الاستمرارية</string>
     <string name="habit_detail_legend_done">تم</string>
+    <string name="habit_detail_legend_today">اليوم</string>
+    <string name="habit_detail_legend_missed">فاتتني</string>
+    <string name="habit_detail_legend_paused">توقف</string>
+    <string name="habit_detail_legend_goal">الهدف</string>
+    <string name="habit_detail_legend_remaining">متبقي</string>
     <string name="habit_detail_legend_empty">فارغ</string>
     <string name="delete_habit_dialog_title">حذف العادة؟</string>
     <string name="delete_habit_dialog_text">متأكد إنك عاوز تمسح العادة دي وكل السجل الخاص بيها؟ مش هينفع ترجع في الخطوة دي.</string>
@@ -175,7 +181,13 @@
     <string name="add_habit_duration_label">المدة (أيام)</string>
     <string name="add_habit_duration_preset">%1$d يوم</string>
     <string name="add_habit_duration_custom">مخصص</string>
-    <string name="add_habit_duration_custom_placeholder">أدخل عدد الأيام</string>
+    <string name="add_habit_duration_type_label">نوع المدة</string>
+    <string name="add_habit_duration_type_calendar">بالأيام (تقويمي)</string>
+    <string name="add_habit_duration_type_occurrence">بالتكرار (عدد المرات)</string>
+    <string name="add_habit_occurrence_label">عدد المرات المستهدف</string>
+    <string name="add_habit_occurrence_placeholder">مثال: ٢٠ مرة</string>
+    <string name="add_habit_error_occurrence">عدد المرات يجب أن يكون أكبر من ٠</string>
+    <string name="habit_card_occurrence_progress">%1$d/%2$d مرة</string>
     <string name="add_habit_start_now">ابدأ العادة الآن</string>
     <string name="add_habit_limit_warning">عندك بالفعل %1$d عادات نشطة (الحد الأقصى) — عطل واحدة الأول</string>
     <string name="add_habit_activate_desc">فعلها دلوقتي عشان تبدأ تتبعها. العادات النشطة: %1$d / %2$d</string>

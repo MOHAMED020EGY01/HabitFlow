@@ -2,6 +2,8 @@ package com.example.feature.habit.presentation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -233,7 +235,11 @@ fun HabitDetailScreen(
                             iconColor = Color(0xFF00E676),
                             label = androidx.compose.ui.res.stringResource(com.example.R.string.habit_detail_done),
                             value = com.example.core.util.AppFormatters.forceWesternDigits(
-                                androidContext.getString(com.example.R.string.habit_detail_days, details.completedDays)
+                                if (details.habit.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                                    androidContext.getString(com.example.R.string.habit_card_occurrence_progress, details.completedDays, details.habit.getScheduledDaysCount()).split("/")[0] + " " + androidContext.getString(com.example.R.string.habit_detail_done)
+                                } else {
+                                    androidContext.getString(com.example.R.string.habit_detail_days, details.completedDays)
+                                }
                             ),
                             modifier = Modifier.weight(1f)
                         )
@@ -242,7 +248,11 @@ fun HabitDetailScreen(
                             iconColor = Color(0xFFFF1744),
                             label = androidx.compose.ui.res.stringResource(com.example.R.string.habit_detail_missed),
                             value = com.example.core.util.AppFormatters.forceWesternDigits(
-                                androidContext.getString(com.example.R.string.habit_detail_days, uiState.missedDaysCount)
+                                if (details.habit.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                                    "0 " + androidContext.getString(com.example.R.string.habit_detail_missed) // Misses don't count for occurrence
+                                } else {
+                                    androidContext.getString(com.example.R.string.habit_detail_days, uiState.missedDaysCount)
+                                }
                             ),
                             modifier = Modifier.weight(1f)
                         )
@@ -251,7 +261,11 @@ fun HabitDetailScreen(
                             iconColor = Color(0xFF00E5FF),
                             label = androidx.compose.ui.res.stringResource(com.example.R.string.habit_detail_goal),
                             value = com.example.core.util.AppFormatters.forceWesternDigits(
-                                androidContext.getString(com.example.R.string.habit_detail_total, details.habit.getScheduledDaysCount())
+                                if (details.habit.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                                    androidContext.getString(com.example.R.string.habit_detail_total, details.habit.getScheduledDaysCount())
+                                } else {
+                                    androidContext.getString(com.example.R.string.habit_detail_total, details.habit.getScheduledDaysCount())
+                                }
                             ),
                             modifier = Modifier.weight(1f)
                         )
@@ -313,7 +327,12 @@ fun HabitDetailScreen(
                         Text(
                             text = com.example.core.util.AppFormatters.forceWesternDigits(
                                 if (uiState.daysRemaining > 0) {
-                                    androidContext.getString(com.example.R.string.habit_detail_days_remaining, uiState.daysRemaining)
+                                    val stringRes = if (details.habit.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                                        com.example.R.string.habit_detail_occurrences_remaining
+                                    } else {
+                                        com.example.R.string.habit_detail_days_remaining
+                                    }
+                                    androidContext.getString(stringRes, uiState.daysRemaining)
                                 } else {
                                     androidContext.getString(com.example.R.string.habit_detail_goal_reached)
                                 }
@@ -734,12 +753,10 @@ fun ConsistencyHeatmap(
         .atZone(java.time.ZoneId.systemDefault())
         .toLocalDate()
     
-    val cycleEndDate = java.time.Instant.ofEpochMilli(habit.cycleEndDate)
-        .atZone(java.time.ZoneId.systemDefault())
-        .toLocalDate()
+    val projectedEndDate = habit.getProjectedEndDate()
     
     val today = LocalDate.now()
-    val displayEndDate = if (cycleEndDate.isAfter(today)) cycleEndDate else today
+    val displayEndDate = if (projectedEndDate != null && projectedEndDate.isAfter(today)) projectedEndDate else today
 
     // Fix Bug 2: Always start from Sunday
     val firstDayInGrid = com.example.core.util.AppFormatters.getStartOfWeek(startDate)
@@ -753,6 +770,13 @@ fun ConsistencyHeatmap(
             curr = curr.plusDays(1)
         }
         dates
+    }
+
+    val androidContext = LocalContext.current
+    val isArabic = remember {
+        val app = androidContext.applicationContext as? com.example.app.HabitApplication
+        app?.currentLanguageCode == "ar" || 
+        (app?.currentLanguageCode == "system" && androidx.core.os.ConfigurationCompat.getLocales(androidContext.resources.configuration).get(0)?.language == "ar")
     }
 
     com.example.core.ui.GlassCard(
@@ -775,48 +799,53 @@ fun ConsistencyHeatmap(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(completedColor)
-                        )
-                        Text(
-                            text = androidx.compose.ui.res.stringResource(com.example.R.string.habit_detail_legend_done),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                        )
-                        Text(
-                            text = androidx.compose.ui.res.stringResource(com.example.R.string.habit_detail_legend_empty),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-                }
             }
 
-            val locale = androidx.compose.ui.platform.LocalContext.current.resources.configuration.locales.get(0)
+                Row(
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Legend: Done
+                    LegendItemSimple(
+                        color = completedColor,
+                        label = stringResource(com.example.R.string.habit_detail_legend_done)
+                    )
+
+                    // Legend: Today (Current)
+                    LegendItemToday(
+                        label = stringResource(com.example.R.string.habit_detail_legend_today)
+                    )
+
+                    // Legend: Missed
+                    LegendItemMarker(
+                        marker = " ",
+                        color = Color(0xFFC62828),
+                        bgColor = Color(0xFFFFCDD2),
+                        label = stringResource(com.example.R.string.habit_detail_legend_missed)
+                    )
+
+                    // Legend: Goal (Ring)
+                    LegendItemRing(
+                        color = completedColor,
+                        label = stringResource(com.example.R.string.habit_detail_legend_goal)
+                    )
+
+                    // Legend: Paused (Yellow Ring)
+                    LegendItemRing(
+                        color = Color(0xFFFFB300),
+                        label = stringResource(com.example.R.string.habit_detail_legend_paused)
+                    )
+
+                    // Legend: Empty
+                    LegendItemSimple(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        label = stringResource(com.example.R.string.habit_detail_legend_empty)
+                    )
+
+                }
+
+            val locale = androidContext.resources.configuration.locales.get(0)
             val dayHeaders = remember(locale) {
                 listOf(
                     DayOfWeek.SUNDAY,
@@ -846,71 +875,105 @@ fun ConsistencyHeatmap(
                 }
             }
 
-            val weeks = gridDates.chunked(7)
+            val monthGroups = remember(gridDates) {
+                gridDates.groupBy { it.month to it.year }
+            }
+
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                weeks.forEach { week ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        week.forEach { date ->
-                            val logForDate = remember(logs, date) {
-                                logs.find { it.logDate == date.toString() }
-                            }
-                            val isCompleted = logForDate?.state == "DONE" || (logForDate?.completed ?: false)
-                            val isMissed = logForDate?.state == "MISS"
-                            val isInactiveSkipped = logForDate?.state == "INACTIVE_SKIPPED"
-                            val isToday = date == today
-                            val isFuture = date.isAfter(today)
-                            val isScheduled = habit.isScheduledOn(date)
+                monthGroups.forEach { entry ->
+                    val key = entry.key
+                    val datesInMonth = entry.value
+                    
+                    val month = key.first
+                    val year = key.second
 
-                            val circleColor = when {
-                                isCompleted -> completedColor
-                                isMissed -> Color(0xFFFFCDD2)
-                                isInactiveSkipped -> Color(0xFFFFE082)
-                                !isScheduled -> MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
-                                isFuture -> MaterialTheme.colorScheme.surfaceVariant
-                                else -> MaterialTheme.colorScheme.surfaceVariant
-                            }
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        val monthName = month.getDisplayName(java.time.format.TextStyle.FULL, locale)
+                        Text(
+                            text = "$monthName $year",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                        )
 
-                            val borderStroke = if (isToday) {
-                                BorderStroke(2.dp, completedColor)
-                            } else null
-
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f),
-                                contentAlignment = Alignment.Center
+                        val weeks = datesInMonth.chunked(7)
+                        weeks.forEach { week ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Card(
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .testTag("heatmap_day_${date}"),
-                                    shape = CircleShape,
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = circleColor
-                                    ),
-                                    border = borderStroke
-                                ) {
+                                week.forEach { date ->
+                                    val logForDate = remember(logs, date) {
+                                        logs.find { it.logDate == date.toString() }
+                                    }
+                                    val isCompleted = logForDate?.state == "DONE" || (logForDate?.completed ?: false)
+                                    val isMissed = logForDate?.state == "MISS"
+                                    val isInactiveSkipped = logForDate?.state == "INACTIVE_SKIPPED"
+                                    val isToday = date == today
+                                    val isFuture = date.isAfter(today)
+                                    val isScheduled = habit.isScheduledOn(date)
+                                    
+                                    val isEndDay = date == projectedEndDate
+
+                                    val circleColor = when {
+                                        isCompleted -> completedColor
+                                        isScheduled && isMissed -> Color(0xFFFFCDD2)
+                                        isInactiveSkipped -> Color.Transparent
+                                        !isScheduled -> MaterialTheme.colorScheme.surface.copy(alpha = 0.1f)
+                                        isFuture -> MaterialTheme.colorScheme.surfaceVariant
+                                        else -> MaterialTheme.colorScheme.surfaceVariant
+                                    }
+
+                                    val borderStroke = when {
+                                        isEndDay -> BorderStroke(2.dp, completedColor)
+                                        isToday -> BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                                        isInactiveSkipped -> BorderStroke(2.dp, Color(0xFFFFB300))
+                                        else -> null
+                                    }
+
                                     Box(
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .aspectRatio(1f),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(
-                                            text = if (isInactiveSkipped) "X" else com.example.core.util.AppFormatters.forceWesternDigits(date.dayOfMonth.toString()),
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = when {
-                                                isCompleted -> Color.Black
-                                                isMissed -> Color(0xFFC62828)
-                                                isInactiveSkipped -> Color(0xFFEF6C00)
-                                                !isScheduled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                                                else -> MaterialTheme.colorScheme.onSurface
+                                        Card(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .testTag("heatmap_day_${date}"),
+                                            shape = CircleShape,
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = circleColor
+                                            ),
+                                            border = borderStroke
+                                        ) {
+                                            Box(
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = com.example.core.util.AppFormatters.forceWesternDigits(date.dayOfMonth.toString()),
+                                                    fontSize = 12.sp,
+                                                    fontWeight = if (isEndDay) FontWeight.ExtraBold else FontWeight.Bold,
+                                                    color = when {
+                                                        isCompleted -> Color.Black
+                                                        isScheduled && isMissed -> Color(0xFFC62828)
+                                                        isInactiveSkipped -> Color(0xFFFFB300)
+                                                        !isScheduled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                                                        else -> MaterialTheme.colorScheme.onSurface
+                                                    }
+                                                )
                                             }
-                                        )
+                                        }
+                                    }
+                                }
+                                // Fill empty slots if week is partial
+                                if (week.size < 7) {
+                                    repeat(7 - week.size) {
+                                        Spacer(modifier = Modifier.weight(1f))
                                     }
                                 }
                             }
@@ -986,10 +1049,10 @@ fun MultiSegmentProgressBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            LegendItem(label = "Done", count = doneCount, color = Color(0xFF00E676))
-            LegendItem(label = "Missed", count = missCount, color = Color(0xFFFF1744))
-            LegendItem(label = "Paused", count = inactiveCount, color = Color(0xFFFFB300))
-            LegendItem(label = "Remaining", count = remainingCount, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
+            LegendItem(label = stringResource(com.example.R.string.habit_detail_legend_done), count = doneCount, color = Color(0xFF00E676))
+            LegendItem(label = stringResource(com.example.R.string.habit_detail_legend_missed), count = missCount, color = Color(0xFFFF1744))
+            LegendItem(label = stringResource(com.example.R.string.habit_detail_legend_paused), count = inactiveCount, color = Color(0xFFFFB300))
+            LegendItem(label = stringResource(com.example.R.string.habit_detail_legend_remaining), count = remainingCount, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
         }
     }
 }
@@ -1112,5 +1175,43 @@ fun formatTime12Hour(timeStr: String): String {
         }
     } catch (e: Exception) {
         timeStr
+    }
+}
+
+@Composable
+private fun LegendItemSimple(color: Color, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(color))
+        Text(text = label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+    }
+}
+
+@Composable
+private fun LegendItemToday(label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(
+            modifier = Modifier
+                .size(16.dp)
+                .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+        )
+        Text(text = label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+    }
+}
+
+@Composable
+private fun LegendItemMarker(marker: String, color: Color, bgColor: Color, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(modifier = Modifier.size(16.dp).clip(CircleShape).background(bgColor), contentAlignment = Alignment.Center) {
+            Text(text = marker, fontSize = 10.sp, fontWeight = FontWeight.Bold, color = color)
+        }
+        Text(text = label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+    }
+}
+
+@Composable
+private fun LegendItemRing(color: Color, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(modifier = Modifier.size(16.dp).border(2.dp, color, CircleShape))
+        Text(text = label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
     }
 }

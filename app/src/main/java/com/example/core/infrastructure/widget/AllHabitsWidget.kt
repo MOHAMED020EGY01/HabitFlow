@@ -301,15 +301,20 @@ internal fun HabitSlotContent(
             )
 
             val mutedWhite = Color.White.copy(alpha = 0.7f)
+            val progressRes = if (habitData.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                com.example.R.string.habit_card_occurrence_progress
+            } else {
+                com.example.R.string.widget_days_left
+            }
+            
+            val progressText = if (habitData.durationType == com.example.core.model.domain.HabitDurationType.OCCURRENCE) {
+                context.getString(progressRes, habitData.daysCompleted, habitData.totalDays)
+            } else {
+                context.getString(progressRes, habitData.daysCompleted, habitData.totalDays, habitData.daysRemaining)
+            }
+
             Text(
-                text = com.example.core.util.AppFormatters.forceWesternDigits(
-                    context.getString(
-                        com.example.R.string.widget_days_left,
-                        habitData.daysCompleted,
-                        habitData.totalDays,
-                        habitData.daysRemaining
-                    )
-                ),
+                text = com.example.core.util.AppFormatters.forceWesternDigits(progressText),
                 maxLines = 1,
                 style = TextStyle(
                     color = ColorProvider(day = mutedWhite, night = mutedWhite),

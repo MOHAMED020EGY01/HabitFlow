@@ -28,27 +28,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * 7 preset colors chosen for maximum visual spread:
- * Red → Orange → Yellow → Green → Blue → Purple → Gray.
- *
- * Removed from original 12:
- * - Pink  (#D81B60) — too close to Red
- * - Teal  (#00897B) — too close to Green and Blue
- * - Cyan  (#00ACC1) — too close to Blue and Teal
- * - Indigo (#3949AB) — too close to Blue and Purple
- * - Brown (#6D4C41) — too close to Orange
+ * 14 preset colors organized for visual spread.
  */
 val PresetColors = listOf(
     "#E53935", // Red
     "#D81B60", // Pink
     "#8E24AA", // Purple
+    "#5E35B1", // Deep Purple
+    "#3949AB", // Indigo
     "#1E88E5", // Blue
+    "#039BE5", // Light Blue
     "#00ACC1", // Cyan
+    "#00897B", // Teal
     "#43A047", // Green
+    "#7CB342", // Light Green
+    "#C0CA33", // Lime
     "#FDD835", // Yellow
+    "#FFB300", // Amber
     "#FB8C00", // Orange
-    "#757575"  // Gray
-)
+    "#F4511E", // Deep Orange
+    "#6D4C41", // Brown
+    "#757575", // Gray
+    "#546E7A"  // Blue Gray
+).take(14)
 
 // Rainbow / multi-colour gradient for the Custom swatch
 private val customSwatchBrush = Brush.sweepGradient(
@@ -108,7 +110,7 @@ fun ColorPicker(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    PresetColors.take(5).forEach { colorHex ->
+                    PresetColors.subList(0, 5).forEach { colorHex ->
                         ColorSwatch(
                             colorHex = colorHex,
                             isSelected = selectedColorHex.equals(colorHex, ignoreCase = true),
@@ -117,13 +119,28 @@ fun ColorPicker(
                     }
                 }
 
-                // ── Row 2: presets 5..8 + Custom swatch (5 swatches) ──
+                // ── Row 2: presets 5..9 (5 swatches) ────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    PresetColors.drop(5).forEach { colorHex ->
+                    PresetColors.subList(5, 10).forEach { colorHex ->
+                        ColorSwatch(
+                            colorHex = colorHex,
+                            isSelected = selectedColorHex.equals(colorHex, ignoreCase = true),
+                            onClick = { onColorSelected(colorHex) }
+                        )
+                    }
+                }
+
+                // ── Row 3: presets 10..13 + Custom swatch (5 swatches) ──
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    PresetColors.subList(10, 14).forEach { colorHex ->
                         ColorSwatch(
                             colorHex = colorHex,
                             isSelected = selectedColorHex.equals(colorHex, ignoreCase = true),

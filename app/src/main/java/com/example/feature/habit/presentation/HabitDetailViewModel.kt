@@ -161,7 +161,7 @@ class HabitDetailViewModel(application: Application) : AndroidViewModel(applicat
             val history = com.example.core.model.domain.HabitCycleHistory(
                 habitId = details.habit.id,
                 cycleStartDate = details.habit.cycleStartDate,
-                cycleEndDate = details.habit.cycleEndDate,
+                cycleEndDate = details.habit.cycleEndDate ?: details.habit.cycleStartDate,
                 completionPercentage = completionPercentage,
                 result = resultStatus,
                 logsSnapshot = logsJson
@@ -169,7 +169,9 @@ class HabitDetailViewModel(application: Application) : AndroidViewModel(applicat
             app.repository.insertCycleHistory(history)
 
             val todayMillis = System.currentTimeMillis()
-            val newEndDate = todayMillis + (details.habit.durationDays * 24L * 60L * 60L * 1000L)
+            val newEndDate = if (details.habit.durationType == com.example.core.model.domain.HabitDurationType.CALENDAR) {
+                todayMillis + (details.habit.durationDays * 24L * 60L * 60L * 1000L)
+            } else null
             
             val updatedHabit = details.habit.copy(
                 status = if (willBeActive) com.example.core.model.domain.HabitStatus.ACTIVE else com.example.core.model.domain.HabitStatus.INACTIVE,
